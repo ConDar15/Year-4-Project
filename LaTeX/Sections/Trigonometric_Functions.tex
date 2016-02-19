@@ -1,0 +1,34 @@
+\section{Trigonometric Functions}
+\subsection{Basic Methods}
+\subsection{Advanced Methods}
+\subsubsection{CORDIC}
+CORDIC is an algorithm that stands for COrdinate Rotation DIgital Computer and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bitshifting.\\
+
+CORDIC works by taking an initial guess of
+\begin{math}
+	\mathbf{x}_0 = \left( 
+		\begin{array}{c}
+			1 \\
+			0
+		\end{array} \right)
+\end{math}
+which can be rotated through an anti-clockwise angle of $\gamma$ by the matrix
+\begin{displaymath}
+	\left( \begin{array}{cc}
+		\cos{\gamma} & -\sin{\gamma} \\
+		\sin{\gamma} &  \cos{\gamma}
+	\end{array} \right)
+	= \frac{1}{\sqrt{1 + \tan{\gamma}^2}} \left( \begin{array}{cc}
+		1 & -\tan{\gamma} \\
+		\tan{\gamma} & 1
+	\end{array} \right)
+\end{displaymath}
+
+By taking taking smaller and smaller values of $\gamma$ we can create an iterative process to find $\mathbf{x}_n$ which converges, for a given $\beta \in (-\frac{\pi}{2}, \frac{\pi}{2})$, to
+\begin{displaymath}
+	\left( \begin{array}{c}
+		\cos{\beta}\\
+		\sin{\beta}
+	\end{array} \right)
+\end{displaymath}
+

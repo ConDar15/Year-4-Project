@@ -1,0 +1,39 @@
+%SEC%
+\section{Introduction}
+\label{SEC_"Introduction"}
+For many thousands of years all calculations that a Human might want performing had to be done by hand. For simple calculations such as addition, subtraction and multiplication this was not such an issue, but as society evolved we wanted to know the answer to increasingly hard questions. The greeks saught to find a value for $\pi$, and ended up with the bounds that $\frac{223}{71} < \pi < \frac{22}{7}$, which while sufficient for their needs is not sufficient for ours in the modern era. \\
+
+Nowadays we have computers and calculators to calculate functions such as square roots or the trigonometric functions. These devices however must be told how to correctly calculate these values, those methods used will be looked at here. Specifically, for most purposes it does not matter if some small error is present in the results, as long as the value found is close enough to the actual value.\\
+
+%SUB%
+\subsection{Code and Computers used}
+\label{SUB_"Code and Computers used}
+During this project I will be discussing the implementation of various algorithms. I will be implementing these algorithms in the C programming language, using the C11 standard.\\
+
+I chose the C programming language to implement my algorithms in because, once it compiles to binary machine code, the programs produced tend to be very efficient. This is partly due to the low-level of C programming, having relatively close control over direct CPU actions; however this does come at the cost of losing higher functionality that many other programming languages offer. A second reason for the efficiency is due to C's long history, originally being developed int 1969-1970, which has lead to several very efficient compilers.\\
+
+I will be implementing most programs using C's built in primitive types, typically \codeinline{int}, \codeinline{unsigned int} and \codeinline{double}. On a computer an \codeinline{int} is an integer that can represent both positive and negative bits using twos compliment, this gives an \codeinline{int} using \(n\) bits a minimum value of \(-2^n\) and a maximum value of \(2^n-1\). Typically a computer will store an \codeinline{int} as 32 bits, though some computers may use more or less bits. An \codeinline{unsigned int} is very similar to an \codeinline{int}, but does not represent negative values, and thus an \codeinline{unsigned int} of \(n\) bits has a minimum value of \(0\) and a maximum value of \(2^{n+1}-1\).\\
+
+If an integer of a specific number of bits is needed then the header \codeinline{stdint.h} may be used which defines \codeinline{int\_N} and \codeinline{uint\_N} which repsectively represent \codeinline{int} of N bits and \codeinline{unsigned int} of N bits; The typical values of N are 8, 16, 32 and 64.\\
+
+In C a \codeinline{double} is a floating point representation of a real value, that typically follows the IEEE 754 standard for double-precision binary floating points. This standard has:
+\begin{itemize}
+\item 1 bit for the sign of the number, \(s\)
+\item 11 bits for the exponent, \(e\)
+\item 52 bits for the significand, \(b = b_0b_1b_2\dots b_{51}\)
+\item A value that is understood to be:
+	\[(-1)^s\left(1 + \sum_{i=1}^{52}b_{52-i}2^{-i}\right) \times 2^{e-1023
+}\]
+\end{itemize}
+
+This gives a \codeinline{double} value a precision of around 15-17 significant decimal digits. While this is good for most applications, there are applications where we may want even more precision than this. To solve this I will be implementing certain algorithms using the GNU Multiple Precision Arithmetic Library (reffered to as GMP) as well as GNU MPFR Library(reffered to as GMP), wich was built upon GMP to correct and optimise the original. These libraries allow the use of arbitrary precision real values, given enough memory space, as well as integers longer than C's standard integer types can hold.\\
+
+The downside is that the increased precision does increase computation time for these calculations.\\
+
+I will be compiling and testing all of my code on a benchmark machine running a light version of Ubuntu <VERSION>, using the GNU C Compiler. The specifications of the machine, that may impact perrformance are:
+\begin{itemize}
+\item An Intel i5-4690K processor running at 4GHz. This processor uses a 64 bit architecture.
+\item 8Gb of DDR3 RAM
+\item A modern chipset on the motherboard
+\end{itemize}
+\TODO{Expand the introduction and make it more eloquent}
