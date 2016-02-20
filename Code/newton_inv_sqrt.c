@@ -93,6 +93,12 @@ int main(int argc, char **argv)
 	char sf[50];
 	FILE *in;
 
+	if(argc == 1)
+	{
+		printf("Usage: %s [a/b] <Arguments>\n", argv[0]);
+		exit(1);
+	}
+
 	switch(argv[1][0])
 	{
 		case 'a':

@@ -172,17 +172,45 @@ uintmax_t uint_sqrt(uintmax_t num)
 #ifdef COMPILE_MAIN
 int main(int argc, char **argv)
 {
-	/*uintmax_t n;
-	for(int i = 1; i < argc; i++)
-		if(sscanf(argv[i], "%" SCNuMAX, &n) == 1)
-			printf("sqrt(%" PRIuMAX ") ~= %" PRIuMAX "\n",
-					n, uint_sqrt(n));*/
-	
+	uintmax_t N;
 	unsigned int p, d;
 	char *R;
-	sscanf(argv[2], "%u", &d);
-	sscanf(argv[3], "%u", &p);
-	mpfr_set_default_prec(p);
-	printf("%s", root_digits_precise(argv[1], d));
+	
+	if (argc == 1)
+	{
+		printf("Usage: %s [a/b] [arguments]", argv[0]);
+		exit(1);
+	}
+	
+	switch(argv[1][0])
+	{
+		case 'a':
+			if(argc == 5 &&
+				sscanf(argv[3], "%u", &d) == 1 &&
+				sscanf(argv[4], "%u", &p) == 1)
+			{
+				mpfr_set_default_prec(p);
+				printf("sqrt(%s) ~=\n\t%s", argv[2], 
+					root_digits_precise(argv[2], d));
+			}
+			else
+				printf("Usage: %s a <N=Number to sqrt> "
+					   "<d=Number of significant digits> "
+					   "<p=bits of precision to use>\n", argv[0]);
+			break;
+
+		case 'b':
+			if(argc == 3 &&
+				sscanf(argv[2], "%" SCNuMAX, &N) == 1)
+				printf("int_sqrt(%" PRIuMAX ") ~= %" PRIuMAX "\n", 
+						N, uint_sqrt(N));
+			else
+				printf("Usage: %s b <N=Positive integer to sqrt>\n",
+						argv[0]);
+			break;
+
+		default:
+			printf("Usage: %s [a/b] [arguments]", argv[0]);
+	}
 }
 #endif
