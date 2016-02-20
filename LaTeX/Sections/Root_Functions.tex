@@ -709,7 +709,28 @@ Therefore as \(M\epsilon_0 < 1\) we have satisfied \(\mathrm{NR}_3\), and as suc
 %SUB%
 \subsection{Comparrison of Methods}
 
-We have observed several methods that can be 
+We have observed several methods that can be used to calculate Square Roots, and so now we will see how the methods compare to each other in theory and practice. The exact root method that we first discussed is the hardest to compare to the other methods as it works in a very different manner to the others. For now we will merely observe that it is an inefficient method that can be will be shown to tae longer than the others.\\
 
-\TODO{Fill this out later}
+Now for the other methods we will be comparing Algorithms \ref{PCD_"Square Root Bisection Method fixed bounds"}, \ref{PCD_"Newton Method for Square Root v3"} and \ref{PCD_"Newton Inverse Square Root"}; we will first consider their computational complexity. As all of these methods have a variable number of iterations that they can perform then we need to consider the complexity fore each iteration step.\\
 
+First for the bisection method if we calculate \(x_n^2 - N\) (which takes 3 operations) whenever we generate \(n\), and as we also calculate \(x_n := \tfrac{1}{2}(a_n + b_n)\) each iteration. Then the total number of operations for each iteration is 6.\\
+
+Next the regular newton method calculates \(\tfrac{1}{2}(x_n + \tfrac{a}{x_n})\) and \(|x_n+1 - x_n|\) each iteration whic take 3 and 3 operations respectively, giving a total of 6 operations per iteration; however as previously noted one of those operations is a costly division operation. Finally the inverse newton method calculates \(x_n(\tfrac{3}{2} + \tfrac{a}{2}x_n^2\) and \(|x_n+1 - x_n|\) each iteration which take 4 and 3 opertaions respectively, giving a total of 7 operations per iteration.\\
+
+As we can see the number of operations per iteration are similar for each of these methods and so the number of required iterations will have a large impact on the speed of these methdos. Now we have seen the required number of iterations for a tolerance \(\tau = 10^{-k} : k \in \N\), for both the bisection and basic newton square root methods, and similar to the basic newton method, we can show that for the inverse newton method we are looking for \(n \in \N\) that satisfies the following inequality:
+
+\[n > \log_2\left(\log_{\tfrac{1}{6}(\sqrt{2} - 1)(2\sqrt{2} - 1)^3}\left(\frac{\tau}{\sqrt{2} - 1}\right)\right) - 1\]
+
+This gives the following table:
+
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\(k : \tau = 10^k\) & Bisection Method & Newton Method & Inverse Newton\\\hline
+5 & 		16 &		4 &		4\\\hline
+10 & 		33 &		5 &		5\\\hline
+100 & 		332 &		8 &		9\\\hline
+1,000 & 	3321 &		12 &	12\\\hline
+1,000,000 & 3219280 &	22 &	22\\\hline
+\end{tabular}
+\end{center}
