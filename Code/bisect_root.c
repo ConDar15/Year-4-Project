@@ -18,13 +18,20 @@ double bisect_sqrt(double N, double T)
 	assert(N >= 0);
 	assert(T >= 0);
 
+	int e;
 	double a, b, x, f;
+
+	N = frexp(N, &e);
+	if(e%2)
+	{
+		N /= 2;
+		e += 1;
+	}
 	
+	printf("N=%lf\ne=%d\n", N, e);
 	//Sets the initial values of a and b
 	a = 0;
-	//This statement is equivalent to
-	//  if(N<1) b=1; else b=N;
-	b = N < 1 ? 1 : N;
+	b = 1;
 
 	x = 0.5*(a + b);
 	f = x*x - N;
@@ -44,7 +51,7 @@ double bisect_sqrt(double N, double T)
 		f = x*x - N;
 	}
 	
-	return x;
+	return ldexp(x, e / 2);
 }
 
 double iPow(double x, unsigned int n)
@@ -107,14 +114,23 @@ void mpfr_bisect_sqrt(mpfr_t R, mpfr_t N, mpfr_t T)
 		fprintf(stderr, "The tolerance must be non-negative\n");
 		exit(-1);
 	}
-	mpfr_t a, b, x, f, d, fab;
+	
+	mpfr_exp_t e;
+	mpfr_t a, b, x, f, d, fab, n;
+
+	mpfr_init(n);
+	mpfr_frexp(&e, n, N, MPFR_RNDN);
+	if(e%2)
+	{
+		mpfr_div_ui(n, n, 2, MPFR_RNDN);
+		e += 1;
+	}
 
 	//Set a == 0
 	mpfr_init_set_ui(a, 0, MPFR_RNDN);
 	
-	//Set b = max{1, N}
-	mpfr_init(b);
-	mpfr_max(b, MPFR_ONE, N, MPFR_RNDN);
+	//Set b == 1
+	mpfr_init_set_ui(b, 1, MPFR_RNDN);
 
 	//Set x = (a + b)/2
 	mpfr_init(x);
@@ -146,11 +162,12 @@ void mpfr_bisect_sqrt(mpfr_t R, mpfr_t N, mpfr_t T)
 		
 		//Update f and fab
 		mpfr_mul(f, x, x, MPFR_RNDN);
-		mpfr_sub(f, f, N, MPFR_RNDN);
+		mpfr_sub(f, f, n, MPFR_RNDN);
 		mpfr_abs(fab, f, MPFR_RNDN);
 	}
 
-	mpfr_set(R, x, MPFR_RNDN);
+	printf("beep");
+	mpfr_mul_2si(R, x, e/2, MPFR_RNDN);
 }
 
 void mpfr_bisect_nRoot(mpfr_t R, mpfr_t N, mpfr_t T, unsigned int n)
@@ -224,7 +241,7 @@ int main(int argc, char** argv)
 
 	if (argc == 1)
 	{
-		printf("Usage: %s [a/b/c/d] [arguments]", argv[0]);
+		printf("Usage: %s [a/b/c/d] [arguments]\n", argv[0]);
 		exit(1);
 	}
 

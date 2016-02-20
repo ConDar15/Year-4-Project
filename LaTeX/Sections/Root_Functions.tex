@@ -304,7 +304,7 @@ The proof that this converges to the correct value is very similar to the proof 
 
 We can now consider the accuracy that can be acheived by our algorithm, for our purposes we will be considering \(\sqrt{N}\), though the same applies for \(\sqrt{k}{N}\). We know that \(\sqrt{N} \in [a_n, b_n] \forall n \in \N\), and in particular we know that either \(\sqrt{N} \in [a_n, x_n]\) or \(\sqrt{N} \in [x_n, b_n] \forall n \in \N\); therefore we know that \(\epsilon_n := \left|x_n - \sqrt{N}\right| \le \tfrac{1}{2}(b_n - a_n) \forall n \in \N\). Then as we know that \(b_{n+1} - a_{n+1} = \tfrac{1}{2}(b_n - a_n)\), we know that \(\epsilon_n \le \tfrac{1}{2^n}(b_0 - a_0)\).\\
 
-We can consider that \(\forall N \in \Rpz \exists (r,k) \in [0,1]\times\Z : N = r \cdot 10^{2k}\); using this we know that \(\sqrt{N} = \sqrt{r} \cdot 10^k\). As we have the fixed initial bounds of \(a_0 = 0\) and \(b_0 = 1\), then if we are finding \(\sqrt{r}\) we know that \(\epsilon_n \le \tfrac{1}{2^n} \forall n \in \N\). Hence we can calculate the precision of our current estimate beforehand for any \(n \in \N\), and thus we can guarantee \(d\) significant digits of accuracy for \(r \in [0, 1]\).\\
+We can consider that \(\forall N \in \Rpz \exists (r,k) \in [\frac{1}{4},1)\times\Z : N = r \cdot 2^{2k}\); using this we know that \(\sqrt{N} = \sqrt{r} \cdot 2^k\). As we have the fixed initial bounds of \(a_0 = 0\) and \(b_0 = 1\), then if we are finding \(\sqrt{r}\) we know that \(\epsilon_n \le \tfrac{1}{2^n} \forall n \in \N\). Hence we can calculate the precision of our current estimate beforehand for any \(n \in \N\), and thus we can guarantee \(d\) significant digits of accuracy for \(r \in [\frac{1}{4}, 1)\).\\
 
 To get this accuracy must find \(n \in \N\) such that \(\epsilon_n \le \tfrac{1}{10^d}\), to acheive this we must find \(n \in \N\) such that \(2^n \ge 10^d\). For example the following table indicates the required \(n\), required for certain significant digits of accuracy.
 
@@ -321,7 +321,32 @@ To get this accuracy must find \(n \in \N\) such that \(\epsilon_n \le \tfrac{1}
 	100 & 329\\\hline
 	\end{tabular}
 \end{center}
-\TODO{Finish up writeup of code implementation, testing and examination}
+
+Now ususally finding \(r\) and \(k\) as above would be as hard as calculating the logorithm of \(N\); however due to the way that C stores real numbers as either \codeinline{double} or in the MPFR library, finding these values are actually fairly trivial. Both provide a functionality to find \((a, b) \in [\frac{1}{2}, 1)\times \Z : N = a\cdot2^b\), and from this we merely require a simple comparison and division by 2 if \(b\) is not even. This leads to the following algorithm, which has the above maximum number of iterations for a required accuracy:
+
+
+%PCD%
+\begin{lstlisting}[frame=single,mathescape,caption={Bisection Method for Square Roots with fixed bounds},label={PCD_"Square Root Bisection Method fixed bounds"}]
+  bisectionSquareRoot($N \in \Rpz, \tau \in \Rp$)
+      Let $(r, e) \in [\tfrac{1}{2}, 1) : N = r\cdot2^e$
+      if $2 \nmid e$:
+          $r \mapsto \tfrac{r}{2}$
+          $e \mapsto e - 1$
+      $a_0 := 0$
+      $b_0 := 1$
+      $x_0 := \tfrac{1}{2}(a_0 + b_0)$
+      $n := 0$
+      while $x_n^2 - N \neq 0$ AND $b_n - a_n > \tau$:
+          if $x_n^2 - N < 0$:
+              $a_{n+1} := x_n$
+              $b_{n+1} := b_n$
+          else:
+              $a_{n+1} := a_n$
+              $b_{n+1} := x_n$
+          $n \mapsto n+1$
+          $x_n := \tfrac{1}{2}(a_n + b_n)$
+      return $x_n \cdot 2^{\tfrac{e}{2}}$
+\end{lstlisting}\\
 
 %SUB%
 \subsection{Newton's Method for Square Roots}
@@ -383,7 +408,7 @@ Now suppose that \(x_n \ge \sqrt{N}\) and then, for a contradiction, assume that
 \end{align*}
 This is a contradiction as \(x_n, \sqrt{n} \in \R \implies \left(x_n - \sqrt{N}\right)^2 \ge 0\).\\
 Therefore \(x_n \ge \sqrt{N} \implies x_{n+1} \ge \sqrt{N}\).\\
-Hence if \(x_0 > \sqrt{N}\), then it follows that \(\{x_n : n \in \N\}\) is a strictly decreasing sequence that is bounded below. Therefore by an elementary result from limit theory, we see that \(\lim_{n\to\inft} x_n = \sqrt{N}\).
+Hence if \(x_0 > \sqrt{N}\), then it follows that \(\{x_n : n \in \N\}\) is a strictly decreasing sequence that is bounded below. Therefore by an elementary result from limit theory, we see that \(\lim_{n\to\inft} x_n = \inf\{x_n : n \in \N\}\).
 \end{proof}\\
 
 The most obvious choice for \(x_0\) would be \(N\), but we see that \(N \in (0,1)\), then \(N < \sqrt{N}\). In this case, we could choose \(x_0 = 1\) for the case that \(N \in (0,1)\). Therefore we can choose 
@@ -680,10 +705,11 @@ Now we consider \(M\epsilon_0\):\\
 
 Therefore as \(M\epsilon_0 < 1\) we have satisfied \(\mathrm{NR}_3\), and as such we have quadratic convergence of our method to \(\sqrt{N}^{-1}\).
 \end{proof}
-
-We now have two methods that converge quadratically to  
  
 %SUB%
-\subsection{Methods for other roots}
+\subsection{Comparrison of Methods}
+
+We have observed several methods that can be 
+
 \TODO{Fill this out later}
 
