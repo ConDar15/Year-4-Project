@@ -169,7 +169,7 @@ uintmax_t uint_sqrt(uintmax_t num)
 	return res;
 }
 
-/*
+#ifdef COMPILE_MAIN
 int main(int argc, char **argv)
 {
 	/*uintmax_t n;
@@ -177,11 +177,12 @@ int main(int argc, char **argv)
 		if(sscanf(argv[i], "%" SCNuMAX, &n) == 1)
 			printf("sqrt(%" PRIuMAX ") ~= %" PRIuMAX "\n",
 					n, uint_sqrt(n));*/
-/*	
+	
 	unsigned int p, d;
 	char *R;
 	sscanf(argv[2], "%u", &d);
 	sscanf(argv[3], "%u", &p);
 	mpfr_set_default_prec(p);
 	printf("%s", root_digits_precise(argv[1], d));
-}*/
+}
+#endif

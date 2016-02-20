@@ -83,6 +83,7 @@ void mpfr_newton_inv_sqrt(mpfr_t R, mpfr_t N, mpfr_t T)
 	mpfr_mul_2si(R, x, -e/2, MPFR_RNDN);
 }
 
+#ifdef COMPILE_MAIN
 int main(int argc, char **argv)
 {
 	double N, T;
@@ -140,3 +141,4 @@ int main(int argc, char **argv)
 			printf("Usage: %s [a/b] <Arguments>\n", argv[0]);
 	}
 }
+#endif

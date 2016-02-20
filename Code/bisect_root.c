@@ -213,6 +213,7 @@ void mpfr_bisect_nRoot(mpfr_t R, mpfr_t N, mpfr_t T, unsigned int n)
 	mpfr_set(R, x, MPFR_RNDN);
 }
 
+#ifdef COMPILE_MAIN
 int main(int argc, char** argv)
 {
 	double N, T;
@@ -308,7 +309,7 @@ int main(int argc, char** argv)
 						   "<n=nth root> <p=bits of precision>\n", argv[0]);
 			}
 			else
-				printf("Usage: %s c <N=Value to root> "
+				printf("Usage: %s d <N=Value to root> "
 				       "<D=Number of digits to calculate to> " 
 					   "<n=nth root> <p=bits of precision>\n", argv[0]);
 			break;
@@ -317,3 +318,4 @@ int main(int argc, char** argv)
 			printf("Usage: %s [a/b/c/d] [arguments]", argv[0]);
 	}
 }
+#endif

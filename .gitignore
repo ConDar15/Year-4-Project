@@ -1,0 +1,3 @@
+Code/obj/*.o
+Code/out/*.out
+Code/lib/*.a

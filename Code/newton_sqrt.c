@@ -37,7 +37,6 @@ double newton_sqrt_v1(double N, double T)
 		x = 0.5 * (x + N/x);
 		d = fabs(x - px);
 	}
-
 	return x;
 }
 
@@ -48,10 +47,11 @@ double newton_sqrt_v2(double N, double T)
 
 	double x, px, d;
 
-	/*if(N >= 4)
-		//x = uint_sqrt((unsigned long) N);
+	if(N >= 4)
+		x = uint_sqrt((unsigned long) N);
 	else
-		x = N > 1 ? N : 1;*/
+		x = N > 1 ? N : 1;
+
 	d = 1000000;
 	
 	while(d > T)
@@ -72,7 +72,7 @@ double newton_sqrt_v3(double N, double T)
 	int e;
 	double x, px, d;
 	
-	N = frexp(x, &e);
+	N = frexp(N, &e);
 
 	x = 1;
 	d = 1000000;
@@ -120,6 +120,7 @@ void mpfr_newton_sqrt_v3(mpfr_t R, mpfr_t N, mpfr_t T)
 	mpfr_mul_2si(R, x, e/2, MPFR_RNDN);
 }
 
+#ifdef COMPILE_MAIN
 int main(int argc, char **argv)
 {
 	double N, T;
@@ -201,3 +202,4 @@ int main(int argc, char **argv)
 			printf("Usage: %s [a/b/c/d] <Arguments>\n", argv[0]);
 	}
 }
+#endif
