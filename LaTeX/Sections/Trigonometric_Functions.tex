@@ -1,6 +1,70 @@
+%SEC%
 \section{Trigonometric Functions}
-\subsection{Basic Methods}
-\subsection{Advanced Methods}
+
+%SUB%
+\subsection{Geometric Method}
+\label{SUB_"Trig Geometric Method"}
+
+The first method I will be discussing is a method based on geometric properties that are derived on a circle, and we will start by considering values of \(\cos\) in the range \([0, \frac{\pi}{2})\). To do this we will consider the following figure of the unit circle:
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Geometric Trig 1"}
+	\caption{Diagram showing angles to be dealt with}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 1"}
+\end{figure}
+
+Here theta will be given in radians, and we can note that the labelled arc has length \(\theta\) due the formula for the circumference of a circle. By using the following derivation we can find a formula for \(\theta\) in terms of \(s\):
+
+\begin{displaymath}
+\begin{align*}
+	s^2 &= \sin^2\theta + (1 - \cos\theta)^2\\
+	    &= (\sin^2\theta + \cos^2\theta) + 1 - 2\cos\theta\\
+		&= 2 - 2 \cos\theta 
+			&\mathrm{By using } \sin^2\theta + \cos^2\theta = 1\\
+	\cos\theta &= 1 - \frac{s^2}{2}
+\end{align*}
+\end{displaymath}
+
+We will now consider a second diagram which will allow us to calculate an approximate value of \(s\).
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Geometric Trig 2"}
+	\caption{Diagram detailing how to calculate \(s\)}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 2"}
+\end{figure}
+
+We will first note that by an elementary geometry result we can know that the angle \(ABC\) is a right-angle; also we can consider that \(h\) is an approximation of \(\tfrac{\theta}{2}\), which will become relevant later. Now because \(AC\) is a diameter of our circle then it's length is 2 and thus, by utilising Pythagarus' Theorem, we get that the length of \(AB\) is \(\sqrt{AC^2 - BC^2} = \sqrt{4 - h^2}\).\\
+
+From here we consider the area of triangle \(ABC\), which can be calculated as \(\frac{1}{2}\cdot h\cdot\sqrt{4-h^2}\) and as \(\frac{1}{2}\cdot2\cdot\frac{s}{2}\); by equating these two, squaring both sides and re-arranging we get that \(s^2 = h^2(4 - h^2)\). Now we have the basis for a method that will allow us to calculate \(\cos\theta\).\\
+
+To complete our method we will consider introducing a new line that is to \(h\) what \(h\) is to \(s\) as shown in the diagram below:
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Geometric Trig 3"}
+	\caption{Detailing the recursive steps}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 3"}
+\end{figure}
+
+It is easy to see that if we repeat the steps above we get that \(h^2 = \hat{h}^2(4 - \hat{h}^2)\), and it also follows that \(\hat{h} \approx \frac{\theta}{4}\). Using this we can take an initial guess of \(h_0 := \frac{\theta}{2^k}\), for some \(k \in \N\), and then calculate \(h_{n+1}^2 = h_n^2(4 - h_n^2)\) where \(n \in [0, k] \cap \Z\); finally we calculate \(\cos\theta = 1 - \frac{h_k^2}{2}\), giving the following algorithm:
+  
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Geometric calculation of \(\cos\)},label={PCD_"Gometric Cos"}]
+  geometric_cos($\theta \in [0, \frac{\pi}{2}), k \in \N$)
+      $h_0 := \tfrac{\theta}{2^k}$
+      $n := 0$
+      while $n < K$:
+          $h_{n+1}^2 := h_n^2\cdot(4 - h_n^2)$
+          $n \mapsto n + 1$
+      return $1 - \tfrac{h_k^2}{2}$
+\end{lstlisting}
+
+\subsection{Taylor Series}
 \subsection{CORDIC}
 CORDIC is an algorithm that stands for COrdinate Rotation DIgital Computer and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bitshifting.\\
 
