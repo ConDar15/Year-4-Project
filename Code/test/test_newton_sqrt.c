@@ -3,6 +3,7 @@
 #include <mpfr.h>
 #include <time.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #include "exact_root.h"
 #include "newton_sqrt.h"
@@ -12,7 +13,7 @@ int main(int argc, char **argv)
 {
 	FILE *in;
 	int first = 1, c = 0, I;
-	long unsigned int msec;
+	uintmax_t msec;
 	unsigned int K;
 	size_t r;
 	char line[1024];
@@ -78,20 +79,16 @@ int main(int argc, char **argv)
 		}
 		for(int i = 0; i < 3; i++)
 		{
-			t = time_average(time[i], K); 
-			msec = (long unsigned int)t * 1000 / CLOCKS_PER_SEC;
+			msec = (uintmax_t)time_average(time[i], K) * 1000 / CLOCKS_PER_SEC;
 			printf("Average time for newton_sqrt_v%d: %lu.%04lus\n",
 			 	   i+1, msec/1000, msec % 1000);
-			t = time_total(time[i], K); 
-			msec = (long unsigned int)t * 1000 / CLOCKS_PER_SEC;
+			msec = (uintmax_t)time_total(time[i], K) * 1000 / CLOCKS_PER_SEC;
 			printf("Total time for newton_sqrt_v%d: %lu.%04lus\n",
 				   i+1, msec/1000, msec % 1000);
-			t = time_min(time[i], K); 
-			msec = (long unsigned int)t * 1000 / CLOCKS_PER_SEC;
+			msec = (uintmax_t)time_min(time[i], K) * 1000 / CLOCKS_PER_SEC;
 			printf("Minimum time for newton_sqrt_v%d: %lu.%04lus\n",
 				   i+1, msec/1000, msec % 1000);
-			t = time_max(time[i], K); 
-			msec = (long unsigned int)t * 1000 / CLOCKS_PER_SEC;
+			msec = (uintmax_t)time_max(time[i], K) * 1000 / CLOCKS_PER_SEC;
 			printf("Maximum time for newton_sqrt_v%d: %lu.%04lus\n",
 				   i+1, msec/1000, msec % 1000);
 			printf("\n");

@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+from random import random as r, randint as ri
+
+name = input('Base Filename: ').replace(' ', '_')
+m    = int(input('Minimum value: '))
+M    = int(input('Maximum value: '))
+num  = int(input('Number of test cases: '))
+
+if 'mpfr' in name:
+	f   = input('Use fixed number of digits <Y/N>?: ')[0]
+	if f in 'yY':
+		dig = int(input('Number of digits: '))
+		mD = MD = dig
+	else:
+		mD = int(input('Minimum number of digits: '))
+		MD = int(input('Maximum number of digits: '))
+	f   = input('Use fixed precision <Y/N>?: ')[0]
+	if f in 'yY':
+		prec = int(input('Bits of precision: '))
+		mP = MP = prec
+	else:
+		mP = int(input('Minimum bits of precision: '))
+		MP = int(input('Maximum bits of precision: '))
+	with open('{}_{}_N{}-{}_d{}-{}_p{}-{}'
+				.format(name,num,m,M,mD,MD,mP,MP),'w') as f:
+		f.write('{}\n'.format(num))
+		for i in range(num):
+			f.write('{}\t{}\t{}\n'
+				.format(r()*ri(1, max(M-m, 1)) + m, 
+						int(r()*ri(1, max(MD-mD, 1)) + mD),
+						int(r()*ri(1, max(MP-mP, 1)) + mP)))
+	
+else:
+	f   = input('Use fixed tolerance <Y/N>?: ')[0]
+	if f[0] in 'y':
+		tol = int(input('Decimal places of tolerance: '))
+		mT = MT = tol
+	else:
+		mT = int(input('Minimum decimal places of tolerance: '))
+		MT = int(input('Maximum decimal places of tolerance: '))
+	
+	with open('{}_{}_N{}-{}_t{}-{}'
+				.format(name, num, m, M, mT, MT), 'w') as f:
+		f.write('{}\n'.format(num))
+		for i in range(num):
+			f.write('{}\t0.{}1\n'
+				.format(r()*ri(1, max(M-m, 1)) + m,
+						'0'*int(r()*ri(1, max(MT-mT, 1)) + mT)))
+
