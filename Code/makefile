@@ -6,6 +6,7 @@ CFLAGS=-std=c11
 OBJDIR=obj
 OUTDIR=out
 LIBDIR=lib
+TSTDIR=test
 
 #Library linking options
 MPFRLIB=-lgmp -lmpfr
@@ -16,14 +17,16 @@ UTILLIB=-L$(LIBDIR) -lutil
 EXE=-D COMPILE_MAIN
 
 #The lists of files that are used or created
-INFILES =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
+INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
 		 geometric_trig.c
-OUTFILES=$(addprefix out/, $(INFILES:.c=.out))
-OBJECTS =$(addprefix obj/, $(INFILES:.c=.o))
+TESTFILES=test_newton_sqrt.c
+OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
+OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
+TESTS   =$(addprefix $(TSTDIR)/, $(TESTFILES:.c=.out))
 LU=$(LIBDIR)/libutil.a
 
 #Defualt option to build all the files
-all: $(OBJECTS) $(LU) $(OUTFILES)
+all: $(OBJECTS) $(LU) $(OUTFILES) $(TESTS)
 
 #Cleans the workspace, best used for a fresh start
 clean:
@@ -33,10 +36,13 @@ clean:
 $(OBJDIR)/util.o: utilities.c utilities.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/util_trig.o: trig_utilities.c trig_utilities.c
+$(OBJDIR)/util_trig.o: trig_utilities.c trig_utilities.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/util_test.o: $(TSTDIR)/test_utilities.c $(TSTDIR)/test_utilities.h
 	$(CC) $(CFLAGS) -c $< -o $@
 	
-$(LU): $(OBJDIR)/util.o $(OBJDIR)/util_trig.o
+$(LU): $(OBJDIR)/util.o $(OBJDIR)/util_trig.o $(OBJDIR)/util_test.o
 	ar -cr $@ $(OBJDIR)/util*.o	
 	
 #How to compile a c file to an object file	
@@ -71,3 +77,11 @@ $(OUTDIR)/geometric_trig.out: geometric_trig.c trig_utilities.h $(LU)
 	$(CC) $(CFLAGS) $(EXE) $(TEST_FIXED) geometric_trig.c $(UTILLIB)\
 		-o $@
 geometric_trig: $(OUTDIR)/geometric_trig.out
+
+$(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \
+				$(TSTDIR)/test_utilities.h \
+				$(OBJDIR)/newton_sqrt.o $(OBJDIR)/exact_root.o \
+				$(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/newton_sqrt.o $(OBJDIR)/exact_root.o \
+		$(MPFRLIB) $(UTILLIB) -I. -o $@
+test_newton_sqrt: $(TSTDIR)/test_newton_sqrt.out
