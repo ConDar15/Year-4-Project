@@ -1,6 +1,18 @@
 %SEC%
 \section{Trigonometric Functions}
 
+This section will focus on trigonometric functions, which are commonly used cyclic functions. These functions have been studied for hundreds of years, and can be challenging to calculate. We will discuss several methods of calculating them below before comparing methods.
+
+\TODO{Extend and Eloquate introduction}
+
+%SUB%
+\subsection{Calculating \pi}
+\label{SUB_"Calculating pi"}
+
+Several of the methods in this section require that we already know the value of \(\pi\), for example when we are applying several trig identities. Here we will briefly discuss several methods for calculating the value of \(\pi\), so that we may use this value in later subsections.
+
+\TODO{Fill out with content methods}
+
 %SUB%
 \subsection{Geometric Method}
 \label{SUB_"Trig Geometric Method"}
@@ -54,7 +66,7 @@ To complete our method we will consider introducing a new line that is to \(h\) 
 It is easy to see that if we repeat the steps above we get that \(h^2 = \hat{h}^2(4 - \hat{h}^2)\), and it also follows that \(\hat{h} \approx \frac{\theta}{4}\). Using this we can take an initial guess of \(h_0 := \frac{\theta}{2^k}\), for some \(k \in \N\), and then calculate \(h_{n+1}^2 = h_n^2(4 - h_n^2)\) where \(n \in [0, k] \cap \Z\); finally we calculate \(\cos\theta = 1 - \frac{h_k^2}{2}\), giving the following algorithm:
   
 %PCD%
-\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Geometric calculation of \(\cos\)},label={PCD_"Gometric Cos"}]
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Geometric calculation of \(\cos\)},label={PCD_"Geometric Cos"}]
   geometric_cos($\theta \in [0, \frac{\pi}{2}), k \in \N$)
       $h_0 := \tfrac{\theta}{2^k}$
       $n := 0$
@@ -62,7 +74,39 @@ It is easy to see that if we repeat the steps above we get that \(h^2 = \hat{h}^
           $h_{n+1}^2 := h_n^2\cdot(4 - h_n^2)$
           $n \mapsto n + 1$
       return $1 - \tfrac{h_k^2}{2}$
-\end{lstlisting}
+\end{lstlisting}\\
+
+Now we can use the above pseudocode to calculate any trigonometric function value by using various trigonometric identities. First we  suppose \(\theta \in \R\), then we can repeatedly apply the identity \(\cos\theta = \cos(\theta \pm 2\pi)\) to either add or subtrack \(2\pi\) until we have a value \(\theta' \in [0, 2pi)\). Once we have this value we can utilise the following assignment to calculate \(\cos\theta\):
+
+\begin{displaymath}
+	\cos\theta = \left\{ \begin{array}{lcl}
+			\cos\theta' & : & \theta' \in [0, \frac{\pi}{2})\\
+			-\cos(\pi - \theta') & : & \theta' \in [\frac{\pi}{2}, \pi)\\
+			-\cos(\theta' - \pi) & : & \theta' \in [\pi, \frac{3\pi}{2})\\
+			\cos(2\pi - \theta') & : & \theta' \in [\frac{3\pi}{2}, 2\pi)
+		\end{array}\right.
+\end{displaymath}
+
+Using Algorithm \ref{PCD_"Geometric Cos"} we can also easily calculate both \(\sin\theta\) and \(\tan\theta\), by further use of trigonometric identities. In particular we note that \(\sin\theta = \cos(\theta - \frac{\pi}{2}\) and \(\tan\theta = \frac{\sin\theta}{\cos\theta}\). Hence we can now calculate the trigonometric function value of any angle.\\
+
+We now wish to analyse the error of our approximation for \(\cos\), as the other methods have errors that are derivative of the error for approximating \(\cos\). Now Figure \ref{FIG_"Geometric Trig 4"} shows an arc of a circle which creates chord \(x\), with this we will be able to calculate the exact length of the chord and thus work on the error of our approximations.\\
+
+%FIG%
+\begin{figure}[!ht]
+	\caption{Diagram to find actual arc approximation}
+	\label{FIG_"Geometric Trig 4"}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 4"}
+\end{figure}
+
+To start we will note that \(\phi = \frac{\pi - \theta}{2} = \frac{\pi}{2} - \frac{\theta}{2}\), and then by using the Sine Law we get 
+\[\frac{x}{\sin\theta} = \frac{1}{\sin\phi} \implies x = \frac{\sin\theta}{\sin\phi}\]
+
+Now we can recall the double angle formula for \(\sin\), which gives \(\sin\theta = 2\sin\frac{\theta}{2}\cos\frac{\theta}{2}\), and also \(\sin\phi = \cos\frac{\theta}{2}\). This allows us to see that
+\[x = \frac{2\sin\frac{\theta}{2}\cos\frac{\theta}{2}}{\cos\frac{\theta}{2}} = 2\sin\tfrac{\theta}{2}\]
+
+Now it is obvious from the diagram that our estimates for the chord lengths are going to be over-estimates and thus we get that \(\epsilon_n = h_n - 2\sin\frac{\theta}{2^{k+1-n}} \forall n \in [0, k] \cap \Z\).
+
 
 \subsection{Taylor Series}
 \subsection{CORDIC}

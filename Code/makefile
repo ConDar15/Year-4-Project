@@ -46,11 +46,14 @@ $(LU): $(OBJDIR)/util.o $(OBJDIR)/util_trig.o $(OBJDIR)/util_test.o
 	ar -cr $@ $(OBJDIR)/util*.o	
 	
 #How to compile a c file to an object file	
-$(OBJECTS): $(notdir $(@:.o=.c)) $(notdir $(@:.o=.h)) utilities.h
+$(OBJECTS): $(notdir $(@:.o=.c)) $(notdir $(@:.o=.h)) utilities.h\
+		    trig_utilities.h
 	$(CC) $(CFLAGS) -c $(notdir $(@:.o=.c)) -o $@
 
 #The following are how to compile each of the OUTFILES
 #	The accompanying entry is a shorthand for the first
+
+## SQUARE ROOT FILES ##
 $(OUTDIR)/bisect_root.out: bisect_root.c bisect_root.h utilities.h $(LU)
 	$(CC) $(CFLAGS) $(EXE) bisect_root.c \
 		$(MATHLIB) $(UTILLIB) -o $@
@@ -62,7 +65,7 @@ $(OUTDIR)/exact_root.out: exact_root.c exact_root.h utilities.h $(LU)
 exact_root: $(OUTDIR)/exact_root.out
 
 $(OUTDIR)/newton_inv_sqrt.out: newton_inv_sqrt.c newton_inv_sqrt.h \
-						   utilities.h $(LU)
+						   	   utilities.h $(LU)
 	$(CC) $(CFLAGS) $(EXE) newton_inv_sqrt.c \
 		$(MATHLIB) $(UTILLIB) -o $@
 newton_inv_sqrt: $(OUTDIR)/newton_inv_sqrt.out
@@ -73,11 +76,14 @@ $(OUTDIR)/newton_sqrt.out: newton_sqrt.c newton_sqrt.h exact_root.h \
 		$(MATHLIB) $(UTILLIB) -o $@
 newton_sqrt: $(OUTDIR)/newton_sqrt.out
 
-$(OUTDIR)/geometric_trig.out: geometric_trig.c trig_utilities.h $(LU)
+## TRIGONOMETRIC FILES ##
+$(OUTDIR)/geometric_trig.out: geometric_trig.c trig_utilities.h \
+							  geometric_trig.h $(LU)
 	$(CC) $(CFLAGS) $(EXE) $(TEST_FIXED) geometric_trig.c $(UTILLIB)\
-		-o $@
+		$(MATHLIB) -o $@
 geometric_trig: $(OUTDIR)/geometric_trig.out
 
+## TESTING FILES ##
 $(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \
 				$(TSTDIR)/test_utilities.h \
 				$(OBJDIR)/newton_sqrt.o $(OBJDIR)/exact_root.o \

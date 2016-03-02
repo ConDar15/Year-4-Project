@@ -1,6 +1,8 @@
 #ifndef UTILITIES_HEADER
 	#define UTILITIES_HEADER
 
+	#include <mpfr.h>
+
 	#define ROOT_2_INFILE "root_2_digits.txt"
 	#define ROOT_2_INV_INFILE "root_2_inv_digits.txt"
 

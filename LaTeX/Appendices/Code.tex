@@ -1,4 +1,4 @@
-\section{Code}
+\Section{Code}
 \lstset{basicstyle=\ttfamily,
 		language=C,
 		backgroundcolor=\color{cBg},
@@ -12,12 +12,44 @@
 \renewcommand{\thelstlisting}{}
 \renewcommand{\lstlistingname}{File}
 
-Code for Digit by Digit Square root method:
+In this appendix I list the entirety of the code which implements the algorithms discussed in the body of this document.
+
+\subsection{General Code}
+General Utilities File:
+\lstinputlisting[caption={utilities.c}]{../Code/utilities.c}
+
+Trigonometric Utilities File:
+\lstinputlisting[caption={trig\_utilities.c}]{../Code/trig_utilities.c}
+
+Header Files for Utilities:
+\lstinputlisting[caption={utilities.h}]{../Code/utilities.h}
+\lstinputlisting[caption={trig\_utilities.h}]{../Code/trig_utilities.h}
+
+Makefile for the project:
+\lstinputlisting[caption={makefile},language=make]{../Code/makefile}
+
+\subsection{Trigonometric Code}
+Code for Geometric Trigonometric Functions:
+\lstinputlisting[caption={geometric\_trig.c}]{../Code/geometric_trig.c}
+
+Header files for trigonometric functions:
+\lstinputlisting[caption={geometric\_trig.h}]{../Code/geometric_trig.h}
+
+\subsection{Square Root Code}
+Code for Exact Square Root Metods:
 \lstinputlisting[caption={exact\_root.c}]{../Code/exact_root.c}
 
-Code for the Bisection Method:
+Code for the Bisection Methods:
 \lstinputlisting[caption={bisect\_root.c}]{../Code/bisect_root.c}
 
-Code for Newton Square Root Method:
+Code for Newton Square Root Methods:
 \lstinputlisting[caption={newton\_root.c}]{../Code/newton_sqrt.c}
 
+Code for Newton Inverse Square Root Methods:
+\lstinputlisting[caption={newton\_inv\_sqrt.c}]{../code/newton_inv_sqrt.c}
+
+Header files for Square Root Code:
+\lstinputlisting[caption={exact\_root.h}]{../Code/exact_root.h}
+\lstinputlisting[caption={bisect\_root.h}]{../Code/bisect_root.h}
+\lstinputlisting[caption={newton\_root.h}]{../Code/newton_root.h}
+\lstinputlisting[caption={newton\_inv\_sqrt.h}]{../Code/newton_inv_sqrt.h}
