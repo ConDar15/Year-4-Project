@@ -17,6 +17,11 @@ Several of the methods in this section require that we already know the value of
 \subsection{Geometric Method}
 \label{SUB_"Trig Geometric Method"}
 
+\theoremstyle{plain}
+\newtheorem{Geo Trig Prop 1}{Proposition}[subsection]
+\newtheorem{Geo Trig Prop 2}[Geo Trig Prop 1]{Proposition}
+\newtheorem{Geo Trig Prop 3}[Geo Trig Prop 1]{Proposition}
+
 The first method I will be discussing is a method based on geometric properties that are derived on a circle, and we will start by considering values of \(\cos\) in the range \([0, \frac{\pi}{2})\). To do this we will consider the following figure of the unit circle:
 
 %FIG%
@@ -105,8 +110,67 @@ To start we will note that \(\phi = \frac{\pi - \theta}{2} = \frac{\pi}{2} - \fr
 Now we can recall the double angle formula for \(\sin\), which gives \(\sin\theta = 2\sin\frac{\theta}{2}\cos\frac{\theta}{2}\), and also \(\sin\phi = \cos\frac{\theta}{2}\). This allows us to see that
 \[x = \frac{2\sin\frac{\theta}{2}\cos\frac{\theta}{2}}{\cos\frac{\theta}{2}} = 2\sin\tfrac{\theta}{2}\]
 
-Now it is obvious from the diagram that our estimates for the chord lengths are going to be over-estimates and thus we get that \(\epsilon_n = h_n - 2\sin\frac{\theta}{2^{k+1-n}} \forall n \in [0, k] \cap \Z\).
+Therefore we see that \(h_n\) is approximating the chord length associated with angle \(\theta2^{n-k}\), and thus \(\epsilon_n = |h_n - 2\sin(\theta2^{n-k-1})|\). Now as \(h_0 =\theta2^{-k} \approx 2\sin(\theta2^{-k-1})\) then if follows that \(\exists \phi\) such that \(h_0 = 2\sin(\phi2{-k-1})\), from this we can see that \(\phi = 2^{k+1}\sin^{-1}(\theta2^{-k-1})\). We will uses these facts to prove a couple of propositions.
 
+%THM%
+\begin{Geo Trig Prop 1}
+\label{THM_"Geo Trig Prop 1"}
+\(h_n = 2\sin(\phi2^{n-k-1}) \forall n \in [0, k] \cap \Z\) where \(\phi := 2^{k+1}\sin^{-1}(\theta2^{-k-1})\).
+\end{Geo Trig Prop 1}
+\begin{proof}
+Proceed by induction on \(n \in [0, k]\cap\Z\).\\
+\begin{description}
+\item [\textrm{H\((n)\):}] \(h_n = 2\sin(\phi2^{n-k-1})\)
+\item [\textrm{H\((0)\):}] 
+	\begin{displaymath}
+		\begin{align*}
+			2\sin(\phi2^{-k-1}) &= 2\sin(\sin^{-1}(\phi2^{-k-1}))\\
+								&= \theta2^{-k}\\
+								&= h_0 & \textrm{by definition of } h_0
+		\end{align*}
+	\end{displaymath}
+\item [\textrm{H\((n)\) \(\implies\) H\((n+1)\):}]
+	\begin{displaymath}
+		\begin{align*}
+			h_{n+1} &= h_n\sqrt{4-h_n^2}\\
+					&= 2\sin(\phi2^{n-k-1})\sqrt{4-4\sin^2(\phi2^{n-k-1})}
+						&\textrm{by H\((n)\)}\\
+					&= 4\sin(\phi2^{n-k-1})\cos(\phi2^{n-k-1})\\
+					&= 2\sin(\phi2^{n-k})
+						&\textrm{by the use of double angle formulas}
+		\end{align*}
+	\end{displaymath}
+\end{description}
+\end{proof}
+
+%THM%
+\begin{Geo Trig Prop 2}
+\label{THM_"Geo Trig Prop 2"}
+\(h_n > 2\sin(\theta2^{n-k-1}) \forall n \in [0,k] \cap \Z\)
+\end{Geo Trig Prop 2}
+\begin{proof}
+We start by considering the expansion of the exact value of \(h_n\).
+\begin{displaymath}
+	\begin{align*}
+		h_n &= 2\sin(\phi2^{n-k-1})\\
+			&= 2\sin(2^{n-k-1}(2^{k+1}\sin^{-1}(\theta2^{-k-1})))\\
+			&= 2\sin(2^n\sin^{-1}(\theta2^{-k-1}))\\
+			&= 2\sin(\theta2^{n-k-1} + \tfrac{1}{6}\theta^32^{n-3k -3} 
+				+ \bigO(2^{-5k}))
+				& \textrm{Detailed in section \ref{#REF#}}
+	\end{align*}
+\end{displaymath}
+
+Now as we know that \(n \le k\), then it follows that \(\theta2^{n-k-1} \le \tfrac{1}{2}\theta\).\\
+
+Also as \(\theta < \tfrac{\pi}{2}\) we know that \(\theta2^{n-k-1} < \tfrac{\pi}{4}\).\\
+
+We can also show that \(\tfrac{1}{6}\theta^32^{n-3k-3} + \bigO(2^{-5k}) < \tfrac{\pi}{4}\), though the proof is ommited here for brevity; therefore we see that \(\phi2^{n-k-1} < \tfrac{\pi}{2}\), and obviously that \(\phi2^{n-k-1} > \theta2^{n-k-1}\).\\
+
+Hence, as \(\sin\) is an increasing function in the range \([0, \tfrac{\pi}{2})\), we conclude that \[h_n = 2\sin(\phi2^{n-k-1}) > 2\sin(\theta2^{n-k-1})\].
+\end{proof}
+
+With these two propositions we can now consider the error of our approximation of \(\cos\)
 
 \subsection{Taylor Series}
 \subsection{CORDIC}
