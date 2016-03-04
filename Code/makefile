@@ -18,7 +18,7 @@ EXE=-D COMPILE_MAIN
 
 #The lists of files that are used or created
 INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
-		 geometric_trig.c
+		  geometric_trig.c geometric_inv_trig.c
 TESTFILES=test_newton_sqrt.c
 OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
 OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
@@ -79,9 +79,15 @@ newton_sqrt: $(OUTDIR)/newton_sqrt.out
 ## TRIGONOMETRIC FILES ##
 $(OUTDIR)/geometric_trig.out: geometric_trig.c trig_utilities.h \
 							  geometric_trig.h $(LU)
-	$(CC) $(CFLAGS) $(EXE) $(TEST_FIXED) geometric_trig.c $(UTILLIB)\
+	$(CC) $(CFLAGS) $(EXE) geometric_trig.c $(UTILLIB)\
 		$(MATHLIB) -o $@
 geometric_trig: $(OUTDIR)/geometric_trig.out
+
+$(OUTDIR)/geometric_inv_trig.out: geometric_inv_trig.c trig_utilities.h \
+							  	  geometric_inv_trig.h $(LU)
+	$(CC) $(CFLAGS) $(EXE) geometric_inv_trig.c $(UTILLIB)\
+		$(MATHLIB) -o $@
+geometric_inv_trig: $(OUTDIR)/geometric_inv_trig.out
 
 ## TESTING FILES ##
 $(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \

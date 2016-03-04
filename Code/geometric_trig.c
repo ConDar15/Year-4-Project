@@ -23,7 +23,7 @@ double geometric_cos_bounded(double x, unsigned int n)
 {
 	//Ensures that x is in the range [0, HALF_PI) and raises an error
 	//	message if this is not the case.
-	assert(x >= 0 && x < HALF_PI);
+	assert(x >= 0 && x <= HALF_PI);
 	
 	//Sets the first chord length that will be the basis or our induction
 	double h = (x*x)/pow(4, n);
@@ -37,7 +37,7 @@ double geometric_cos_bounded(double x, unsigned int n)
 
 void mpfr_geometric_cos_bounded(mpfr_t R, mpfr_t x, unsigned int n)
 {
-	assert(mpfr_cmp_ui(x, 0) >= 0 && mpfr_cmp(x, MPFR_HALF_PI) < 0);
+	assert(mpfr_cmp_ui(x, 0) >= 0 && mpfr_cmp(x, MPFR_HALF_PI) <= 0);
 
 	mpfr_t h, t; 
 	mpz_t k;
@@ -86,11 +86,8 @@ double geometric_cos(double x, unsigned int n)
 				return geometric_cos_bounded(x, n);
 	}
 	
-	//The second case increases x until it is non-negative and then
-	//	recursively calls geometric_cos, to perform the code above
-	while(x < 0)
-		x += TWO_PI;
-	return geometric_cos(x, n);
+	//cos(x) = cos(-x) in the second case
+	return geometric_cos(-x, n);
 }
 
 void mpfr_geometric_cos(mpfr_t R, mpfr_t x, unsigned int n)
@@ -116,7 +113,7 @@ void mpfr_geometric_cos(mpfr_t R, mpfr_t x, unsigned int n)
 			{
 				mpfr_sub(y, y, MPFR_PI, MPFR_RNDN);
 				mpfr_geometric_cos_bounded(R, y, n);
-				mpfr_mul_si(R, R, -1, MPFR_RNDN);
+				mpfr_neg(R, R, MPFR_RNDN);
 			}
 		}
 		else
@@ -125,7 +122,7 @@ void mpfr_geometric_cos(mpfr_t R, mpfr_t x, unsigned int n)
 			{
 				mpfr_sub(y, MPFR_PI, y, MPFR_RNDN);
 				mpfr_geometric_cos_bounded(R, y, n);
-				mpfr_mul_si(R, R, -1, MPFR_RNDN);
+				mpfr_neg(R, R, MPFR_RNDN);
 			}
 			else
 			{
@@ -135,8 +132,7 @@ void mpfr_geometric_cos(mpfr_t R, mpfr_t x, unsigned int n)
 	}
 	else
 	{
-		while(mpfr_cmp_ui(y, 0) < 0)
-			mpfr_add(y, y, MPFR_TWO_PI, MPFR_RNDN);
+		mpfr_neg(y, y, MPFR_RNDN);
 		mpfr_geometric_cos(R, y, n);
 	}
 }
@@ -164,11 +160,17 @@ double geometric_tan(double x, unsigned int n)
 void mpfr_geometric_tan(mpfr_t R, mpfr_t x, unsigned int n)
 {
 	mpfr_t S, C;
+	
 	mpfr_init(S);
 	mpfr_init(C);
 	mpfr_geometric_sin(S, x, n);
 	mpfr_geometric_cos(C, x, n);
+	
 	mpfr_div(R, S, C, MPFR_RNDN);
+	if(mpfr_cmp_ui(R, 1000000) > 0)
+		mpfr_set_inf(R, 1);
+	else if(mpfr_cmp_si(R, -1000000) < 0)
+		mpfr_set_inf(R, -1);
 }
 
 #ifdef COMPILE_MAIN
@@ -185,35 +187,44 @@ int main(int argc, char **argv)
 		switch(argv[1][0])
 		{
 			case 'a':
-				if(argc == 4 && 
+				if(argc == 5 && 
 				   sscanf(argv[2], "%lf", &x) == 1 &&
-				   sscanf(argv[3], "%u" , &n) == 1)
+				   sscanf(argv[3], "%u" , &n) == 1 &&
+				   sscanf(argv[4], "%u" , &D) == 1)
 					printf("Cos(%.*lf) = %.*lf\n",
-							n+5, x, n+5, geometric_cos(x, n));
+							d(D), x, D, geometric_cos(x, n));
 				else
-					printf("Usage: %s a <x=value for cos(x)>, <n>\n",
+					printf("Usage: %s a <x=value for Cos(x)> <n> "
+						   "<D=Number of digits to display>\n",
+
 							argv[0]);
 				break;
 			 
 			case 'b':
-				if(argc == 4 && 
+				if(argc == 5 && 
 				   sscanf(argv[2], "%lf", &x) == 1 &&
-				   sscanf(argv[3], "%u" , &n) == 1)
+				   sscanf(argv[3], "%u" , &n) == 1 &&
+				   sscanf(argv[4], "%u" , &D) == 1)
 					printf("Sin(%.*lf) = %.*lf\n",
-							n+5, x, n+5, geometric_sin(x, n));
+							d(D), x, D, geometric_sin(x, n));
 				else
-					printf("Usage: %s b <x=value for sin(x)>, <n>\n",
+					printf("Usage: %s b <x=value for Sin(x)> <n> "
+						   "<D=Number of digits to display>\n",
+
 							argv[0]);
 				break;
 
 			case 'c':
-				if(argc == 4 && 
+				if(argc == 5 && 
 				   sscanf(argv[2], "%lf", &x) == 1 &&
-				   sscanf(argv[3], "%u" , &n) == 1)
+				   sscanf(argv[3], "%u" , &n) == 1 &&
+				   sscanf(argv[4], "%u" , &D) == 1)
 					printf("Tan(%.*lf) = %.*lf\n",
-							n+5, x, n+5, geometric_tan(x, n));
+							d(D), x, D, geometric_tan(x, n));
 				else
-					printf("Usage: %s a <x=value for tan(x)>, <n>\n",
+					printf("Usage: %s a <x=value for Tan(x)> <n> "
+						   "<D=Number of digits to display>\n",
+
 							argv[0]);
 				break;
 			
@@ -237,13 +248,13 @@ int main(int argc, char **argv)
 					}
 					else
 						printf("Usage: %s d <x=value for Cos(x)> "
-							   "<D=Number of digits to display<n> "
+							   "<D=Number of digits to display> "
 							   "<n> <p=bits of precision to use>\n",
 							   argv[0]);
 				}
 				else
 					printf("Usage: %s d <x=value for Cos(x)> "
-						   "<D=Number of digits to display<n> "
+						   "<D=Number of digits to display> "
 						   "<n> <p=bits of precision to use>\n",
 						   argv[0]);
 				break;
@@ -268,13 +279,13 @@ int main(int argc, char **argv)
 					}
 					else
 						printf("Usage: %s d <x=value for Sin(x)> "
-							   "<D=Number of digits to display<n> "
+							   "<D=Number of digits to display> "
 							   "<n> <p=bits of precision to use>\n",
 							   argv[0]);
 				}
 				else
 					printf("Usage: %s d <x=value for Sin(x)> "
-						   "<D=Number of digits to display<n> "
+						   "<D=Number of digits to display> "
 						   "<n> <p=bits of precision to use>\n",
 						   argv[0]);
 				break;
@@ -299,13 +310,13 @@ int main(int argc, char **argv)
 					}
 					else
 						printf("Usage: %s d <x=value for Tan(x)> "
-							   "<D=Number of digits to display<n> "
+							   "<D=Number of digits to display> "
 							   "<n> <p=bits of precision to use>\n",
 							   argv[0]);
 				}
 				else
 					printf("Usage: %s d <x=value for Tan(x)> "
-						   "<D=Number of digits to display<n> "
+						   "<D=Number of digits to display> "
 						   "<n> <p=bits of precision to use>\n",
 						   argv[0]);
 				break;
