@@ -22,7 +22,7 @@ Several of the methods in this section require that we already know the value of
 \newtheorem{Geo Trig Prop 2}[Geo Trig Prop 1]{Proposition}
 \newtheorem{Geo Trig Prop 3}[Geo Trig Prop 1]{Proposition}
 
-The first method I will be discussing is a method based on geometric properties that are derived on a circle, and we will start by considering values of \(\cos\) in the range \([0, \frac{\pi}{2})\). To do this we will consider the following figure of the unit circle:
+The first method I will be discussing is a method based on geometric properties that are derived on a circle, and we will start by considering values of \(\cos\) in the range \([0, \frac{\pi}{2}]\). To do this we will consider the following figure of the unit circle:
 
 %FIG%
 \begin{figure}[!ht]
@@ -72,7 +72,7 @@ It is easy to see that if we repeat the steps above we get that \(h^2 = \hat{h}^
   
 %PCD%
 \begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Geometric calculation of \(\cos\)},label={PCD_"Geometric Cos"}]
-  geometric_cos($\theta \in [0, \frac{\pi}{2}), k \in \N$)
+  geometric_cos($\theta \in [0, \frac{\pi}{2}], k \in \N$)
       $h_0 := \tfrac{\theta}{2^k}$
       $n := 0$
       while $n < K$:
@@ -85,9 +85,9 @@ Now we can use the above pseudocode to calculate any trigonometric function valu
 
 \begin{displaymath}
 	\cos\theta = \left\{ \begin{array}{lcl}
-			\cos\theta' & : & \theta' \in [0, \frac{\pi}{2})\\
-			-\cos(\pi - \theta') & : & \theta' \in [\frac{\pi}{2}, \pi)\\
-			-\cos(\theta' - \pi) & : & \theta' \in [\pi, \frac{3\pi}{2})\\
+			\cos\theta' & : & \theta' \in [0, \frac{\pi}{2}]\\
+			-\cos(\pi - \theta') & : & \theta' \in [\frac{\pi}{2}, \pi]\\
+			-\cos(\theta' - \pi) & : & \theta' \in [\pi, \frac{3\pi}{2}]\\
 			\cos(2\pi - \theta') & : & \theta' \in [\frac{3\pi}{2}, 2\pi)
 		\end{array}\right.
 \end{displaymath}
@@ -163,11 +163,11 @@ We start by considering the expansion of the exact value of \(h_n\).
 
 Now as we know that \(n \le k\), then it follows that \(\theta2^{n-k-1} \le \tfrac{1}{2}\theta\).\\
 
-Also as \(\theta < \tfrac{\pi}{2}\) we know that \(\theta2^{n-k-1} < \tfrac{\pi}{4}\).\\
+Also as \(\theta \le \tfrac{\pi}{2}\) we know that \(\theta2^{n-k-1} \le \tfrac{\pi}{4}\).\\
 
-We can also show that \(\tfrac{1}{6}\theta^32^{n-3k-3} + \bigO(2^{-5k}) < \tfrac{\pi}{4}\), though the proof is ommited here for brevity; therefore we see that \(\phi2^{n-k-1} < \tfrac{\pi}{2}\), and obviously that \(\phi2^{n-k-1} > \theta2^{n-k-1}\).\\
+We can also show that \(\tfrac{1}{6}\theta^32^{n-3k-3} + \bigO(2^{-5k}) \le \tfrac{\pi}{4}\), though the proof is ommited here for brevity; therefore we see that \(\phi2^{n-k-1} \le \tfrac{\pi}{2}\), and obviously that \(\phi2^{n-k-1} > \theta2^{n-k-1}\).\\
 
-Hence, as \(\sin\) is an increasing function in the range \([0, \tfrac{\pi}{2})\), we conclude that \[h_n = 2\sin(\phi2^{n-k-1}) > 2\sin(\theta2^{n-k-1})\].
+Hence, as \(\sin\) is an increasing function in the range \([0, \tfrac{\pi}{2}]\), we conclude that \[h_n = 2\sin(\phi2^{n-k-1}) > 2\sin(\theta2^{n-k-1})\].
 \end{proof}
 
 With these two propositions we can now consider the error of our approximation of \(\cos\). First we will prove the following proposition regarding the error of the approximation of \(s\):
@@ -234,11 +234,11 @@ Obviously \(\epsilon_k = |h_k - s|\), and we can now use this to find the error 
 			&=\frac{1}{2}(2+h_k)\epsilon_k\\
 		&=\frac{1}{2}(2 + 2\sin(\frac{\phi}{2}))\epsilon_k\\
 		&=(1 + \sin(\frac{\phi}{2}))\epsilon_k\\
-		&<2\epsilon_k
+		&\le2\epsilon_k
 \end{align*}
 \end{displaymath}
 
-As \(\epsilon_{\mathcal{C}} < 2\epsilon_k\), then by Proposition \ref{THM_"Geo Trig Prop 3"} we see that \(\epsilon_{\mathcal{C}} < 2^{k+1}\epsilon_0\). Now to consider \(\epsilon_0\) we first observe that \(\epsilon_0 =\theta2^{-k} - 2\sin{\theta2^{-k-1}\), and therefore we can conclude that:
+As \(\epsilon_{\mathcal{C}} \le 2\epsilon_k\), then by Proposition \ref{THM_"Geo Trig Prop 3"} we see that \(\epsilon_{\mathcal{C}} < 2^{k+1}\epsilon_0\). Now to consider \(\epsilon_0\) we first observe that \(\epsilon_0 =\theta2^{-k} - 2\sin{\theta2^{-k-1}\), and therefore we can conclude that:
 \[\epsilon_{\mathcal{C}} < 2\theta - 2^{k+2}\sin(\theta2^{-k-1})\]
 
 If we then wish to calculate \(\cos\theta\) accurate to \(N\) decimal places then we are looking to find \(k \in \N\) such that
@@ -264,9 +264,9 @@ As can be seen the value of \(k\) required to acheive \(N\) digits of accuracy i
 
 Another consideration for Algorithm \ref{PCD_"Geometric Cos"} is that we could "run it in reverse" to attain an algorithm for the inverse cosine function. To start take line 7 which is \(\mathcal{C} = 1 - \frac{1}{2}h_k^2\), which can be re-arranged to give \(h_k^2 = 2 - 2\mathcal{C}\), where we know \(\mathcal{C}\) as our initial value.\\
 
-Line 5 is a little more difficult, but by re-arranging we see that \(h_n^4 - 4h_n^2 + h_{n+1}^2 = 0\), which can be solved via the quadratic formula to give \(h_n^2 = 2 \pm \sqrt{4 - h_{n+1}^2}\). Now we can make the observation that if \(x \in \Rpz\), then \(\sin^{-1}(-x) = -\sin^{-1}(x)\) and so we can restric our algorithm to only consider \(x \in \Rpz\). With this we know that \(\theta \in [0,\frac{\pi}{2}]\), and thus \(h_k < \sqrt{2}\). Therefore as \(h_{n+1} > h_n \forall n \in [0,k-1]\cap\Z\) we see that \(h_n^2 \le 2  \forall n \in [0,k]\cap\Z\). This allows us to ascertain that to reverse Line 5 we perform \(h_n^2 = 2 - \sqrt{4 - h_{n+1}^2}\).\\
+Line 5 is a little more difficult, but by re-arranging we see that \(h_n^4 - 4h_n^2 + h_{n+1}^2 = 0\), which can be solved via the quadratic formula to give \(h_n^2 = 2 \pm \sqrt{4 - h_{n+1}^2}\). Now we can make the observation that if \(x \in \Rpz\), then \(\cos^{-1}(-x) = \pi - \cos^{-1}(x)\) and so we can restric our algorithm to only consider \(x \in [0,1]\). With this we know that \(\theta \in [0,\frac{\pi}{2}]\), and thus \(h_k \le \sqrt{2}\). Therefore as \(h_{n+1} > h_n \forall n \in [0,k-1]\cap\Z\) we see that \(h_n^2 \le 2 \forall n \in [0,k]\cap\Z\). This allows us to ascertain that to reverse Line 5 we perform \(h_n^2 = 2 - \sqrt{4 - h_{n+1}^2}\).\\
 
-Finally line 2 is reversed by returning the value \(2^kh_0\); therefore we get the following algorithm for \(\cos^{-1}(x)\) where \(x \in \Rpz\):
+Finally line 2 is reversed by returning the value \(2^kh_0\); therefore we get the following algorithm for \(\cos^{-1}(x)\) where \(x \in [0,1]\):
 
 %PCD%
 \begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Geometric calculation of \(\cos^{-1}\)},label={PCD_"Geometric aCos"}]
@@ -278,6 +278,11 @@ Finally line 2 is reversed by returning the value \(2^kh_0\); therefore we get t
           $n \mapsto n - 1$
       return $2^kh_0$
 \end{lstlisting}\\
+
+Similar to the regular trigonometric functions we can use trigonometric identities to calculate the inverse trigonometric functions from \(\cos^{-1}\). To start we recall that \(\cos^{-1}(-x) = -\cos(x)\) where \(x \in [0,1]\), then we can use the identities that \(\sin^{-1}(x) = \frac{\pi}{2} - \cos^{-1}(x)\) and \(\tan^{-1}(x) = \sin^{-1}(\frac{x}{\sqrt{x^2 + 1}})\).\\
+
+If we suppose that all operations in the method are accurately computed then Algorithm \ref{PCD_"Geometric aCos"} is a computation with high accuracy. This is because there is no initial guess, such as in Algorithm \ref{PCD_"Geometric Cos"}, and so the only introduction of error is assuming that \(2^kh_0 \approx \theta\). However as we discuss in detail in Section \ref{#SEC#}, calculating square roots is not a simple task and thus will introduce error to the method in general; therefore the accuracy of the method is roughly as accurate as our method of calculating square roots.
+
 \subsection{Taylor Series}
 \subsection{CORDIC}
 CORDIC is an algorithm that stands for COrdinate Rotation DIgital Computer and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bitshifting.\\
