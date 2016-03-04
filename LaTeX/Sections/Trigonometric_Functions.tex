@@ -170,8 +170,114 @@ We can also show that \(\tfrac{1}{6}\theta^32^{n-3k-3} + \bigO(2^{-5k}) < \tfrac
 Hence, as \(\sin\) is an increasing function in the range \([0, \tfrac{\pi}{2})\), we conclude that \[h_n = 2\sin(\phi2^{n-k-1}) > 2\sin(\theta2^{n-k-1})\].
 \end{proof}
 
-With these two propositions we can now consider the error of our approximation of \(\cos\)
+With these two propositions we can now consider the error of our approximation of \(\cos\). First we will prove the following proposition regarding the error of the approximation of \(s\):
 
+%THM%
+\begin{Geo Trig Prop 3}
+\label{THM_"Geo Trig Prop 3"}
+If \(\epsilon_n := |h_n - 2\sin(\theta2^{n-k-1})| \forall n \in [0,k] \cap \Z\), then \(\epsilon_k < 2^k\epsilon_0)\).
+\end{Geo Trig Prop 3}
+\begin{proof}
+\(\epsilon_n = h_n - 2\sin(\theta2^{n-k-1})\) as \(h_n > 2\sin(\theta2^{n-k-1})\) by Proposition \ref{THM_"Geo Trig Prop 2"}.\\
+
+Now we see that:
+\begin{displaymath}
+\begin{align*}
+	\epsilon_{n+1} &= h_{n+1} - 2\sin(\theta2^{n-k})\\
+		&= h_n\sqrt{4-h_n^2} 
+			- 4\sin(\theta2^{n-k-1})\cos(\theta2^{n-k-1})\\
+\end{align*}
+\end{displaymath}
+
+If we consider the equation \(\alpha\beta - \gamma\delta = (\alpha - \gamma) + \alpha(\beta - 1) - \gamma(\delta - 1)\) and apply it to our current formula we get:
+
+\begin{displaymath}
+\begin{align*}
+	\epsilon_{n+1} &= (h_n - 2\sin(\theta2^{n-k-1})) 
+						+ h_n(\sqrt{4 - h_n^2} - 1)
+						- 2\sin(\theta2^{n-k-1})(2\cos(\theta2^{n-k-1}) - 1)\\
+		&= \epsilon_n + h_n(\sqrt{4 - h_n^2} - 1)
+			-2\sin(\theta2^{n-k-1})(2\cos(\theta2^{n-k-1}) - 1)\\
+		&= 2\epsilon_n + h_n(\sqrt{4 - h_n^2} - 2)
+			-2\sin(\theta2^{n-k-1})(2\cos(\theta2^{n-k-1}) - 2)\\
+		&= 2\epsilon_n + h_n(\sqrt{4 - h_n^2} - 2)
+			+2\sin(\theta2^{n-k-1})(2 - 2\cos(\theta2^{n-k-1}))\\
+		&< 2\epsilon_n + h_n(\sqrt{4 - h_n^2} - 2\cos(\theta2^{n-k-1}))\\
+		&< 2\epsilon_n + h_n(\sqrt{4 - 4\sin^2(\theta2^{n-k-1})}
+			- 2\cos(\theta2^{n-k-1}))\\
+		&= 2\epsilon_n + h_n(2\cos(\theta2^{n-k-1}) 
+			- 2\cos(\theta2^{n-k-1}))\\
+		&= 2\epsilon_n
+\end{align*}
+\end{displaymath}
+
+The inequalities in the above derivation arrise from the fact that \(h_n > 2\sin(\theta2^{n-k-1})\) by Proposition \ref{THM_"Geo Trig Prop 2"}.\\
+
+Hence as we now know that \(\epsilon_{n+1} < 2\epsilon_n\), we then see that \(\epsilon_n < 2^n\epsilon_0\). Therefore we prove our statement that
+\[\epsilon_k < 2^k\epsilon_0\]
+\end{proof}
+
+Obviously \(\epsilon_k = |h_k - s|\), and we can now use this to find the error of our final answer. First we will start by letting \(\mathcal{C} := 1-\tfrac{1}{2}h_k^2\) and note that analytically \(cos\theta = 1 - \tfrac{1}{2}s^2\). Therefore we will now consider \(\epsilon_{\mathcal{C}} = |\mathcal{C} - \cos(\theta)|\):
+
+\begin{displaymath}
+\begin{align*}
+	\epsilon_{\mathcal{C}} &= | 1 - \frac{h_k^2}{2} - 1 + \frac{s^2}{2}|\\
+		&=\frac{1}{2}|h_k^2 - s^2|\\
+		&=\frac{1}{2}|h_kh_k 
+			- 2\sin(\frac{\theta}{2})2\sin(\frac{\theta}{2})|\\
+		&=\frac{1}{2}(h_kh_k 
+			- 2\sin(\frac{\theta}{2})2\sin(\frac{\theta}{2})
+			&\textrm{as \(2\sin(\frac{\theta}{2}) < h_k\)}\\
+		&=\frac{1}{2}(2\epsilon_k + h_k(h_k-2) - 2\sin(\frac{\theta}{2})
+			(2\sin(\frac{\theta}{2}) - 2)\\
+		&<\frac{1}{2}(2\epsilon_k + h_k(h_k - 2\sin(\frac{\theta}{2})))\\
+			&=\frac{1}{2}(2+h_k)\epsilon_k\\
+		&=\frac{1}{2}(2 + 2\sin(\frac{\phi}{2}))\epsilon_k\\
+		&=(1 + \sin(\frac{\phi}{2}))\epsilon_k\\
+		&<2\epsilon_k
+\end{align*}
+\end{displaymath}
+
+As \(\epsilon_{\mathcal{C}} < 2\epsilon_k\), then by Proposition \ref{THM_"Geo Trig Prop 3"} we see that \(\epsilon_{\mathcal{C}} < 2^{k+1}\epsilon_0\). Now to consider \(\epsilon_0\) we first observe that \(\epsilon_0 =\theta2^{-k} - 2\sin{\theta2^{-k-1}\), and therefore we can conclude that:
+\[\epsilon_{\mathcal{C}} < 2\theta - 2^{k+2}\sin(\theta2^{-k-1})\]
+
+If we then wish to calculate \(\cos\theta\) accurate to \(N\) decimal places then we are looking to find \(k \in \N\) such that
+\[2\theta - 2^{k+2}\sin(\theta2^{-k-1}) < 10^{-N} \implies 2^{k+2}\sin(\theta2^{-k-1}) > 2\theta - 10^{-N}\]
+
+For an example of the above in action we will be taking \(\theta = 0.5\). The table below shows the minimum \(k \in \N\) to guarantee \(N\) digits of accuracy in the result:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|}
+	\hline
+	\(N\) & \(k\)\\
+	\hline
+	5 & 6\\\hline
+	10 & 14\\\hline
+	50 & 80\\\hline
+	100 & 163\\\hline
+	1000 & 1658\\\hline
+\end{tabular}
+\end{center}
+
+As can be seen the value of \(k\) required to acheive \(N\) digits of accuracy increases roughly linearly when \(\theta = 0.5\). Testing for other values of \(\theta\) reveals them to have similar required values for \(k\), at least within the same order of each other.\\
+
+Another consideration for Algorithm \ref{PCD_"Geometric Cos"} is that we could "run it in reverse" to attain an algorithm for the inverse cosine function. To start take line 7 which is \(\mathcal{C} = 1 - \frac{1}{2}h_k^2\), which can be re-arranged to give \(h_k^2 = 2 - 2\mathcal{C}\), where we know \(\mathcal{C}\) as our initial value.\\
+
+Line 5 is a little more difficult, but by re-arranging we see that \(h_n^4 - 4h_n^2 + h_{n+1}^2 = 0\), which can be solved via the quadratic formula to give \(h_n^2 = 2 \pm \sqrt{4 - h_{n+1}^2}\). Now we can make the observation that if \(x \in \Rpz\), then \(\sin^{-1}(-x) = -\sin^{-1}(x)\) and so we can restric our algorithm to only consider \(x \in \Rpz\). With this we know that \(\theta \in [0,\frac{\pi}{2}]\), and thus \(h_k < \sqrt{2}\). Therefore as \(h_{n+1} > h_n \forall n \in [0,k-1]\cap\Z\) we see that \(h_n^2 \le 2  \forall n \in [0,k]\cap\Z\). This allows us to ascertain that to reverse Line 5 we perform \(h_n^2 = 2 - \sqrt{4 - h_{n+1}^2}\).\\
+
+Finally line 2 is reversed by returning the value \(2^kh_0\); therefore we get the following algorithm for \(\cos^{-1}(x)\) where \(x \in \Rpz\):
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Geometric calculation of \(\cos^{-1}\)},label={PCD_"Geometric aCos"}]
+  geometric_aCos($x \in [0,1], k \in \N$)
+      $h_k := 2 - 2x$
+      $n := k-1$
+      while $n \ge 0$:
+          $h_n^2 := 2 - \sqrt{4 - h_{n+1}^2}$
+          $n \mapsto n - 1$
+      return $2^kh_0$
+\end{lstlisting}\\
 \subsection{Taylor Series}
 \subsection{CORDIC}
 CORDIC is an algorithm that stands for COrdinate Rotation DIgital Computer and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bitshifting.\\
