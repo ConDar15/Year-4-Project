@@ -283,7 +283,88 @@ Similar to the regular trigonometric functions we can use trigonometric identiti
 
 If we suppose that all operations in the method are accurately computed then Algorithm \ref{PCD_"Geometric aCos"} is a computation with high accuracy. This is because there is no initial guess, such as in Algorithm \ref{PCD_"Geometric Cos"}, and so the only introduction of error is assuming that \(2^kh_0 \approx \theta\). However as we discuss in detail in Section \ref{#SEC#}, calculating square roots is not a simple task and thus will introduce error to the method in general; therefore the accuracy of the method is roughly as accurate as our method of calculating square roots.
 
+%SUB%
 \subsection{Taylor Series}
+\label{SUB_"Taylor Series Trig"}
+
+If we consider our definition of a McClaurin Series from Section \ref{#SUB#}, we can use this to approximate our Trigonometric Functions. Consider first \(\cos\theta\), for which we know that \(\frac{d}{d\theta}\cos\theta = - \sin\theta\); it then follows that \(\frac{d^2}{d\theta^2}\cos\theta = -\cos\theta\), \(\frac{d^3}{d\theta^3} \cos\theta = \sin\theta\) and \(\frac{d^4}{d\theta^4} \cos\theta = \cos\theta\).\\
+
+If we let \(f(x) = \cos x\) and use the known values \(\cos(0) = 1\) and \(\sin(0) = 0\), then we see that:
+
+\begin{displaymath}
+	f^{(n)}(0) = \left\{
+		\begin{array}{lcl}
+			1 &:& 4 \mid n\\
+			0 &:& 4 \mid n-1\\
+			-1 &:& 4 \mid n-2\\
+			0 &:& 4 \mid n-3
+		\end{array}\right.
+\end{displaymath}
+
+By simplifying this by ommitting the \(0\) coefficient terms we get the following series:
+
+%EQN%
+\begin{equation}
+\label{EQN_"Cos Series Formula"}
+\sum_{n=0}^\infty \frac{(-1)^n}{(2n)!}x^{2n} = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots
+\end{equation}
+
+By using similar working we can get that the series associated with \(\sin\(x)\):
+
+%EQN%
+\begin{equation}
+\label{EQN_"Sin Series Formula"}
+\sum_{n=0}^\infty \frac{(-1)^n}{(2n+1)!}x^{2n+1} = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots
+\end{equation}
+
+Before we go any further we need to consider when Equations \ref{EQN_"Cos Series Formula"} and \ref{EQN_"Sin Series Formula"} converge to their respective functions. To do this we will use the ratio test for series as defined in \ref{#SEC#}, using Equation \ref{EQN_"Cos Series Formula"} we see that
+
+\begin{displaymath}
+	\begin{align*}
+		L_{\mathcal{C}} &= \lim_{n \to \infty} \left| 
+			\frac{a_{n+1}}{a_n} \right|\\
+		&= \lim_{n \to \infty} \left| 
+			\frac{\frac{(-1)^{n+1}}{(2n+2)!}x^{2n+2}}
+				{\frac{(-1)^n}{(2n)!}x^{2n}} \right|\\
+		&=\frac{(2n)!}{(2n+2)!}|x|^2\\
+		&=\frac{1}{(2n+2)(2n+1)}|x|^2
+	\end{align*}
+\end{displaymath}
+
+Now it is easy to see that, \(L_{\mathcal{C}} = 0\) for all values of \(x\) as the fractional component decreases as \(n\) increases and \(|x|^2\) is a constant. Therefore we can conclude that Equation \ref{EQN_"Cos Series Formula"} converges to \(\cos(x)\) for all values of \(x\). We can use a very similar deduction to show that Equation \ref{EQN_"Sin Series Formula"} converges to \(\sin(x)\) for all values of \(x\).\\
+
+The above means that \(\cos\) and \(\sin\) can be approximated using Taylor Polynomials, in particular for a given \(N \in \N\):
+\begin{displaymath}
+\begin{array}{rcl}
+	\cos x \approx \sum_{n=0}^N \frac{(-1)^n}{(2n)!}x^{2n}
+	& \textrm{and}
+	&\sin x\approx \sum_{n=0}^N \frac{(-1)^n}{(2n+1)!}x^{2n+1}
+\end{array}
+\end{displaymath}
+
+This allows us to create the following two methods for computing \(\cos x\) and \(\sin x\):
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor computation of \(\cos\) and \(\sin\)},label={PCD_"Taylor Cos/Sin"}]
+  taylor_cos($x \in \R, N \in \N$)
+      $\mathcal{C} := 0$
+      $n := 0$
+      while $n < N$:
+          $\mathcal{C} \mapsto \mathcal{C} + (-1)^n\cdot\tfrac{1}{(2n)!}x^{2n}$
+          $n \mapsto n+1$
+      return $\mathcal{C}$
+  
+  taylor_sin($x \in \R, N \in \N$)
+      $\mathcal{S} := 0$
+      $n := 0$
+      while $n < N$:
+          $\mathcal{S} \mapsto \mathcal{S} + (-1)^n\cdot\tfrac{1}{(2n+1)!}x^{2n+1}$
+          $n \mapsto n+1$
+      return $\mathcal{S}$
+\end{lstlisting}
+
+
+%SUB%
 \subsection{CORDIC}
 CORDIC is an algorithm that stands for COrdinate Rotation DIgital Computer and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bitshifting.\\
 

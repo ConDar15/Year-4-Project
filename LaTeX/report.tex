@@ -56,6 +56,7 @@
 \renewcommand{\lstlistingname}{Algorithm}
 \lstset{basicstyle=\rmfamily,mathescape}
 \bibpunct{[}{]}{;}{s}{,}{,}
+\numberwithin{equation}{subsection}
 
 \AtBeginDocument{%
 	\counterwithin*{lstlisting}{section}
@@ -75,7 +76,7 @@
 }
 
 %\includeonly{./Sections/Introduction}
-%\includeonly{./Sections/Trigonometric_Functions}
+\includeonly{./Sections/Trigonometric_Functions}
 %\includeonly{./Sections/Root_Functions}
 %\includeonly{}
 
@@ -112,6 +113,6 @@ Inside your Calculator by Gerald R Rising \\
 Wolfram Alpha \\
 
 \appendix
-\include{./Appendices/Code}
+%\include{./Appendices/Code}
 
 \end{document}
