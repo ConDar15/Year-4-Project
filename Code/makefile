@@ -18,7 +18,8 @@ EXE=-D COMPILE_MAIN
 
 #The lists of files that are used or created
 INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
-		  geometric_trig.c geometric_inv_trig.c
+		  geometric_trig.c geometric_inv_trig.c taylor_trig.c \
+		  taylor_inv_trig.c
 TESTFILES=test_newton_sqrt.c
 OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
 OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
@@ -88,6 +89,18 @@ $(OUTDIR)/geometric_inv_trig.out: geometric_inv_trig.c trig_utilities.h \
 	$(CC) $(CFLAGS) $(EXE) geometric_inv_trig.c $(UTILLIB)\
 		$(MATHLIB) -o $@
 geometric_inv_trig: $(OUTDIR)/geometric_inv_trig.out
+
+$(OUTDIR)/taylor_trig.out: taylor_trig.c trig_utilities.h \
+						   taylor_trig.h $(LU)
+	$(CC) $(CFLAGS) $(EXE) taylor_trig.c $(UTILLIB)\
+		$(MATHLIB) -o $@
+geometric_trig: $(OUTDIR)/taylor_trig.out
+
+$(OUTDIR)/taylor_inv_trig.out: taylor_inv_trig.c trig_utilities.h \
+						   	   taylor_inv_trig.h $(LU)
+	$(CC) $(CFLAGS) $(EXE) taylor_inv_trig.c $(UTILLIB)\
+		$(MATHLIB) -o $@
+geometric_trig: $(OUTDIR)/taylor_inv_trig.out
 
 ## TESTING FILES ##
 $(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \
