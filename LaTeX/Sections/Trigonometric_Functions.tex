@@ -363,6 +363,196 @@ This allows us to create the following two methods for computing \(\cos x\) and 
       return $\mathcal{S}$
 \end{lstlisting}
 
+As these two methods are obviously very similar and the fact that \(\sin(x) = \cos(x - \frac{\pi}{2})\), we will continue by examining only the taylor method for approximating \(\cos\). We will assume that any calculations for \(\sin\) are transformed into a problem of finding a \(\cos\) value.\\
+
+It should be noted that this \(\cos\) algorithnm is particularly inefficient to calculate on a computer implementation; this is primarily due to the way in which the update of \(\mathcal{C}\) is calculated each loop.\\
+
+In each loop we are calculating \(x^{2n}\), which has a naieve complexity of \(\bigO(2n)\). However what we are actually calculating \(x^{2(n-1)}\cdot x^2\) and thus if we store the values of \(x^{2(n-1)}\) and \(x^2\), the complexity of this step drops to \(\bigO(1)\). Similarly we are also calculating \(\tfrac{1}{(2n)!}\) in each loop which, by the same logic, is \(\tfrac{1}{2(n-1)!} \cdot \tfrac{1}{(2n)(2n-1)}\), and we can use the same storage and update method as for \(x^{2n}\).\\
+
+As another step towards optimizing the algorithm we can start with an initial value of \(\mathcal{C} = 1\), and then perform two updates of \(\mathcal{C}\) each loop until we reach or surpass \(N\). This saves calculating \((-1)^n\) each loop, by explicitly performing two different calculations. Implementing all of the above gives us the following two updated methods:
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor computation of \(\cos\) optimised},label={PCD_"Taylor Cos opt"}]
+  taylor_cos($x \in \R, N \in \N$)
+      $\mathcal{C} := 1$
+      $x_2 := x^2$
+      $a := 1$
+      $b := 1$
+      $n := 1$
+      while $n < N$:
+          $a \mapsto a \cdot \tfrac{1}{(2n-1)(2n)}$
+          $b \mapsto b \cdot x_2$
+          $\mathcal{C} \mapsto \mathcal{C} - a\cdot b$
+          $a \mapsto a \cdot \tfrac{1}{(2n+1)(2n+2)}$
+          $b \mapsto b \cdot x_2$
+          $\mathcal{C} \mapsto \mathcal{C} + a\cdot b$
+          $n \mapsto n+2$
+      return $\mathcal{C}$
+\end{lstlisting}
+
+As the next term of the polynomial is known definitively then we can see that it is very easy to calculate the error of our approximation. We see that 
+\begin{displaymath}
+\begin{align*}
+	\epsilon_N &= |\cos(x) - \mathrm{taylor\_cos(x,N)}|\\
+		&= \bigO(|x|^{N'+1}) &\textrm{where } N' \textrm{ is the smallest}\\
+		&&\textrm{odd integer such that } N'\ge N\\
+		&\le \frac{1}{(2(N'+1))!} |x|^{N'+1}\\
+		&\le \frac{1}{(2(N+1))!} |x|^{N+1}
+\end{align*}
+\end{displaymath}
+
+If we place bounds on the value of \(\cos\) calculated as in Section \ref{SUB_"Trig Geometric Method"}, then we know that \(|x| \le \frac{\pi}{2}\), and thus we get the following bound for the error of our approximation:
+
+\[\epsilon_N \le \frac{\pi^{N' + 1}}{2^{N'+1}(2(N'+1))!}\]
+
+Thus if we find \(N \in \N\) such that \(\frac{\pi^{N}+1}{2^{N+1}(2(N+1)!)} < \tau \in \R+\) then we know that \(\epsilon_N < \tau\). If we consider \(\tau = 10^k\), then we can find \(N \in \N\) such that our approximation is accurate to \(k\) decimal places. Below is a table which details some values of \(k\) and the corresponding minimum \(N\) to guarantee \(k\) decimal places of accuracy:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|}
+	\hline
+	\(k\) & \(N\)\\
+	\hline
+	5 & 4\\\hline
+	10 & 7\\\hline
+	50 & 21\\\hline
+	100 & 36\\\hline
+	1000 & 233\\\hline
+\end{tabular}
+\end{center}
+
+Now for \(\tan x\) we can either calculate both \(\sin x\) and \(\cos x\) using \mathrm{taylor\_cos(x,N)} and divide the resulting value, or we can calculate \(\tan x\) directly using a Taylor expansion.\\
+
+In calculating the McClaurin series for \(\tan x\) we start by letting \(\tan x = \sum_{n=0}^\infty a_nx^n\), and then noting that as \(\tan x\) is an odd series then it's McClaurin series only contains non-zero coefficients for odd powers of \(x\); therefore we get that \(\tan x = \sum_{n=0}^\infty a_{2n+1}x^{2n+1} = a_1x + a_3x^3 + a_5x^5 + \cdots\).\\
+
+Next we consider that \(\frac{d}{dx} \tan x = 1 + \tan^2 x\), and knowing the McClaurin series form of \(\tan x\) we get the following:
+
+\begin{displaymath}
+\begin{align*}
+	\sum_{n=0}^\infty (2n+1)a_{2n+1}x^{2n} &= 1 + 
+		(\sum_{n=0}^\infty a_{2n+1}x^{2n+1})^2\\
+	&= 1 + a_1^2x^2 + (2a_1a_3)x^4 + (2a_1a_5 + a_3^2)x^6 + \cdots
+\end{align*}
+\end{displaymath}
+
+Considering the co-efficients of powers on the right hand side of the above equation we see that \(2a_1a_3 = a_1a_3 + a_3_a_1 = a_1a_{4-1} + a_3a_{4-3}\) and \(2a_1a_5 + a_3^2 = a_1a_5 + a_3a_3 + a_5a_1 = a_1a_{6-1} + a_3a_{6-3} +a_5a_{6-5}\). This indicates that our general form for the co-efficient of \(2n\) on the right hand side is \(\sum_{k=1}^n a_{2k-1}a_{2n - 2k + 1}\), and thus returning to our equation we get
+
+\[a_1 + \sum_{n=1}^\infty (2n+1)a_{2n+1}x^{2n} = 1 + \sum_{n=1}^\infty(\sum_{k=1}^n a_{2k-1}a_{2n-2k+1})x^{2n}\]
+
+Using this we conclude that \(a_1 = 1\) and \(a_{2n+1} = \frac{1}{2n+1}\sum_{k=1}^n a_{2k-1}a_{2n-2k+1} \forall n \in \N\). We can note immediately that the calculation of any previous co-efficients will provide no help in calculating later co-efficients and so the entire sum must be calculated each loop, while also storing each co-efficient already calcualted.\\
+
+This means that the complexity to calculate co-efficient \(a_{2n+1}\) is \(\bigO(n)\) and will be the \(n^\text{th}\) such calculation, making the complexity of calculating \(n\) co-efficients to be \(\bigO(n^2)\). Comparing this to the \mathrm{taylor\_cos} method we see that to calculate up to \(n\) co-efficients of both \(\cos\) and \(\sin\) has complexity \(\bigO(n)\). Therfore it is more efficient to calculate \(\tan\) by calculating both \(\cos\) and \(\sin\) using Algorithm \ref{PCD_"Taylor Cos Opt"}, and performing division than directly using Taylor Polynomial approximation.\\
+
+We would also like to be able to calculate the inverse trigonometric functions using this method, which means we need to find our McClaurin series of the inverse trigonometric functions. The simplest of these is \(\tan^{-1}\), where we start by recalling that \(\frac{d}{dx} \tan^{-1} x = \frac{1}{1+x^2}\) and then by intergrating both sides we get:
+
+\begin{displaymath}
+\begin{align*}
+	\tan^{-1} x &= \int \frac{1}{1+x^2} dx\\
+		&= \int (1 - (-x^2))^-1 dx\\
+		&= \int \sum_{n=0}^\infty (-x^2)^n dx &\textrm{by Equation \ref{#EQN#}}\\
+		&= \int \sum_{n=0}^\infty (-1)^nx^{2n} dx\\
+		&= c + \sum_{n=0}^\infty \frac{(-1)^n}{2n+1}x^{2n+1}
+\end{align*}
+\end{displaymath}
+
+As \(\tan^{-1} (0) = 0\) then we see that \(c = 0\) and thus gives us the following formula for \(\tan^{-1}\):
+
+\[\tan^{-1} x = \sum_{n=0}^\infty \frac{(-1)^n}{2n+1}x^{2n+1}\]
+
+Now due to the restrictions from Equation \ref{#EQN#} the above is only valid for \(x \in [-1, 1]\), but we know that the domain of \(\tan^{-1}\) is \(x \in \R\). To fix this we will first recognise that \(\tan^{-1}(-x) = -\tan^{-1}(x)\), so we can restric our problem to \(x \in \Rpz\). Now if we take the double angle formula for \(\tan\):
+
+\[\tan(\alpha + \beta) = \frac{\tan(\alpha) + \tan(\beta)}{1 - \tan(\alpha)\tan(\beta)}\]
+
+By substituting \(\alpha = \tan^{-1}(x)\) and \(\beta = \tan^{-1}(x)\) into the above then we get
+
+\[\tan^{-1}(x) + \tan^{-1}(y) = \tan^{-1}\left(\frac{x + y}{1 - xy}\right)\]
+
+Using this, suppose we are looking for \(\tan^{-1}(z)\) where \(z \in (1, \infty)\) and let \(y = 1\), then \(\tan^{-1}(y) = \frac{\pi}{4}\). We can then re-arrange the equation \(z = \frac{x + 1}{1 - x}\) to get \(x = \frac{z - 1}{z + 1}\); finally as \(z > 1\), then \(0 < x < 1\). This allows us to calculate:
+
+\[\tan^{-1}(z) = \frac{\pi}{4} + \tan^{-1}\left(\frac{z-1}{z+1}\right)\]
+
+In the above the calculated value is in the range \([0, 1]\) and so it is valid to use a Taylor polynomial using our McClaurin series above. This gives the following method
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor Method for \(\tan^{-1}\)},label={PCD_"Taylor aTan"}]
+  taylor_aTan($x \in [0,1], N \in \N$)
+      $\mathcal{T} := 0$
+      $x_2 := x^2$
+      $y := x$
+      $n := 0$
+      while $n < N$:
+          $\mathcal{T} \mapsto \mathcal{T} + \tfrac{1}{2n+1}y$
+          $y\mapsto y\cdot x_2$
+          $\mathcal{T} \mapsto \mathcal{T} - \tfrac{1}{2n+2}y$
+          $y\mapsto y\cdot x_2$
+          $n \mapsto n + 2$
+      return $\mathcal{T}$
+\end{lstlisting}
+
+Similar to Algorithm \ref{PCD_"Taylor Cos Opt"} the error of Algorithm \ref{PCD_"Taylor aTan"} is easy to calculate. We see that 
+
+\begin{displaymath}
+\begin{align*}
+	\epsilon_N &= |\tan^{-1}(x) - \mathrm{taylor\_aTan(x,N)}|\\
+		&\le \frac{1}{2N + 3}|x|^{2N+3}\\
+		&\le \frac{1}{2N + 3} &\textrm{as } x \le 1
+\end{algin*}
+\end{displaymath}
+
+The next function we will consider is \(\sin^{-1}\), which starts it's derivation in much the same way as \(\tan^{-1}\). First we start by recalling that \(\frac{d}{dx} \sin^{-1}(x) = (1 - x^{2})^{-\frac{1}{2}}\), then by taking integrals of both sides we get the following derivation:
+
+\begin{displaymath}
+\begin{align*}
+	\sin^{-1}(x) &= \int (1 - x^{2})^{-\frac{1}{2}} dx\\
+		&= \int \sum_{n=0}^\infty \binom{-\frac{1}{2}}{n} (-x^2)^n\\
+		&= c + \sum_{n=0}^\infty (-1)^n 
+			\left(\prod_{k=1}^n \frac{-\tfrac{1}{2} - k + 1}{k}\right)
+			\frac{x^{2n+1}}{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{(-1)^n}{n!(2n+1)} 
+			\left(\prod_{k=1}^n \tfrac{1}{2} - k\right)
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{(-1)^{2n}}{n!(2n+1)}
+			\left(\prod_{k=1}^n \frac{2k - 1}{2}\right)
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{1}{n!(2n+1)2^n}
+			\left(\prod_{k=1}^n 2k - 1\right)
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{1}{n!(2n+1)2^n}
+			(1\times3\times5\times\cdots\times(2n-1))
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{1}{n!(2n+1)2^n} \times
+			\frac{1\times2\times3\times\cdots\times(2n)}{2\times4\times\cdots\times(2n)}x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{(2n)!}{(n!)^2(2n+1)4^n}x^{2n+1}
+\end{align*}
+\end{displaymath}
+
+As \(\sin^{-1}(0) = 0\) then we see that \(c=0\). Because the above is valid for \(x \in (-1,1)\), and we know the values of \(\sin^{-1}(-1)\) and \(\sin^{-1}(1)\), then we can have the following method for evaluating \(\sin^{-1}\):
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor Method for \(\sin^{-1}\)},label={PCD_"Taylor aSin"}]
+  taylor_aSin($x \in [-1,1], N \in \N$)
+      if $x = 1$:
+          return $\tfrac{\pi}{2}$
+      if $x = -1$:
+          return $-\tfrac{\pi}{2}$
+      $\mathcal{S} := x$
+      $x_2 := x^2$
+      $y := x$
+      $a := 1$
+      $b := 1$
+      $c := 1$
+      $n := 1$
+      while $n < N$:
+          $a \mapsto 2n\cdot(2n-1)\cdot a$
+          $b \mapsto n^2 \cdot b$
+          $c \mapsto 4\cdot c$
+          $y \mapsto x_2 \cdot y$
+          $\mathcal{S} \mapsto \mathcal{S} + \tfrac{a}{b\cdot c \cdot(2n+1)}\cdot y$
+          $n \mapsto n + 1$
+      return $\mathcal{S}$
+\end{lstlisting}
+
+The error for this method is similar to the \(\tan^{-1}\) method, in that \(\epsilon_N \le \frac{(2(N+1))!}{((N+1)!)(2N+1)4^{N+1}}\). Finally we note that \(\cos^{-1}(x) = \tfrac{\pi}{2} - \sin^{-1}(x)\), and thus can be calculated from a value calculated with Algorithm \ref{PCD_"Taylor aSin"}.
 
 %SUB%
 \subsection{CORDIC}
