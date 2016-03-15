@@ -34,30 +34,22 @@
 		#define TRIG_FIXED_TYPE int8_t
 		#define TRIG_FIXED_UTYPE uint8_t
 		#define BITS 8
-		#define FRAC_BITS 5
-		#define UFRAC_BITS 6
-		#define CONVERSION_VALUE 0x20
+		#define CONVERSION_VALUE 0x40
 	#elif defined USE_FIXED_16
 		#define TRIG_FIXED_TYPE int16_t
 		#define TRIG_FIXED_UTYPE uint16_t
 		#define BITS 16
-		#define FRAC_BIT 13
-		#define UFRAC_BITS 14
-		#define CONVERSION_VALUE 0x2000
+		#define CONVERSION_VALUE 0x4000
 	#elif defined USE_FIXED_32
 		#define TRIG_FIXED_TYPE int32_t
 		#define TRIG_FIXED_UTYPE uint32_t
 		#define BITS 32
-		#define FRAC_BIT 29
-		#define UFRAC_BITS 30
-		#define CONVERSION_VALUE 0x20000000
+		#define CONVERSION_VALUE 0x40000000
 	#elif defined USE_FIXED_64
 		#define TRIG_FIXED_TYPE int64_t
 		#define TRIG_FIXED_UTYPE uint64_t
 		#define BITS 64
-		#define FRAC_BIT 61
-		#define UFRAC_BITS 62
-		#define CONVERSION_VALUE 0x2000000000000000
+		#define CONVERSION_VALUE 0x4000000000000000
 	#else
 		#error "How did you get here?"
 	#endif

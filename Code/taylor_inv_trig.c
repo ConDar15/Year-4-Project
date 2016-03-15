@@ -95,19 +95,19 @@ double taylor_atan_bounded(double x, unsigned int N)
 void mpfr_taylor_atan_bounded(mpfr_t R, mpfr_t x, unsigned int N)
 {
 	assert(mpfr_cmp_ui(x, 0) >= 0 && mpfr_cmp_ui(x, 1) <= 1);
-	mpfr_t t, x_2, y, a;
+	mpfr_t x_2, y, a;
 	mpfr_init_set(y, x, MPFR_RNDN);
-	mpfr_init_set_ui(t, 0, MPFR_RNDN);
+	mpfr_init_set_ui(R, 0, MPFR_RNDN);
 	mpfr_init(x_2);
 	mpfr_mul(x_2, x, x, MPFR_RNDN);
 	mpfr_init(a);
 	for(int n = 0; n < N; n++)
 	{
 		mpfr_div_ui(a, y, 2*(n++) + 1, MPFR_RNDN);
-		mpfr_add(t, t, a, MPFR_RNDN);
+		mpfr_add(R, R, a, MPFR_RNDN);
 		mpfr_mul(y, y, x_2, MPFR_RNDN);
 		mpfr_div_ui(a, y, 2*n + 1, MPFR_RNDN);
-		mpfr_sub(t, t, a, MPFR_RNDN);
+		mpfr_sub(R, R, a, MPFR_RNDN);
 		mpfr_mul(y, y, x_2, MPFR_RNDN);
 	}
 }
@@ -115,9 +115,9 @@ void mpfr_taylor_atan_bounded(mpfr_t R, mpfr_t x, unsigned int N)
 double taylor_atan(double x, unsigned int N)
 {
 	if(x < 0)
-		return taylor_atan(-x, N);
-	
-	if(x > 1)
+		return -taylor_atan(-x, N);
+
+	if(x >= 1)
 		return HALF_PI/2 + taylor_atan_bounded((x - 1)/(x + 1), N);
 	
 	return taylor_atan_bounded(x, N);
@@ -134,8 +134,9 @@ void mpfr_taylor_atan(mpfr_t R, mpfr_t x, unsigned int N)
 	{
 		mpfr_neg(y, x, MPFR_RNDN);
 		mpfr_taylor_atan(R, y, N);
+		mpfr_neg(R, R, MPFR_RNDN);
 	}
-	else if(mpfr_cmp_ui(x, 1) > 0)
+	else if(mpfr_cmp_ui(x, 1) >= 0)
 	{
 		mpfr_div_ui(pi_4, MPFR_HALF_PI, 2, MPFR_RNDN);
 		mpfr_add_ui(z, x, 1, MPFR_RNDN);
@@ -146,7 +147,7 @@ void mpfr_taylor_atan(mpfr_t R, mpfr_t x, unsigned int N)
 	}
 	else
 	{
-		mpfr_taylor_atan_bounded(R, y, N);
+		mpfr_taylor_atan_bounded(R, x, N);
 	}
 }
 

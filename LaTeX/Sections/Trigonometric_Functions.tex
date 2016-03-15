@@ -9,9 +9,43 @@ This section will focus on trigonometric functions, which are commonly used cycl
 \subsection{Calculating \pi}
 \label{SUB_"Calculating pi"}
 
-Several of the methods in this section require that we already know the value of \(\pi\), for example when we are applying several trig identities. Here we will briefly discuss several methods for calculating the value of \(\pi\), so that we may use this value in later subsections.
+Several of the methods in this section require that we already know the value of \(\pi\), for example when we are applying several trig identities. Here we will briefly discuss several methods for calculating the value of \(\pi\), so that we may use this value in later subsections.\\
 
-\TODO{Fill out with content methods}
+The first method to consider is the method used by ancient mathematicians, such as the Greeks and Chinese. We know that if the radius of the circle is \(\frac{1}{2}\), then the circumference of the circle is \(\pi\), and the value is between the perimeters of the inner and outer polygon perimeters. The internal perimeter is \(p_n = n\sin(\frac{\pi}{n})\) and the external perimeter is \(P_n = n\tan(\frac{\pi}{n})\).
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Pi Diagram 1"}
+	\caption{Ancient method of calculating \(\pi\)}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Pi Diagram 1"}
+\end{figure}
+
+As we know the values of \(\tan(\frac{\pi}{6})\) and \(\sin(\frac{\pi}{6}\), then we can calculate \(P_6\) and \(p_6\). It has be shown that \(P_{2n} = \frac{2p_nP_n}{p_n + P_n}\) and \(p_{2n} = \sqrt{p_nP_{2n}}\), which allows us to create an iterative method to approximate \(\pi\), by taking the mid-point of the successive polygon perimeters.\\
+
+Other common historical methods for approximating \(\pi\) are to use infinite series. One such method uses the series expansion of \(\tan^{-1}\), which is discussed in detail below, where \(\tan^{-1}(1) = \frac{\pi}{4}\). This gives the following approximation using \(N\) terms:
+
+%EQN%
+\begin{equation}
+\label{EQN_"Tan pi Series"}
+\pi = 4\sum_{n=0}^{N} \frac{(-1)^n}{2n+1} = \sum_{n=0}^N \frac{8}{(4n+1)(4n+3)}
+\end{equation}
+
+This sequence converges very slowly, with sublinear convergence, to the correct value. More modern methods have typically revolved around finding more rapidly converging infinite series, examples include Ramanujan's series:
+
+\begin{equation}
+\frac{1}{\pi} = \frac{2\sqrt{2}}{9801}\sum_{n=0}^\infty \frac{(4n)!(1103 + 26390n)}{(k!)^n396^{4n}}
+\end{equation}
+
+or the Chudnovsky algorithm:
+
+\begin{equation}
+\frac{1}{\pi} = 12\sum_{n=0}^\infty \frac{(-1)^n(6n)!(13591409 + 545140134n)}{(3n)!(n!)^3640320^{3n + \frac{3}{2}}}
+\end{equation}
+
+This final series is extremely rapidly convergant to the value of \(\frac{1}{\pi}\), for example just the first term gives \(\pi\) accurate to 13 decimal places while we can get \(\pi\) accurate to 1000 decimal places with summing just 71 terms. Compared to Equation \ref{EQN_"Tan pi Series} which takes the summation of 500 terms to acheive the same 1000 digits of accuracy.\\
+
+To get large degrees of accuracy for \(\pi\) is extremely computer intensive and using the \codeinline{mpfr} requires the number of bits of precision and number of terms to be set. This makes calculating \(\pi\) to a large number of decimal places, for example 1000000, computationally infeasible on a regular home computer. Therefore for our purposes we will use the precalculated value of \(\pi\) to 1000000 decimal places as listed on \texttt{http://www.exploratorium.edu/pi/pi\_archive/Pi10-6.html}
 
 %SUB%
 \subsection{Geometric Method}

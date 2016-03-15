@@ -73,6 +73,7 @@ double taylor_sin_bounded(double x, unsigned int N)
 
 void mpfr_taylor_sin_bounded(mpfr_t R, mpfr_t x, unsigned int N)
 {
+	mpfr_printf("%.20RNF\n", x);
 	assert(mpfr_cmp_ui(x, 0) >= 0 && mpfr_cmp(x, MPFR_HALF_PI) <= 0);
 	mpfr_t t, x_2;
 	
@@ -193,7 +194,7 @@ void mpfr_taylor_sin(mpfr_t R, mpfr_t x, unsigned int N)
 		while(mpfr_cmp(y, MPFR_TWO_PI) >= 0)
 			mpfr_sub(y, y, MPFR_TWO_PI, MPFR_RNDN);
 
-		if(mpfr_cmp(t, MPFR_PI) >= 0)
+		if(mpfr_cmp(y, MPFR_PI) >= 0)
 		{
 			mpfr_sub(t, y, MPFR_PI, MPFR_RNDN);
 			if(mpfr_cmp(t, MPFR_PI) >= 0)

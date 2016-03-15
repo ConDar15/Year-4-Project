@@ -57,6 +57,6 @@ int main(int argc, char **argv)
 	mpfr_set_default_prec(P);
 	mpfr_init(pi);
 	mpfr_pi_Chudnovsky(pi, N);
-	sprintf(sf, "%%.%uRNf\n", D);
+	sprintf(sf, "%%.%uRZf", D);
 	mpfr_printf(sf, pi);
 }
