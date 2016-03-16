@@ -590,9 +590,15 @@ The error for this method is similar to the \(\tan^{-1}\) method, in that \(\eps
 
 %SUB%
 \subsection{CORDIC}
+\label{SUB_"CORDIC"}
+
+\theoremstyle{plain}
+\newtheorem{Cordic Gamma Property}{Proposition}[subsection]
+\newtheorem{Cordic Accuracy}[Cordic Gamma Property]{Proposition}
+
 CORDIC is an algorithm that stands for COrdinate Rotation DIgital Computer and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bitshifting.\\
 
-CORDIC works by taking an initial guess of
+CORDIC works by taking an initial value of
 \begin{math}
 	\mathbf{x}_0 = \left( 
 		\begin{array}{c}
@@ -620,3 +626,112 @@ By taking taking smaller and smaller values of $\gamma$ we can create an iterati
 	\end{array} \right)
 \end{displaymath}
 
+To do this we repreately add and subtract our values for \(\gamma\) from \(\beta\) to bring it as close to 0 as possible. For our purposes we wish to have a sequence \((\gamma_k : k \in [0, n] \cap \Z)\) which will allow us to construct all angles in the range \((-\frac{\pi}{2}, \frac{\pi}{2})\) to within a known level of accuracy. There are many possible choices here, but we wish to consider \((\gamma_k : k \in [0, n] \cap \Z)\) such that \(\tan \gamma_k = 2^{-k} \forall k \in [0,n] \cap \Z\).\\
+
+We can note that the powers of 2 have a useful property, in that if \(m > n \in \N\) we see that \(\sum_{k=n}^{m-1} 2^k = 2^m - 2^n\). We wish to show that our choice for \(\gamma_k\) have a similar property which will be usefull in showing that they are a good choice for our CORIC algorithm.
+
+%THM%
+\begin{Cordic Gamma Property}
+\label{THM_"Cordic Gamma Property"}
+If \(m \in \Zpz\) and \(n \in \Zp\) such that \(m > n\) and \(\gamma_k = \tan^{-1}(2^-k) \forall k \in \Zpz\), then \(\gamma_m < \gamma_n + \sum_{k=m+1}^n \gamma_k\).
+\end{Cordic Gamma Property}
+\begin{proof}
+We know that \(2^{-m} = 2^{-n} + \sum_{k=m+1}^n 2^-k\), and thus by applying \(\tan^{-1}\) to both sides we get:
+
+\[\tan^{-1} 2^{-m} = \gamma_m = \tan^{-1}(2^{-m-1} + 2^{-m-2} + \cdots + 2^{-n} + 2^{-n})\]
+
+Let \(a := 2^{-m-1} + 2^{-m-2} + \cdots + 2^{-n} + 2^{-n}\) and \(b := 2^{-m-2} + \cdots + 2^{-n} + 2^{-n}\). Obviously \(a < b\) and further we know that \(\tan^{-1}\) is continuous on \([a,b]\) and differentiable on \((a,b)\). Therefore we can apply the Mean Value Theorem from calculas to find that 
+
+\[\exists c \in (a,b) : \frac{1}{c^2 + 1} = \frac{\tan^{-1}(b) - \tan^{-1}(a)}{b-a}\]
+
+By re-arranging we see that 
+
+\begin{align*}
+	\tan^{-1}(b) &= \frac{2^{-m-1}}{c^2 + 1} + \tan^{-1}(a)\\
+		&< \frac{2^{-m-1}}{2^{-2m-2} + 1} + \tan^{-1}(a)
+\end{align*}
+
+It can be shown, by considering the series expansion of \(\tan^{-1}(2^{-m-1})\), that \(\frac{2^{-m-1}}{2^{-2m-2} + 1} < \tan^{-1}(2^{-m-1}) \forall m \in \Zpz\); therefore we get that:
+
+\[\tan^{-1}(b) < \tan^{-1}(2^{-m-1}) + \tan^{-1}(a)\]
+
+Following this an using the assumed value of \(\gamma_{m+1}\), we see that:
+
+\[\gamma_m < \gamma_{m+1} + \tan^{-1}(2^{-m-2} + \cdots + 2^{-n} + 2^{-n})\]
+
+By repeating the above process we eventually see that:
+
+\[\gamma_m < \sum_{k=m+1}^{n-1} \gamma_k + \tan^{-1}(2^{-n} + 2^{-n})\]
+
+In a similar manner we can repeat the above process with \(a := \tan^{-1}(2^{-n})\) and \(b := \tan^{-1}(2^{-n} + 2^{-n})\). This will show that:
+
+\begin{displaymath}
+	\gamma_m < \gamma_n + \sum_{k=m+1}^{n}\gamma_n
+\end{displaymath}
+
+\end{proof}
+
+Using the previous proposition we can then show that our \(\gamma_k\) have the property that every angle in \((-\frac{\pi}{2}, \frac{\pi}{2})\) can be approximated by either adding or subtracting successive \(\gamma_k\) to within a tolerance of \(\gamma_n\).
+
+%THM%
+\begin{Cordic Accuracy}
+\label{THM_"Cordic Accuracy"}
+If \(\gamma_k = \tan^{-1}(2^-k) \forall k \in \Z\), then for any \(n \in \N\) 
+\[\exists \: (c_k\in \{-1,1\} : k \in [0,n] \cap \Z) \: : \: |\beta - \sum_{k=0}^nc_k\gamma_k| \le \gamma_n \quad \forall \: \beta \in (-\frac{\pi}{2}, \frac{\pi}{2})\]
+\end{Cordic Accuracy}
+\begin{proof}
+We let \(\beta \in (-\frac{\pi}{2}, \frac{\pi}{2})\) and then will proceed by induction on \(n \in \N\).
+\begin{description}
+\item[\textrm{H\((n)\)}:] 
+	\(\exists (c_k \in{-1, 1} : k \in [0, n] \cap \Z) : |\beta - \sum_{k=0}^nc_k\gamma_k| \le \gamma_n\)\\
+\item[\textrm{H\((0)\)}:] 
+	We have 4 cases to consider:\\
+	\begin{description}
+	\item[Case \(\beta \in [0, \frac{\pi}{4})\):]
+		In this case \(-\frac{\pi}{4} \le \beta - \gamma_0 < 0\)\\
+		Therefore \(|\beta - \gamma_0| \le \gamma_0\).
+	\item[Case \(\beta \in [\frac{\pi}{4}, \frac{\pi}{2})\):]
+		In this case \(0 \le \beta - \gamma_0 < \frac{\pi}{4}\)\\
+		Therefore \(|\beta - \gamma_0| \le \gamma_0\).
+	\item[Case \(\beta \in (-\frac{\pi}{4}, 0)\):]
+		In this case \(0 < \beta + \gamma_0 < \frac{\pi}{4}\)\\
+		Therefore \(|\beta - \gamma_0| < \gamma_0\).
+	\item[Case \(\beta \in (-\frac{\pi}{2}, -\frac{\pi}{4}]\):]
+		In this case \(-\frac{\pi}{4} < \beta - \gamma_0 \le 0\)\\
+		Therefore \(|\beta - \gamma_0| < \gamma_0\).
+	\end{description}
+	Therefore we see that \textrm{H\((0)\)} holds true.
+\item[\textrm{H\((n)\) \(\implies\) H\((n+1)\)}:]\hfill\break
+	By \textrm{H\((n)\)} \(\exists (c_k \in {-1,1} : k \in [0,n] \cap \Z) : |\beta - \sum_{k=0}^nc_k\gamma_k| \le \gamma_n\); so let \(\beta_n := \beta - \sum_{k=0}^nc_k\gamma_k\).\\
+	By Proposition \ref{THM_"Cordic Gamma Property"} we know that \(\gamma_n < 2\gamma_{n+1}\), and so we can proceed by case analysis:
+	\begin{description}
+	\item[Case \(\beta_n \in [0, \gamma_{n+1})\):]\hfill\break
+		\(-\gamma_{n+1} \le \beta_n - \gamma_{n+1} < 0 \implies |\beta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = -1\).
+	\item[Case \(\beta_n \in [\gamma_{n+1}, \gamma_n)\):]\hfill\break
+		\(0 \le \beta_n - \gamma_{n+1} < \gamma_{n+1} \implies |\beta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = -1\).
+	\item[Case \(\beta_n \in [-\gamma_{n+1}, 0)\):]\hfill\break
+		\(0 \le \beta_n + \gamma_{n+1} < \gamma_{n+1} \implies |\beta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = 1\).
+	\item[Case \(\beta_n \in (-\gamma_n, -\gamma_{n+1})\):]\hfill\break
+		\(-\gamma_{n+1} < \beta_n + \gamma_{n+1} < 0 \implies |\beta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = 1\).
+	\end{description}
+\end{description}
+	Therefore as we have found a suitable \(c_n\) in all cases then we have shown that \textrm{H\((n)\) \(\implies\) H\((n+1)\)}.
+\end{proof}
+
+With this proposition we see that our choice for \(\gamma_k\) is a good choice to use for the CORDIC algorithm as it covers the entire range of \((-\frac{\pi}{2}, \frac{\pi}{2})\).\\
+
+Now, as stated before, the basis of our algorithm is to calculate \(\left(\begin{array}{c}\cos\beta\\\sin\beta\end{array}\right)\) by using rotations of a unit vector. By putting our values for \(\gamma_k\) into our rotation matrix we get the following:
+
+\begin{displaymath}
+\left(\begin{array}{cc}
+	\cos\gamma_k & -\sin\gamma_k\\
+	\sin\gamma_k & \cos\gamma_k
+	\end{array}\right)
+= \frac{1}{\sqrt{1 + 2^{-2k}}}
+\left(\begin{array}{cc}
+	1 & -2^{-k}\\
+	2^{-k} & 1
+\end{array}\right)
+\end{displaymath}
+
+This is a very useful form of the matrix as if we rotate a 

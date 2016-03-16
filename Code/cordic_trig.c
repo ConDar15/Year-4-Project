@@ -40,13 +40,19 @@ double *cordic_trig(const double theta, const unsigned int iter)
 		{
 			if(beta > 0)
 			{
-				xt = x - (y >> i);
+/*				printf("+\t%d\n%" PRIx64 "\t%" PRIx64"\n%" 
+					   PRIx64 "\t%" PRIx64 "\n\n"
+					   	, i, x, y, x>>i, y>>i);
+*/				xt = x - (y >> i);
 				yt = y + (x >> i);
 				beta -= TRIG_ANGLES[i];
 			}
 			else
 			{
-				xt = x + (y >> i);
+/*				printf("-\t%d\n%" PRIx64 "\t%" PRIx64"\n%" 
+					   PRIx64 "\t%" PRIx64 "\n\n"
+					   	, i, x, y, x>>i, y>>i);
+*/				xt = x + (y >> i);
 				yt = y - (x >> i);
 				beta += TRIG_ANGLES[i];
 			}

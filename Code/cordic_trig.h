@@ -20,21 +20,21 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 						  0x00003fffffffeaaa, 0x00001ffffffffd55, \
 						  0x00000fffffffffaa, 0x000007fffffffff5, \
 						  0x000003fffffffffe, 0x000001ffffffffff, \
-						  0x000000ffffffffff, 0x000000ffffffffff, \
-						  0x0000001fffffffff, 0x0000001fffffffff, \
-						  0x00000007ffffffff, 0x00000007ffffffff, \
-						  0x00000001ffffffff, 0x00000001ffffffff, \
-						  0x000000007fffffff, 0x000000007fffffff, \
-						  0x000000001fffffff, 0x000000001fffffff, \
-						  0x0000000007ffffff, 0x0000000007ffffff, \
-						  0x0000000001ffffff, 0x0000000001ffffff, \
-						  0x00000000007fffff, 0x00000000007fffff, \
-						  0x00000000001fffff, 0x00000000001fffff, \
-						  0x000000000007ffff, 0x000000000007ffff, \
-						  0x000000000001ffff, 0x000000000001ffff, \
-						  0x0000000000007fff, 0x0000000000007fff, \
-						  0x0000000000001fff, 0x0000000000001fff, \
-						  0x0000000000000fff, 0x0000000000000800, \
+						  0x000000ffffffffff, 0x0000007fffffffff, \
+						  0x0000003fffffffff, 0x0000001fffffffff, \
+						  0x0000000fffffffff, 0x00000007ffffffff, \
+						  0x00000003ffffffff, 0x00000001ffffffff, \
+						  0x00000000ffffffff, 0x000000007fffffff, \
+						  0x000000003fffffff, 0x000000001fffffff, \
+						  0x000000000fffffff, 0x0000000007ffffff, \
+						  0x0000000003ffffff, 0x0000000001ffffff, \
+						  0x0000000000ffffff, 0x00000000007fffff, \
+						  0x00000000003fffff, 0x00000000001fffff, \
+						  0x00000000000fffff, 0x000000000007ffff, \
+						  0x000000000003ffff, 0x000000000001ffff, \
+						  0x000000000000ffff, 0x0000000000007fff, \
+						  0x0000000000003fff, 0x0000000000001fff, \
+						  0x0000000000001000, 0x0000000000000800, \
 						  0x0000000000000400, 0x0000000000000200, \
 						  0x0000000000000100, 0x0000000000000080, \
 						  0x0000000000000040, 0x0000000000000020, \
@@ -73,7 +73,7 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 							0x26dd3b6a10d79699, 0x26dd3b6a10d79699, \
 							0x26dd3b6a10d79699, 0x26dd3b6a10d79699, \
 							0x26dd3b6a10d79699}
-	#define MAX_ITER 63
+	#define MAX_ITER 62
 #elif BITS == 32
 	#define FIXED_ONE 0x40000000
 	#define FIXED_HALF_PI 0x6487ed51
