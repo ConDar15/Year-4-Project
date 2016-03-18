@@ -273,9 +273,23 @@ Obviously \(\epsilon_k = |h_k - s|\), and we can now use this to find the error 
 \end{displaymath}
 
 As \(\epsilon_{\mathcal{C}} \le 2\epsilon_k\), then by Proposition \ref{THM_"Geo Trig Prop 3"} we see that \(\epsilon_{\mathcal{C}} < 2^{k+1}\epsilon_0\). Now to consider \(\epsilon_0\) we first observe that \(\epsilon_0 =\theta2^{-k} - 2\sin{\theta2^{-k-1}\), and therefore we can conclude that:
+
 \[\epsilon_{\mathcal{C}} < 2\theta - 2^{k+2}\sin(\theta2^{-k-1})\]
 
-If we then wish to calculate \(\cos\theta\) accurate to \(N\) decimal places then we are looking to find \(k \in \N\) such that
+This looks like an error that may infact grow exponentially large as \(k \to \infty\), due to the multiplication by \(2^{k+2}\). However if we instead consider the series expansion of \(\sin(x)\), shown in Section \ref{SUB_"Taylor Series Trig"} to be \(\sin(x) = x - \frac{1}{3!}x^3 + \frac{1}{5!}x^5 - \cdots\), and substitute that into our equation we see that:
+
+\begin{align*}
+	\epsilon_{\mathcal{C}} &< 2\theta - 2^{k+2}(\theta2^{-k-1} 
+		- \frac{1}{3!}\theta^32^{-3k-3} 
+		+ \frac{1}{5!}\theta^52^{-5k-5} - \cdots)\\
+	&= 2\theta - 2\theta + \frac{1}{3}\theta^32^{-2k-1}
+		- \frac{1}{5!}\theta^52^{-4k-3} + \cdots\\
+	&= \frac{1}{3}\theta^32^{-2k-1} - \frac{1}{5!}\theta^52^{-4k-1}
+		+ \cdots
+\end{align*}
+
+Now obviously the last line tends towards zero as \(k\) tends to infinity, due to it being a formula of order \(\bigO(2^{-2k-1})\). Therefore we know that \(\forall \tau \in \Rp \exists \mathcal{K} \in \N : \epsilon_{\mathcal{C}, k} < \tau \forall k \in [\mathcal{K}, \infty) \cap \Z\). In particular, if we then wish to calculate \(\cos\theta\) accurate to \(N\) decimal places then we are looking to find \(k \in \N\) such that:
+
 \[2\theta - 2^{k+2}\sin(\theta2^{-k-1}) < 10^{-N} \implies 2^{k+2}\sin(\theta2^{-k-1}) > 2\theta - 10^{-N}\]
 
 For an example of the above in action we will be taking \(\theta = 0.5\). The table below shows the minimum \(k \in \N\) to guarantee \(N\) digits of accuracy in the result:
@@ -734,4 +748,207 @@ Now, as stated before, the basis of our algorithm is to calculate \(\left(\begin
 \end{array}\right)
 \end{displaymath}
 
-This is a very useful form of the matrix as if we rotate a 
+Then if we take a current estimate of \(\left(\begin{array}{c}\cos\beta\\\sin\beta\end{array}\right)\) at step \(k\) to be \(\left(\begin{array}{c}x_n\\y_n\end{array}\right)\), we see that
+
+\begin{displaymath}
+	\left(\begin{array}{cc}
+		\cos\gamma_k & - \sin\gamma_k\\
+		\sin\gamma_k & \cos\gamma_k
+	\end{array}\right)
+	\left(\begin{array}{c}
+		x_k \\ y_k
+	\end{array}\right)
+	= \frac{1}{\sqrt{1 + 2^{-2k}}}
+	\left(\begin{array}{c}
+		x_k - 2^{-k}y_k\\
+		y_k + 2^{-k}x_k
+	\end{array}\right)
+\end{displaymath}
+
+This gives a very simple formula for the update of \(x_k\) and \(y_k\), which can be used as the basis of the CORDIC Algorithm.\\
+
+As seen in our proof of Proposition \ref{THM_"Cordic Accuracy"}, we can approximate our desire angle at step \(n\) by keeping a track of \(\beta_n := \beta - \sum_{k=0}^{n-1}c_k\gamma_k\). At step \(n\) we then have \(\beta_{n+1} = \beta_n - \gamma_n\) if \(\beta_{n+1} \ge 0\), and \(\beta_{n+1} = \beta_n + \gamma_n\) otherwise. This leads us to the general implementation of CORDIC for Trigonometric Functions:
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={General Cordic},label={PCD_"General_Cordic"}]
+  CORIC($\beta \in (-\tfrac{\pi}{2}, \tfrac{\pi}{2}), n \in \N$):
+      $x := 1$
+      $y := 0$
+      $k := 0$
+      while $k < n$:
+          if $\beta \ge 0$:
+              $t := x$
+              $x \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(x - 2^{-k}y)$
+              $y \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(y + 2^{-k}t)$
+              $\beta \mapsto \beta - \tan^{-1}(2^{-k})$
+          else:
+              $t := x$
+              $x \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(x + 2^{-k}y)$
+              $y \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(y - 2^{-k}t)$
+              $\beta \mapsto \beta + \tan^{-1}(2^{-k})$
+          $k \mapsto k + 1$
+      return $(x, y)^T$
+\end{lstlisting}
+
+There are few improvements we can make on the general algorithm, however if we start to consider implementaions of the algorithm we can find several ways to make our algorithm more efficient.\\
+
+First we consider the representation of our values in the program, and while in many of the previous algorithms a floating point \codeinline{double} value, as described in Section \ref{#SEC#}, we will see here that we wish to use a fixed point representation. If we have a fixed point representation of our values, then we are using an \(N\) bit integer to represent the value in question, with a fixed number of bits set aside for the integer part and the remainder for the fractional part. In this case the process of addition, subtraction as well as multiplication and division by powers of 2 is the same as that for integers.\\
+
+In particular as our values never exceed the range of \((-2,2)\), then we can use \(N-2\) bits of our \(N\) bit integer to be the fractional part; this gives us a maximum precision of \(2^{2-N}\). Further as we are only performing multiplication and division by two, this operation can be performed by bitshifting the values, which is much quicker than actual integer multiplication.\\
+
+Second we can precalculate all of the values needed for the algorithm to trade storage space for a reduction in computational complexity. The values which we need to pre-calculate are \(\gamma_k = \tan^{-1}(2^{-k})\) and \(\tfrac{1}{\sqrt{1+2^{-2k}}}\) for \(k \in [0, n) \cap \Z\). The first thing to note about this is that instead of calculating the multiplication \(\tfrac{1}{\sqrt{1+2^{-2k}}}\) at each stage we can actually take this value out of the loops and pre-calculate \(\prod_{k=0}^n \tfrac{1}{\sqrt{1+2^{-2k}}}\) for \(k \in [0, n) \cap \Z\). Using these precalculated products we can then replace \(x := 1\) with \(x := \prod_{k=0}^n \tfrac{1}{\sqrt{1+2^{-2k}}}\) in the initialisation stage.\\
+
+Now to consider an actual implementation, suppose we are using the 16 bit integer \codeinline{int16\_t} to represent our values; which will have the leading two bits represent the integer part and the remaining 14 bits represent the fractional part. In this case the level of precision is \(2^{-14} = 0.00006103515625\) and futher we can show that as \(\gamma_{14} = \tan^{-1}(2^{-14}) \approx 2^{-14}\); therefore the largest we will choose \(n := 14\) to ensure the maximum possible accuracy, without performing excessive calculations\\
+
+This means we can simplify our algorithm futher by calculating only \(\prod_{k=0}^{14} \frac{1}{\sqrt{1 + 2^{-2k}}}\) and \(\tan^{-1}(2^{-k}) \forall k \in [0,14] \cap \Z\). One futher note is that these values then need to be converted to approximations in our 16 bit fixed point representation. The first value is: 
+
+\begin{align*}
+	\prod_{k=0}^{14} \frac{1}{\sqrt{1 + 2^{-2k}}} &= 
+		0.60725293651701023412897124207973889082\ldots\\
+		&\approx \textrm{00.10011011011101}_2\\
+		&= \textrm{26dd}_{16}
+\end{align*}
+
+Below is a table of all the angles in the relevant formats
+
+%TBL%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	\(\gamma_k\) & Exact Form & Binary & Hexadecimal \\\hline
+	\(\gamma_0\) & \(0.7853981633\ldots\)
+		& \(\textrm{00.11001001000011}_2\)
+		& \(\textrm{3243}_{16}\\\hline
+	\(\gamma_1\) & \(0.4636476090\ldots\)
+		& \(\textrm{00.01110110101100}_2\)
+		& \(\textrm{1dac}_{16}\)\\\hline
+	\(\gamma_2\) & \(0.2449786631\ldots\)
+		& \(\textrm{00.00111110101101}_2\)
+		& \(\textrm{0fad}_{16}\)\\\hline
+	\(\gamma_3\) & \(0.1243549945\ldots\)
+		& \(\textrm{00.00011111110101}_2\)
+		& \(\textrm{07f5}_{16}\)\\\hline
+	\(\gamma_4\) & \(0.0624188099\ldots\)
+		& \(\textrm{00.00001111111110}_2\)
+		& \(\textrm{03fe}_{16}\)\\\hline
+	\(\gamma_5\) & \(0.0312398334\ldots\)
+		& \(\textrm{00.00000111111111}_2\)
+		& \(\textrm{01ff}_{16}\)\\\hline
+	\(\gamma_6\) & \(0.0156237286\ldots\)
+		& \(\textrm{00.00000100000000}_2\)
+		& \(\textrm{0100}_{16}\)\\\hline
+	\(\gamma_7\) & \(0.0078123410\ldots\)
+		& \(\textrm{00.00000010000000}_2\)
+		& \(\textrm{0080}_{16}\)\\\hline
+	\(\gamma_8\) & \(0.0039062301\ldots\)
+		& \(\textrm{00.00000001000000}_2\)
+		& \(\textrm{0040}_{16}\)\\\hline
+	\(\gamma_9\) & \(0.0019531225\ldots\)
+		& \(\textrm{00.00000000100000}_2\)
+		& \(\textrm{0020}_{16}\)\\\hline
+	\(\gamma_{10}\) & \(0.0009765621\ldots\)
+		& \(\textrm{00.00000000010000}_2\)
+		& \(\textrm{0010}_{16}\)\\\hline
+	\(\gamma_{11}\) & \(0.0004882812\ldots\)
+		& \(\textrm{00.00000000001000}_2\)
+		& \(\textrm{0008}_{16}\)\\\hline
+	\(\gamma_{12}\) & \(0.0002441406\ldots\)
+		& \(\textrm{00.00000000000100}_2\)
+		& \(\textrm{0004}_{16}\)\\\hline
+	\(\gamma_{13}\) & \(0.0001220703\ldots\)
+		& \(\textrm{00.00000000000010}_2\)
+		& \(\textrm{0002}_{16}\)\\\hline
+	\(\gamma_{14}\) & \(0.0000610351\ldots\)
+		& \(\textrm{00.00000000000001}_2\)
+		& \(\textrm{0001}_{16}\)\\\hline
+\end{tabular}
+\end{center}
+
+This allows us to then write the following method in C to calculate both \(\cos\beta\) and \(\sin\beta\), provided \(\beta \in [-\tfrac{\pi}{2}, \tfrac{\pi}{2}]\) is given in 16 bit fixed point representation:
+
+%PCD%
+\begin{codelisting}{16 bit Fixed Point CORDIC algorithm}
+int16_t *cordic_16(int16_t beta)
+{
+	const int16_t GAMMA = {0x3243, 0x1dac, 0x0fad, 0x07f5, 0x03fe,
+			       0x01ff, 0x0100, 0x0080, 0x0040, 0x0020,
+			       0x0010, 0x0008, 0x0004, 0x0002, 0x0001};
+
+	int16_t x = 0x26dd, y = 0x0000, t, result;
+
+	for(int k = 0; k <= 14; ++k)
+	{
+		t = x;
+		if(beta >= 0)
+		{
+			beta -= GAMMA[k];
+			x = x - (y >> k);
+			y = y + (t >> k);
+		}
+		else
+		{
+			beta += GAMMA[k];
+			x = x + (y >> k);
+			y = y - (t >> k);
+		}
+	}
+
+	//This line is required by C to allow the value to be returned
+	result = malloc(2 * sizeof(int16_t));
+	
+	result[0] = x;
+	result[1] = y;
+	return result;
+}
+\end{lstlisting}
+\end{codelisting}
+
+As can easily be seen in the algorithm the number of calculations each iteration is constant, and the number of iterations is fixed at 15. This means that the algorithm is an \(\bigO(1)\) algorithm, and guarantees an answer accurate to 4 decimal places as \(2^{-14} < 10^{-4}\). Further as the only calculations are integer addition, subtraction and bitshifting this method executes extremely quickly.\\
+
+Similar methods exist for other fixed length formats such as using \codeinline{int32\_t} or \codeinline{int64\_t}. To examine in more detail how the method converges we will consider an implementation using \codeinline{int64\_t}, which will be approximating \(\cos(0.5)\). The code used is included in the Appendix \ref{#APP#} and can perform the calculations with \(n \le 63\). Below are some of the functions approximations for different values of \(n\):
+
+%TBL%
+\begin{center}
+\begin{tabular}{|c|c|}
+	\hline
+	\(n\) & Output with underlined accurate digits\\\hline
+	1 & \underline{0.}70710678118654757273731\\\hline
+	2 & \underline{0.}94868329805051376801827\\\hline
+	3 & \underline{0.8}4366148773210747346951\\\hline
+	4 & \underline{0.}90373783889353875853345\\\hline
+	5 & \underline{0.87}527458786899225984257\\\hline
+	6 & \underline{0.8}8995346811933362385360\\\hline
+	\cdots & \cdots\\\hline
+	19 & \underline{0.87758}301847694786257392\\\hline
+	20 & \underline{0.877582}10404530012649360\\\hline
+	21 & \underline{0.877582561}26152311971111\\\hline
+	22 & \underline{0.877582}78986933524468128\\\hline
+	\cdots & \cdots\\\hline
+	53 & \underline{0.8775825618903727}5873943\\\hline
+	54 & \underline{0.877582561890372}64771712\\\hline
+	55 & \underline{0.8775825618903727}5873943\\\hline
+	56 & \underline{0.8775825618903727}5873943\\\hline
+	\cdots & \cdots\\\hline
+	63 & \underline{0.8775825618903727}5873943\\\hline
+\end{tabular}
+\end{center}
+
+This table shows us several interesting features of the algorithm, the first being that while there are points at which a certain number of decimal places are guaranteed; before that point the number of decimal places of accuracy can vary, such as in the first few iterations. As we know that the error after \(n\) iterations is at most \(\gamma_n = \tan^{-1}(2^{-n})\), then we can guarantee that we have at least \(d\) decimal places of accuracy if we use as least \(\log_2(\cot(10^{-d}))\) iterations.\\
+
+Second there are some values of \(n\) which have uncharacteristically close approximations of the actual value, such as the case when 21 iterations are used. This arises due to the algorithm finding a good approximation for \(\beta\), but then successive numbers of iterations move away from this value, thus once more decreasing the number of decimal digits of accuracy.\\
+
+Finally at the end of the able we see that from 55 iterations onwards, the results do not get any more accurate. It turns out this is due to the program converting the \codeinline{int64\_t} fixed point values into \codeinline{double} values, which typically have an precision of around \(2^{-55}\). If we instead modify the program to use a more precise floating point representation we see that the 53 to 56 section of the table becomes:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|c|c|}
+	\hline
+	\(n\) & Output with underlined accurate digits\\\hline
+	53 & \underline{0.8775825618903727}3965747\\\hline
+	54 & \underline{0.877582561890372}68653156\\\hline
+	55 & \underline{0.87758256189037271}298609\\\hline
+	56 & \underline{0.8775825618903727}2621336\\\hline
+\end{tabular}
+\end{center}
+
+This is much more inline with what we would expect to see from the known error of the algorithm.

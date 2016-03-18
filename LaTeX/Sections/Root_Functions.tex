@@ -136,6 +136,7 @@ Line 6 is easy to convert, given our definitions of \codeinline{res}, \codeinlin
 
 Using this above derivation we see that we can calculate this as \codeinline{res = (res >> 1) + bit}. Below is a simple implementaion of this in C using the unsigned 32 bit integer type \codeinline{uint32\_t}. A more commented and slightly modified version can be found in Appendix \ref{#APP#}, File \ref{#FILE#}.
 
+%PCD%
 \begin{codelisting}{Integer Square Root in C}
 uint32_t int_sqrt(uint32_t num)
 {

@@ -11,7 +11,7 @@ double *cordic_trig(const double theta, const unsigned int iter)
 {
 	unsigned int n = (iter > MAX_ITER || iter == 0) ? MAX_ITER : iter;
 	
-	cordic_fixed_t x = TRIG_K_VALUES[n-1], y = 0, xt, yt;
+	cordic_fixed_t x = TRIG_K_VALUES[n-1], y = 0, t;
 	cordic_fixed_t beta = double_to_fixed(theta);
 	
 	double *result = malloc(2*sizeof(*result));
@@ -38,32 +38,24 @@ double *cordic_trig(const double theta, const unsigned int iter)
 	{
 		for(int i = 0; i < n; i++)
 		{
-			if(beta > 0)
+			t = x;
+			if(beta >= 0)
 			{
-/*				printf("+\t%d\n%" PRIx64 "\t%" PRIx64"\n%" 
-					   PRIx64 "\t%" PRIx64 "\n\n"
-					   	, i, x, y, x>>i, y>>i);
-*/				xt = x - (y >> i);
-				yt = y + (x >> i);
+				x = x - (y >> i);
+				y = y + (t >> i);
 				beta -= TRIG_ANGLES[i];
 			}
 			else
 			{
-/*				printf("-\t%d\n%" PRIx64 "\t%" PRIx64"\n%" 
-					   PRIx64 "\t%" PRIx64 "\n\n"
-					   	, i, x, y, x>>i, y>>i);
-*/				xt = x + (y >> i);
-				yt = y - (x >> i);
+				x = x + (y >> i);
+				y = y - (t >> i);
 				beta += TRIG_ANGLES[i];
 			}
-
-			x = xt;
-			y = yt;
 		}
 	}
 
-	result[0] = fixed_to_double(x);
-	result[1] = fixed_to_double(y);
+	result[0] = (double)x / 0x4000000000000000;
+	result[1] = (double)y / 0x4000000000000000;
 	return result;
 }
 
