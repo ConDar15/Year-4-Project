@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <assert.h>
 
 #include "cordic_trig.h"
 #include "utilities.h"
@@ -9,6 +11,7 @@ const cordic_fixed_t TRIG_K_VALUES[] = FIXED_K_VALUES;
 
 double *cordic_trig(const double theta, const unsigned int iter)
 {
+	assert(-HALF_PI <= theta && theta <= HALF_PI);
 	unsigned int n = (iter > MAX_ITER || iter == 0) ? MAX_ITER : iter;
 	
 	cordic_fixed_t x = TRIG_K_VALUES[n-1], y = 0, t;
@@ -54,9 +57,41 @@ double *cordic_trig(const double theta, const unsigned int iter)
 		}
 	}
 
-	result[0] = (double)x / 0x4000000000000000;
-	result[1] = (double)y / 0x4000000000000000;
+	result[0] = fixed_to_double(x);
+	result[1] = fixed_to_double(y);
 	return result;
+}
+
+double cordic_atan_bounded(const double z, const unsigned int iter)
+{
+	assert(0 <= z && z <= 1);
+	unsigned int n = (iter > MAX_ITER || iter == 0) ? MAX_ITER : iter;
+	
+	cordic_fixed_t x = FIXED_ONE >> 1, y = double_to_fixed(z) >> 1, t;
+	cordic_fixed_t beta = 0;
+
+	//printf("%lx\n", y);
+	if(y == 0)
+		return 0;
+	
+	for(int i = 0; i < n; i++)
+	{
+		t = x;
+		if((NEG_CONSTANT & x) ^ (NEG_CONSTANT & y))
+		{
+			x = x - (y >> i);
+			y = y + (t >> i);
+			beta -= TRIG_ANGLES[i];
+		}
+		else
+		{
+			x = x + (y >> i);
+			y = y - (t >> i);
+			beta += TRIG_ANGLES[i];
+		}
+	}
+	
+	return fixed_to_double(beta);
 }
 
 double cordic_cos(double x, unsigned int n)
@@ -114,6 +149,33 @@ double cordic_tan(double x, unsigned int n)
 	return -1 * cordic_tan(-x, n);
 }
 
+double cordic_acos(double x, unsigned int n)
+{
+	assert(-1 <= x && x <= 1);
+	return x == 0 ? HALF_PI 
+				  : x > 0 ? cordic_atan(sqrt(1 - x*x)/x, n)
+				          : HALF_PI + cordic_asin(-x, n);
+}
+
+double cordic_asin(double x, unsigned int n)
+{
+	assert(-1 <= x && x <= 1);
+	return x == 1 ? HALF_PI
+				  : x == -1 ? -HALF_PI
+				  			: atan(x/sqrt(1 - x*x));
+}
+
+double cordic_atan(double x, unsigned int n)
+{
+	if(x < 0)
+		return -cordic_atan(-x, n);
+	
+	if(x >= 1)
+		return HALF_PI/2 + cordic_atan_bounded((x-1)/(x+1), n);
+	
+	return cordic_atan_bounded(x, n);
+}
+
 #ifdef COMPILE_MAIN
 int main(int argc, char **argv)
 {
@@ -162,12 +224,51 @@ int main(int argc, char **argv)
 						   "<D=Number of digits to display>\n",
 						   argv[0]);
 				break;
+			
+			case 'd':
+				if(argc == 5 &&
+				   sscanf(argv[2], "%lf", &x) == 1 &&
+				   sscanf(argv[3], "%u" , &n) == 1 &&
+				   sscanf(argv[4], "%u" , &D) == 1)
+					printf("aTan(%.*lf) = %.*lf\n",
+							d(D), x, D, cordic_atan(x, n));
+				else
+					printf("Uasge: %s d <x=value for aTan(x)> <n> "
+						   "<D=Number of digits to display>\n",
+						   argv[0]);
+				break;
+			
+			case 'e':
+				if(argc == 5 &&
+				   sscanf(argv[2], "%lf", &x) == 1 &&
+				   sscanf(argv[3], "%u" , &n) == 1 &&
+				   sscanf(argv[4], "%u" , &D) == 1)
+					printf("aCos(%.*lf) = %.*lf\n",
+							d(D), x, D, cordic_acos(x, n));
+				else
+					printf("Uasge: %s d <x=value for aCos(x)> <n> "
+						   "<D=Number of digits to display>\n",
+						   argv[0]);
+				break;
 
+			case 'f':
+				if(argc == 5 &&
+				   sscanf(argv[2], "%lf", &x) == 1 &&
+				   sscanf(argv[3], "%u" , &n) == 1 &&
+				   sscanf(argv[4], "%u" , &D) == 1)
+					printf("aSin(%.*lf) = %.*lf\n",
+							d(D), x, D, cordic_asin(x, n));
+				else
+					printf("Uasge: %s d <x=value for aSin(x)> <n> "
+						   "<D=Number of digits to display>\n",
+						   argv[0]);
+				break;
+			
 			default:
-				printf("Usage: %s <a/b/c> <arguments>\n", argv[0]);
+				printf("Usage: %s <a/b/c/d/e/f> <arguments>\n", argv[0]);
 		}
 	}
 	else
-		printf("Usage: %s <a/b/c> <arguments>\n", argv[0]);
+		printf("Usage: %s <a/b/c/d/e/f> <arguments>\n", argv[0]);
 }
 #endif

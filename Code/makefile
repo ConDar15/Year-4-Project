@@ -104,7 +104,7 @@ geometric_trig: $(OUTDIR)/taylor_inv_trig.out
 
 $(OUTDIR)/cordic_trig.out: cordic_trig.c trig_utilities.h trig_fixed.h \
 						   cordic_trig.h $(LU)
-	$(CC) $(CFLAGS) $(EXE) cordic_trig.c $(UTILLIB) $(MPFRLIB) -o $@
+	$(CC) $(CFLAGS) $(EXE) cordic_trig.c $(UTILLIB) $(MATHLIB) -o $@
 cordic_trig: $(OUTDIR)/cordic_trig.out
 
 ## TESTING FILES ##

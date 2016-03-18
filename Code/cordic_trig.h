@@ -8,6 +8,7 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 
 #if BITS == 64
 	#define FIXED_ONE 0x4000000000000000
+	#define NEG_CONSTANT 0x8000000000000000
 	#define FIXED_HALF_PI 0x6487ed5110b4611a
 	#define FIXED_ANGLES {0x3243f6a8885a308d, 0x1dac670561bb4f68, \
 						  0x0fadbafc96406eb1, 0x07f56ea6ab0bdb71, \
@@ -76,6 +77,7 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 	#define MAX_ITER 63
 #elif BITS == 32
 	#define FIXED_ONE 0x40000000
+	#define NEG_CONSTANT 0x80000000
 	#define FIXED_HALF_PI 0x6487ed51
 	#define FIXED_ANGLES {0x3243f6a8, 0x1dac6705, 0x0fadbafc, \
 						  0x07f56ea6, 0x03feab76, 0x01ffd55b, \
@@ -102,6 +104,7 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 	#define max_iter 30
 #elif BITS == 16
 	#define FIXED_ONE 0x4000
+	#define NEG_CONSTANT 0x8000
 	#define FIXED_HALF_PI 0x6487
 	#define FIXED_ANGLES {0x3243, 0x1dac, 0x0fad, 0x07f5, 0x03fe, \
 						  0x01ff, 0x0100, 0x0080, 0x0040, 0x0020, \
@@ -112,6 +115,7 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 	#define MAX_ITER 15
 #elif BITS == 8
 	#define FIXED_ONE 0x40
+	#define NEG_CONSTANT 0x80
 	#define FIXED_HALF_PI 0x64
 	#define FIXED_ANGLES {0x32, 0x1d, 0x10, 0x08, 0x04, 0x02, 0x01}
 	#define FIXED_K_VALUES {0x2d, 0x28, 0x27, 0x26, 0x26, 0x26, 0x26}	
@@ -121,8 +125,14 @@ typedef TRIG_FIXED_TYPE cordic_fixed_t;
 #endif
 
 	double *cordic_trig(const double, const unsigned int);
+	
 	double cordic_cos(double, unsigned int);
 	double cordic_sin(double, unsigned int);
 	double cordic_tan(double, unsigned int);
+	
+	double cordic_atan_bounde(const double, const unsigned int);
+	double cordic_atan(double, unsigned int);
+	double cordic_acos(double, unsigned int);
+	double cordic_asin(double, unsigned int);
 
 #endif
