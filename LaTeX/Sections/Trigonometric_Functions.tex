@@ -907,31 +907,32 @@ As can easily be seen in the algorithm the number of calculations each iteration
 
 Similar methods exist for other fixed length formats such as using \codeinline{int32\_t} or \codeinline{int64\_t}. To examine in more detail how the method converges we will consider an implementation using \codeinline{int64\_t}, which will be approximating \(\cos(0.5)\). The code used is included in the Appendix \ref{#APP#} and can perform the calculations with \(n \le 63\). Below are some of the functions approximations for different values of \(n\):
 
+{\fontfamily{pcr}\selectfont
 %TBL%
 \begin{center}
 \begin{tabular}{|c|c|}
 	\hline
-	\(n\) & Output with underlined accurate digits\\\hline
-	1 & \underline{0.}70710678118654757273731\\\hline
-	2 & \underline{0.}94868329805051376801827\\\hline
-	3 & \underline{0.8}4366148773210747346951\\\hline
-	4 & \underline{0.}90373783889353875853345\\\hline
-	5 & \underline{0.87}527458786899225984257\\\hline
-	6 & \underline{0.8}8995346811933362385360\\\hline
+	\(n\) & \textsf{Output with bold accurate digits}\\\hline
+	1 & \textbf{0.}70710678118654757273731\\\hline
+	2 & \textbf{0.}94868329805051376801827\\\hline
+	3 & \textbf{0.8}4366148773210747346951\\\hline
+	4 & \textbf{0.}90373783889353875853345\\\hline
+	5 & \textbf{0.87}527458786899225984257\\\hline
+	6 & \textbf{0.8}8995346811933362385360\\\hline
 	\cdots & \cdots\\\hline
-	19 & \underline{0.87758}301847694786257392\\\hline
-	20 & \underline{0.877582}10404530012649360\\\hline
-	21 & \underline{0.877582561}26152311971111\\\hline
-	22 & \underline{0.877582}78986933524468128\\\hline
+	19 & \textbf{0.87758}301847694786257392\\\hline
+	20 & \textbf{0.877582}10404530012649360\\\hline
+	21 & \textbf{0.877582561}26152311971111\\\hline
+	22 & \textbf{0.877582}78986933524468128\\\hline
 	\cdots & \cdots\\\hline
-	53 & \underline{0.8775825618903727}5873943\\\hline
-	54 & \underline{0.877582561890372}64771712\\\hline
-	55 & \underline{0.8775825618903727}5873943\\\hline
-	56 & \underline{0.8775825618903727}5873943\\\hline
+	53 & \textbf{0.8775825618903727}5873943\\\hline
+	54 & \textbf{0.877582561890372}64771712\\\hline
+	55 & \textbf{0.8775825618903727}5873943\\\hline
+	56 & \textbf{0.8775825618903727}5873943\\\hline
 	\cdots & \cdots\\\hline
-	63 & \underline{0.8775825618903727}5873943\\\hline
+	63 & \textbf{0.8775825618903727}5873943\\\hline
 \end{tabular}
-\end{center}
+\end{center}}
 
 This table shows us several interesting features of the algorithm, the first being that while there are points at which a certain number of decimal places are guaranteed; before that point the number of decimal places of accuracy can vary, such as in the first few iterations. As we know that the error after \(n\) iterations is at most \(\gamma_n = \tan^{-1}(2^{-n})\), then we can guarantee that we have at least \(d\) decimal places of accuracy if we use as least \(\log_2(\cot(10^{-d}))\) iterations.\\
 
@@ -939,16 +940,237 @@ Second there are some values of \(n\) which have uncharacteristically close appr
 
 Finally at the end of the able we see that from 55 iterations onwards, the results do not get any more accurate. It turns out this is due to the program converting the \codeinline{int64\_t} fixed point values into \codeinline{double} values, which typically have an precision of around \(2^{-55}\). If we instead modify the program to use a more precise floating point representation we see that the 53 to 56 section of the table becomes:
 
+{\fontfamily{pcr}\selectfont
 %TBL%
 \begin{center}
 \begin{tabular}{|c|c|}
 	\hline
-	\(n\) & Output with underlined accurate digits\\\hline
-	53 & \underline{0.8775825618903727}3965747\\\hline
-	54 & \underline{0.877582561890372}68653156\\\hline
-	55 & \underline{0.87758256189037271}298609\\\hline
-	56 & \underline{0.8775825618903727}2621336\\\hline
+	\(n\) & \textsf{Output with bold accurate digits}\\\hline
+	53 & \textbf{0.8775825618903727}3965747\\\hline
+	54 & \textbf{0.877582561890372}68653156\\\hline
+	55 & \textbf{0.87758256189037271}298609\\\hline
+	56 & \textbf{0.8775825618903727}2621336\\\hline
+\end{tabular}
+\end{center}}
+
+This is much more inline with what we would expect to see from the known error of the algorithm.\\
+
+Now another use of CORIC is to effectively run it in reverse, which will allow us to calculate the Inverse Trigonometric functions. To do this we will start by considering the method for calculating \(\tan^{-1}\), and then use trigonometric identities to calculate both \(\cos^{-1}\) and \(\sin^{-1}\).\\
+
+To accomplish this we will be fixing some initial values for \(\sin\theta\) and \(\cos\theta\), and then running the CORDIC algorithm to move the approximation of \(\sin\theta\) towards zero. In doing this we will effectively run our algorithm in reverse, and if we keep track of the angles that we rotate through we can find \(\tan^{-1}\).\\
+
+We know that \(\tan\theta = \frac{\sin\theta}{\cos\theta}\), which means that if we have a current approximation \(\left(\begin{array}{c}x_k\\y_k\end{array}\right)\) then \(\frac{y_k}{x_k} \approx \tan\theta\). Using this, if we have an input of \(\tan\theta = z\) then we can take our initial values to be \(x_0 := \tfrac{1}{2}\) and \(y_0 := \tfrac{z}{2}\). This has the desired property that \(\tfrac{y_0}{x_0} = z\), and if we have \(y_n\) tending to 0 then the angle we approximate in the process will be \(\theta\). \\
+
+If we again consider a 16 bit fixed point implementation for our algorithm we can implement it as follows:
+
+%PCD%
+\begin{codelisting}{16 bit Fixed Point CORDIC \(\tan^{-1}\)}
+int16_t *cordic_atan_16(int16_t z)
+{
+	const int16_t GAMMA = {0x3243, 0x1dac, 0x0fad, 0x07f5, 0x03fe,
+			       0x01ff, 0x0100, 0x0080, 0x0040, 0x0020,
+			       0x0010, 0x0008, 0x0004, 0x0002, 0x0001};
+
+	int16_t x = 0x2000, y = z >> 1, t, theta;
+
+	for(int k = 0; k <= 14; ++k)
+	{
+		t = x;
+		if(y < 0)
+		{
+			theta -= GAMMA[k];
+			x = x - (y >> k);
+			y = y + (t >> k);
+		}
+		else
+		{
+			theta += GAMMA[k];
+			x = x + (y >> k);
+			y = y - (t >> k);
+		}
+	}
+
+	return theta;
+}
+\end{lstlisting}
+\end{codelisting}
+
+Similar to our considerations when dealing with the taylor method of calculating \(\tan^{-1}\), we need to ensure that the input value is not too large, and so can perform the same transformations to the value to ensure we are always calculating a value in the range \([0,1)\). Using this we can then use the identities \(\sin^{-1}(z) = \tan^{-1}(\frac{z}{\sqrt{1-z^2}})\) and \(\cos^{-1}(z) = \tan^{-1}(\frac{\sqrt{1 - z^2}}{z})\). \\
+
+Obviously there are basic exceptional values that need to be checked for, in particular \(\cos^{-1}(0) = \tfrac{\pi}{2}\), and \(\sin^{-1}(\pm1) = \pm\tfrac{\pi}{2}\). If these values are checked before hand then we are never dividing by 0, \(z \in [-1,1]\cap\Z\), and thus we have a complete algorithm, that calculates the inverse Trigonometric Functions.\\
+
+This method, like the CORDIC method for the regular Trigonometric Functions, has an approximation that is acccurate to withing \(\gamma_n\). Thus for our 16 bit implementation, the output will be accurate to within an error of \(2^{-14} = 0.00006103515625\), in particular guaranteeing at least 4 decimal places of accuracy. A final note is that the Inverse Trigonometric Functions, again much like the regular CORDIC algorithm, is an \(\bigO(1)\) algorithm with simple calculations, making the algorithm extremely efficient.
+
+%SUB%
+\subsection{Comparrison of Methods}
+
+We have observed three different methods for calculating the Trigonometric Functions, as well as their inverses and so should compare their efficiency and accuracy properties.\\
+
+First we will compare how quickly each algorithm approaches the correct value for different inputs of \(n\), and using \(\theta = 0.5\). The comparrison will use \codeinline{double} values for computation, so that all three methods may be equally compared. The table below compares the convergence of \(\cos\theta\), with the bold digits being the correct digits found:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|l|l|}
+\hline
+\(n\) & \textrm{geometric\_Cos(0.5, \(n\))}
+	  & \textrm{taylor\_Cos(0.5, \(n\))}
+	  & \textrm{CORDIC(0.5, \(n\))}\\\hline
+1 & \textbf{0.87}6953125000000000
+  & \textbf{1}.000000000000000000
+  & \textbf{0.}707106781186547572\\\hline
+2 & \textbf{0.877}426177263259887
+  & \textbf{0.877}604166666666629
+  & \textbf{0.}948683298050513768\\\hline
+3 & \textbf{0.8775}43526076081437
+  & \textbf{0.877}604166666666629
+  & \textbf{0.8}43661487732107473\\\hline
+4 & \textbf{0.8775}72806699400187
+  & \textbf{0.87758256}2158978118
+  & \textbf{0.}903737838893538758\\\hline
+5 & \textbf{0.87758}0123327654892
+  & \textbf{0.87758256}2158978118
+  & \textbf{0.87}5274587868992259\\\hline
+6 & \textbf{0.87758}1952264380182
+  & \textbf{0.87758256189037}3424
+  & \textbf{0.8}89953468119333623\\\hline
+7 & \textbf{0.877582}409484792491
+  & \textbf{0.87758256189037}3424
+  & \textbf{0.8}82719918613777410\\\hline
+8 & \textbf{0.8775825}23789035007
+  & \textbf{0.8775825618903727}58
+  & \textbf{0.87}9022003513595939\\\hline
+9 & \textbf{0.8775825}52365041901
+  & \textbf{0.8775825618903727}58
+  & \textbf{0.877}152884812089639\\\hline
+10& \textbf{0.8775825}59509040183
+  & \textbf{0.8775825618903727}58
+  & \textbf{0.87}8089122532394572\\\hline
+\end{tabular}
+\end{center}}
+
+This table demonstrates that \textrm{taylor\_Cos} has the fastest convergence, and also demonstrates the staggered increase in accuracy as each step of the algorithm calculates two updates to \(\cos\theta\), and thus the output only gets more accurate every other value of \(n\). The \textrm{geometric\_Cos} method has the second best convergence, while the CORDIC algorithm lags behind, having inconsistent convergence as measured in correct digits.\\
+
+Next we will note that all algorithms can guarantee 10 digits of accuracy in a fixed number of steps. In particular we can guarantee 10 digits of accuracy for \textrm{geometric\_Cos} when \(n \ge 16\), \textrm{taylor\_Cos} when \(n \ge 8\) and \textrm{CORDIC} when \(n \ge 34\). Using the lower bounds of each of these values for \(n\) we can directly compare the speed of the methods.\\
+
+To compare the methods we will be testing 1000 random values in the range \([0, \frac{\pi}{2})\) for which we will calculate the cosine of with each method 100000 times. This will then also be compared to the standard C implementation of the \(\cos\) function, available in \codeinline{math.h}. The results of my personal testing follow, where the given times are for individual values, not individual method execution times:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+	& \codeinline{geometric\_cos} & \codeinline{taylor\_cos}
+	& \codeinline{cordic\_cos} & \codeinline{builtin\_cos}\\\hline 
+	\textsf{Total time:} & 16.029s & 7.937s & 21.471s & 0.243s\\\hline
+	\textsf{Average time:} & 0.016s & 0.007s & 0.021s & 0.000s\\\hline
+	\textsf{Minimum time:} & 0.015s & 0.007s & 0.020s & 0.000s\\\hline
+	\textsf{Maximum time:} & 0.022s & 0.013s & 0.030s & 0.000s\\\hline
 \end{tabular}
 \end{center}
+}
 
-This is much more inline with what we would expect to see from the known error of the algorithm.
+These values show that the fastest algorithm that we have discussed is Algorithm \ref{#ALG#} (\textrm{taylor\_Cos}), while the slowest is the CORDIC algorithm. However all of our Algorithms are much less efficient than the built-in \codeinline{cos} function of C. It turns out this discrepency is due to inefficient implementation as the \codeinline{cos} function also uses a Taylor approximation, but is implemented in a much lower-level method that optimises the execution of the code.\\
+
+\TODO{Ref the C code}\\
+\TODO{https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/ieee754/dbl-64/s\_sin.c;hb=HEAD#l281}\\
+
+Next we will compare our methods for the Inverse Trigonometric Functions, starting with how they converge to the correct value, as detailed in the following table:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|l|l|}
+\hline
+\(n\) & \textrm{geometric\_aCos(0.5, \(n\))}
+	  & \textrm{taylor\_aCos(0.5, \(n\))}
+	  & \textrm{CORDIC(0.5, \(n\))}\\\hline
+1 & \textbf{2.3}51425307918200591
+&\textbf{2.}270796326794896735
+&\textbf{2.3}56194490192344837\\\hline
+2 & \textbf{2.34}7503635391542609
+&\textbf{2.}327962993461563101
+&\textbf{1}.892546881191538687\\\hline
+3 & \textbf{2.346}521397812842746
+&\textbf{2.}340568243461563113
+&\textbf{2.}137525544318402914\\\hline
+4 & \textbf{2.346}275724597314926
+&\textbf{2.34}4244774711563117
+&\textbf{2.}261880538865164602\\\hline
+5 & \textbf{2.346}214299177873829
+&\textbf{2.34}5470795757570225
+&\textbf{2.3}24299348861121661\\\hline
+6 & \textbf{2.34619}8942378459939
+&\textbf{2.34}5913166442261221
+&\textbf{2.3}55539182291389810\\\hline
+7 & \textbf{2.34619}5103149716576
+&\textbf{2.346}081295659538934
+&\textbf{2.3}39915453670913247\\\hline
+8 & \textbf{2.34619}4143336564508
+&\textbf{2.3461}47594614218956
+&\textbf{2.34}7727794731014228\\\hline
+9 & \textbf{2.346193}903386887935
+&\textbf{2.3461}74467628018511
+&\textbf{2.34}3821564599047224\\\hline
+10& \textbf{2.3461938}43452078375
+&\textbf{2.3461}85594784405026
+&\textbf{2.34}5774687115525836\\\hline
+
+\end{tabular}
+\end{center}}
+
+Here we see for the inverse trigonometric functions the convergence speed has been altered with the Geometric method now having the fastest convergence, the Taylor Method converges much slower and the CORDIC method is more stable. One interesting behaviour that emerges for larger values of \(n\) in the \textrm{geometric\_aCos} is demonstrated in the following table:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+\(n\) & \textrm{geometric\_aCos(0.5, \(n\))}\\\hline
+13 & \textbf{2.34619382}2083380897\\\hline
+14 & \textbf{2.3461938}12716280469\\\hline
+15 & \textbf{2.346193}737779483257\\\hline
+\cdots & \cdots\\\hline
+22 & \textbf{2.346}097524754926944\\\hline
+23 & \textbf{2.34}1202123910687049\\\hline
+24 & \textbf{2.3}51023238547698124\\\hline
+\end{tabular}
+\end{center}}
+
+This behaviour arrises due to the use of \codeinline{double} to calculate values of very small magnitude, this causes the value to become effectively 0 and thus lead to the innacuracies seen. If we use a higher precision representation for the calculations we get the following table instead:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+\(n\) & \textrm{geometric\_aCos(0.5, \(n\))}\\\hline
+13 & \textbf{2.346193823}718087586\\\hline
+14 & \textbf{2.3461938234}83759158\\\hline
+15 & \textbf{2.3461938234}25177051\\\hline
+\cdots & \cdots\\\hline
+22 & \textbf{2.3461938234056}50874\\\hline
+23 & \textbf{2.346193823405649}980\\\hline
+24 & \textbf{2.346193823405649}757\\\hline
+\end{tabular}
+\end{center}}
+
+With this we see that Algorithm \ref{#ALG#} continues in the same pattern as before and is actually correct. So we may again look to time our functions to test their efficiency as compared to each other. To do this we will again use 1000 random values, this time in the range \((-1,1)\), each of which we will calculate \(\cos^{-1}\) using each method 100000 times. We note that the algorithms can guarantee 10 decimal places of accuracy for different values of \(n\), in particular \textrm{geometric\_aCos} when \(n \ge 18\), \textrm{taylor\_aCos} when \(n \ge 30\) and \textrm{CORDIC} when \(n \ge 50\).
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+	& \codeinline{geometric\_cos} & \codeinline{taylor\_cos}
+	& \codeinline{cordic\_cos} & \codeinline{builtin\_cos}\\\hline 
+	\textsf{Total time:} & 27.273s & 14.358s & 29.142s & 2.143s\\\hline
+	\textsf{Average time:} & 0.027s & 0.014s & 0.029s & 0.002s\\\hline
+	\textsf{Minimum time:} & 0.026s & 0.014s & 0.028s & 0.001s\\\hline
+	\textsf{Maximum time:} & 0.033s & 0.018s & 0.032s & 0.006s\\\hline
+\end{tabular}
+\end{center}}
+
+Again this table shows that the Taylor method is the quickest of those analysed and teh CORDIC method is the slowest, however they also both are much slower than the built in methods. One thing to note is that the inverse trigonometric functions are simply less efficient to calculate, as can be seen in the execution time of the built-in method, which appears to be two orders of magnitude greater than the corresponting trigonometric method.\\
+
+We conclude that for most implementations the Taylor method is the most appropriate method to use to ensure a high accuracy quickly. However the CORDIC algorithm is of use when more advanced features such as floating point type values, or hardware multipliers are not present; further it is possible to create hardware implementations of the CORDIC algorithm which can even further speed up the calculations. 

@@ -78,7 +78,6 @@
 %\includeonly{./Sections/Introduction}
 %\includeonly{./Sections/Trigonometric_Functions}
 %\includeonly{./Sections/Root_Functions}
-%\includeonly{./Sections/Logarithms_and_Exponentials}
 %\includeonly{}
 
 \begin{document}

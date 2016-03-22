@@ -70,14 +70,13 @@ double cordic_atan_bounded(const double z, const unsigned int iter)
 	cordic_fixed_t x = FIXED_ONE >> 1, y = double_to_fixed(z) >> 1, t;
 	cordic_fixed_t beta = 0;
 
-	//printf("%lx\n", y);
 	if(y == 0)
 		return 0;
 	
 	for(int i = 0; i < n; i++)
 	{
 		t = x;
-		if((NEG_CONSTANT & x) ^ (NEG_CONSTANT & y))
+		if(y < 0)
 		{
 			x = x - (y >> i);
 			y = y + (t >> i);
@@ -162,7 +161,7 @@ double cordic_asin(double x, unsigned int n)
 	assert(-1 <= x && x <= 1);
 	return x == 1 ? HALF_PI
 				  : x == -1 ? -HALF_PI
-				  			: atan(x/sqrt(1 - x*x));
+				  			: cordic_atan(x/sqrt(1 - x*x), n);
 }
 
 double cordic_atan(double x, unsigned int n)

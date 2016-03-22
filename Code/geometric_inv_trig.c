@@ -60,16 +60,19 @@ double geometric_acos(double x, unsigned int n)
 {
 	assert(x >= -1 && x <= 1);
 	return x >= 0 ? geometric_acos_bounded(x,n)
-				  : PI - geometric_acos_bounded(x,n);
+				  : PI - geometric_acos_bounded(-x,n);
 }
 
 void mpfr_geometric_acos(mpfr_t R, mpfr_t x, unsigned int n)
 {
 	assert(mpfr_cmp_si(x, -1) >= 0 && mpfr_cmp_si(x, 1) <= 0);
-	
+	mpfr_t y;
+
 	if(mpfr_cmp_ui(x, 0) < 0)
 	{
-		mpfr_geometric_acos_bounded(R,x,n);
+		mpfr_init_set(y, x, MPFR_RNDN);
+		mpfr_neg(y, x, MPFR_RNDN);
+		mpfr_geometric_acos_bounded(R,y,n);
 		mpfr_sub(R, MPFR_PI, R, MPFR_RNDN);
 	}
 	else

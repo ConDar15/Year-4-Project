@@ -1,6 +1,6 @@
 #Compiler and basic flags
 CC=gcc
-CFLAGS=-std=c11
+CFLAGS=-std=c11 -g
 
 #Directories used
 OBJDIR=obj
@@ -20,7 +20,8 @@ EXE=-D COMPILE_MAIN
 INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
 		  geometric_trig.c geometric_inv_trig.c taylor_trig.c \
 		  taylor_inv_trig.c cordic_trig.c
-TESTFILES=test_newton_sqrt.c
+TESTFILES=test_newton_sqrt.c test_trig_methods.c test_inv_trig_methods.c \
+		  test_sqrt_methods.c
 OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
 OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
 TESTS   =$(addprefix $(TSTDIR)/, $(TESTFILES:.c=.out))
@@ -115,3 +116,30 @@ $(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \
 	$(CC) $(CFLAGS) $< $(OBJDIR)/newton_sqrt.o $(OBJDIR)/exact_root.o \
 		$(MPFRLIB) $(UTILLIB) -I. -o $@
 test_newton_sqrt: $(TSTDIR)/test_newton_sqrt.out
+
+$(TSTDIR)/test_trig_methods.out: $(TSTDIR)/test_trig_methods.c \
+				$(TSTDIR)/test_utilities.h \
+				$(OBJDIR)/geometric_trig.o $(OBJDIR)/taylor_trig.o \
+				$(OBJDIR)/cordic_trig.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/geometric_trig.o $(OBJDIR)/taylor_trig.o \
+		$(OBJDIR)/cordic_trig.o $(MATHLIB) $(UTILLIB) -I. -o $(@)
+test_trig_methods: $(TSTDIR)/test_trig_methods.out
+
+$(TSTDIR)/test_inv_trig_methods.out: $(TSTDIR)/test_inv_trig_methods.c \
+				$(TSTDIR)/test_utilities.h \
+				$(OBJDIR)/geometric_inv_trig.o \
+				$(OBJDIR)/taylor_inv_trig.o \
+				$(OBJDIR)/cordic_trig.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/geometric_inv_trig.o \
+		$(OBJDIR)/taylor_inv_trig.o \
+		$(OBJDIR)/cordic_trig.o $(MATHLIB) $(UTILLIB) -I. -o $(@)
+test_inv_trig_methods: $(TSTDIR)/test_inv_trig_methods.out
+
+$(TSTDIR)/test_sqrt_methods.out: $(TSTDIR)/test_sqrt_methods.c \
+				$(TSTDIR)/test_utilities.h \
+				$(OBJDIR)/exact_root.o $(OBJDIR)/bisect_root.o \
+				$(OBJDIR)/newton_sqrt.o $(OBJDIR)/newton_inv_sqrt.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/exact_root.o $(OBJDIR)/bisect_root.o \
+		$(OBJDIR)/newton_sqrt.o $(OBJDIR)/newton_inv_sqrt.o\
+		$(MATHLIB) $(UTILLIB) -I. -o $(@)
+test_sqrt_methods: $(TSTDIR)/test_sqrt_methods.out

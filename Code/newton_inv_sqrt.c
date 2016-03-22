@@ -48,6 +48,28 @@ double newton_inv_sqrt(double N, double T)
 	return ldexp(x, -e / 2);
 }
 
+double newton_inv_sqrt_it(double N, unsigned int I)
+{
+	assert(N >= 0);
+
+	int e;
+	double x, NN, N_2;
+
+	NN  = N;
+	N   = frexp(N, &e);
+	N_2 = 0.5*N;
+
+	x = 1;
+
+	for(int i = 0; i < I; ++i)
+		x = x * (1.5 - N_2*x*x);
+
+	if(e%2)
+		x *= e > 0 ? ROOT_2_INV : ROOT_2;
+	x *= NN;
+	return ldexp(x, -e / 2);
+}
+
 void mpfr_newton_inv_sqrt(mpfr_t R, mpfr_t N, mpfr_t T)
 {
 	mpfr_t x, px, d, t, n, n_2;
@@ -95,7 +117,7 @@ int main(int argc, char **argv)
 
 	if(argc == 1)
 	{
-		printf("Usage: %s [a/b] <Arguments>\n", argv[0]);
+		printf("Usage: %s [a/b/c] <Arguments>\n", argv[0]);
 		exit(1);
 	}
 
@@ -142,9 +164,22 @@ int main(int argc, char **argv)
 					   "<D=Number of digits to calculate to> "
 					   "<p=bits of precision>\n", argv[0]);
 			break;
+		
+		case 'c':
+			if (argc == 5 &&
+					sscanf(argv[2], "%lf", &N) == 1 &&
+					sscanf(argv[3], "%u",  &p) == 1 &&
+					sscanf(argv[4], "%u" , &D) == 1)
+				printf("sqrt(%.*lf) =~ %.*lf\n", d(D), N, D, 
+											newton_inv_sqrt_it(N, p));
+			else
+				printf("Usage: %s a <N=Value to sqrt> "
+					   "<I=iterations> <D=Number of digits to display>\n",
+					   argv[0]);
+			break;
 
 		default:
-			printf("Usage: %s [a/b] <Arguments>\n", argv[0]);
+			printf("Usage: %s [a/b/c] <Arguments>\n", argv[0]);
 	}
 }
 #endif

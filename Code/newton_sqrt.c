@@ -89,6 +89,26 @@ double newton_sqrt_v3(double N, double T)
 	return ldexp(x, e / 2);
 }
 
+double newton_sqrt_v3_it(double N, unsigned int I)
+{
+	assert(N >= 0);
+
+	int e;
+	double x;
+	
+	N = frexp(N, &e);
+
+	x = 1;
+
+	for(int i = 0; i < I; ++i)
+		x = 0.5 * (x + N/x);
+
+	if(e%2)
+		x *= e > 0 ? ROOT_2 : ROOT_2_INV;
+	return ldexp(x, e / 2);
+}
+
+
 void mpfr_newton_sqrt_v3(mpfr_t R, mpfr_t N, mpfr_t T)
 {
 	mpfr_t x, px, d, t, n;
@@ -132,7 +152,7 @@ int main(int argc, char **argv)
 
 	if(argc==1)
 	{
-		printf("Usage: %s [a/b/c/d] <Arguments>\n", argv[0]);
+		printf("Usage: %s [a/b/c/d/e] <Arguments>\n", argv[0]);
 		exit(1);
 	}
 
@@ -204,8 +224,20 @@ int main(int argc, char **argv)
 					   "<p=bits of precision>\n", argv[0]);
 			break;
 		
+		case 'e':
+			if (argc == 5 &&
+					sscanf(argv[2], "%lf", &N) == 1 &&
+					sscanf(argv[3], "%u",  &p) == 1 &&
+					sscanf(argv[4], "%u" , &D) == 1)
+				printf("sqrt(%.*lf) =~ %.*lf\n", d(D), N, D, 
+												 newton_sqrt_v3_it(N, p));
+			else
+				printf("Usage: %s e <N=Value to sqrt> "
+					   "<I=Iterations> <D=Number of digits to display>\n",
+					   argv[0]);
+			break;
 		default:
-			printf("Usage: %s [a/b/c/d] <Arguments>\n", argv[0]);
+			printf("Usage: %s [a/b/c/d/e] <Arguments>\n", argv[0]);
 	}
 }
 #endif

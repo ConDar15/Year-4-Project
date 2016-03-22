@@ -660,7 +660,7 @@ Therefore we only need to calculate inverse square roots for values of \(N\) in 
 
 %PCD%
 \begin{lstlisting}[frame=single,mathescape,caption={Newton Inverse Square Root Method},label={PCD_"Newton Inverse Square Root"}]
-  NewtonSquareRoot($N \in \Rpz, \tau \in (0,1)$):
+  NewtonInvSquareRoot($N \in \Rpz, \tau \in (0,1)$):
       Let $(a, b) :\in \left[\tfrac{1}{2}, 1\right)\times\Z$ s.t. $N = a*2^b$
       $x_0 := 1$
       if $b \equiv 0 \textrm{mod}\ 2$:
@@ -713,15 +713,29 @@ Therefore as \(M\epsilon_0 < 1\) we have satisfied \(\mathrm{NR}_3\), and as suc
 %SUB%
 \subsection{Comparrison of Methods}
 
-We have observed several methods that can be used to calculate Square Roots, and so now we will see how the methods compare to each other in theory and practice. The exact root method that we first discussed is the hardest to compare to the other methods as it works in a very different manner to the others. For now we will merely observe that it is an inefficient method that can be will be shown to tae longer than the others.\\
+We have observed several methods that can be used to calculate Square Roots, and so now we will see how the methods compare to each other in practice. The exact root method that we first discussed is the hardest to compare to the other methods as it works in a very different manner to the others. For now we will merely observe that it is an inefficient method that can be will be shown to tae longer than the others.\\
 
-Now for the other methods we will be comparing Algorithms \ref{PCD_"Square Root Bisection Method fixed bounds"}, \ref{PCD_"Newton Method for Square Root v3"} and \ref{PCD_"Newton Inverse Square Root"}; we will first consider their computational complexity. As all of these methods have a variable number of iterations that they can perform then we need to consider the complexity fore each iteration step.\\
+Second we need to compare the different methods discussed for the Newton Square Root method. As they work in the same general method, we really only need to test the computation time of the different methods. To do this we will be testing 1000 values in the range \((0,1000)\) and will calculate each of these values 100000 times, accurate to within a tolerance of \(10^-1)\), for each method to give the most accurate results. The table below gives the calculated results:
 
-First for the bisection method if we calculate \(x_n^2 - N\) (which takes 3 operations) whenever we generate \(n\), and as we also calculate \(x_n := \tfrac{1}{2}(a_n + b_n)\) each iteration. Then the total number of operations for each iteration is 6.\\
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|l|r|r|r|}
+\hline
+	&\codeinline{mpfr\_newton\_sqrt\_v1} &\codeinline{mpfr\_newton\_sqrt\_v2}
+	&\codeinline{mpfr\_newton\_sqrt\_v3}\\\hline
+	\textsf{Total time:} & 10.507s & 12.707s & 8.188s\\\hline
+	\textsf{Average time:} & 0.010s & 0.012s & 0.008s\\\hline
+	\textsf{Minimum time:} & 0.003s & 0.004s & 0.005s\\\hline
+	\textsf{Maximum time:} & 0.016s & 0.021s & 0.016s\\\hline
+\end{tabular}
+\end{center}}
 
-Next the regular newton method calculates \(\tfrac{1}{2}(x_n + \tfrac{a}{x_n})\) and \(|x_n+1 - x_n|\) each iteration whic take 3 and 3 operations respectively, giving a total of 6 operations per iteration; however as previously noted one of those operations is a costly division operation. Finally the inverse newton method calculates \(x_n(\tfrac{3}{2} + \tfrac{a}{2}x_n^2\) and \(|x_n+1 - x_n|\) each iteration which take 4 and 3 opertaions respectively, giving a total of 7 operations per iteration.\\
+Here we see that our third method, as expected, is the fastest of the proposed methods and so we will use this method going forwards. One unexpected result is that the second method is actually slwer than the first, which is likely due to the extra conversions, comparrisons and method calls; this slows down the execution more than it is sped up by reduction in number of iterations required.\\
 
-As we can see the number of operations per iteration are similar for each of these methods and so the number of required iterations will have a large impact on the speed of these methdos. Now we have seen the required number of iterations for a tolerance \(\tau = 10^{-k} : k \in \N\), for both the bisection and basic newton square root methods, and similar to the basic newton method, we can show that for the inverse newton method we are looking for \(n \in \N\) that satisfies the following inequality:
+Now for the comparrison of methods we will be comparing modified versions of Algorithms \ref{PCD_"Square Root Bisection Method fixed bounds"}, \ref{PCD_"Newton Method for Square Root v3"} and \ref{PCD_"Newton Inverse Square Root"}, which will execute for a given number of steps, rather than testing for the approximate error. To do this we need to consider how many iterations each method needs  to reach a particular number of decimal places of accuracy.\\
+
+We have seen the required number of iterations for a tolerance \(\tau = 10^{-k} : k \in \N\), for both the bisection and basic newton square root methods, and similar to the basic newton method, we can show that for the inverse newton method we are looking for \(n \in \N\) that satisfies the following inequality:
 
 \[n > \log_2\left(\log_{\tfrac{1}{6}(\sqrt{2} - 1)(2\sqrt{2} - 1)^3}\left(\frac{\tau}{\sqrt{2} - 1}\right)\right) - 1\]
 
@@ -739,3 +753,64 @@ This gives the following table:
 1,000,000 & 3219280 &	22 &	22\\\hline
 \end{tabular}
 \end{center}
+
+To show the above in action we have the table below which shows the convergence of all 3 methods to \(\sqrt{0.75} \approx 0.86602540378\), for differnct numbers of iterations \(n\) with the bold digits being those correct:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|l|l|}
+\hline
+\(n\) & \textrm{bisectSquareRoot(\(0.75, n\))}
+	  & \textrm{NewtonSquareRoot(\(0.75, n\))}
+	  & \textrm{NewtonInvSquareRoot(\(0.75, n\))}\\\hline
+0 & \textbf{0.}500000000000000000
+& \textbf{1}.000000000000000000
+& \textbf{0.}750000000000000000\\\hline
+1 & \textbf{0.}750000000000000000
+& \textbf{0.8}75000000000000000
+& \textbf{0.8}43750000000000000\\\hline
+2 & \textbf{0.8}75000000000000000
+& \textbf{0.8660}71428571428603
+& \textbf{0.86}5173339843750000\\\hline
+3 & \textbf{0.8}12500000000000000
+& \textbf{0.86602540}5007363691
+& \textbf{0.86602}4146705512976\\\hline
+4 & \textbf{0.8}43750000000000000
+& \textbf{0.866025403784438}596
+& \textbf{0.86602540378}1701674\\\hline
+5 & \textbf{0.8}59375000000000000
+& \textbf{0.866025403784438}596
+& \textbf{0.866025403784438}596\\\hline
+6 & \textbf{0.86}7187500000000000
+& \textbf{0.866025403784438}596
+& \textbf{0.866025403784438}596\\\hline
+\end{tabular}
+\end{center}}
+
+If we compare the methods so that they guarantee an accuracy of 10 decimal places, then we will be able to see their relative efficiency. In particular we will again be testing the three methods using 1000 values in the range \((0,1000)\), and calculating the square root of each of these values 10000 times for each method; further we will be including the the digit by digit method and the built-in C \codeinline{sqrt} function. The results calculated are present in the following table:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|r|}
+\hline
+	&\codeinline{root\_digits\_precise} 
+	&\codeinline{bisect\_sqrt}
+	&\codeinline{newton\_sqrt}
+	&\codeinline{newton\_inv\_sqrt}
+	&\codeinline{builtin\_sqrt}\\\hline
+	\textsf{Total time:} & 227.620s & 2.520s & 1.028s & 0.646s & 0.072s
+	\\\hline
+	\textsf{Average time:} & 0.227s & 0.002s & 0.001s & 0.000s & 0.000s
+	\\\hline
+	\textsf{Minimum time:} & 0.160s & 0.002s & 0.000s & 0.000s & 0.000s
+	\\\hline
+	\textsf{Maximum time:} & 0.429s & 0.004s & 0.004s & 0.001s & 0.000s
+	\\\hline
+\end{tabular}
+\end{center}}
+
+Here we see the expected result that the digit by digit method is the least efficient method, taking two orders of magnitude more time than the second least efficient. We also see that while the two differnt newton methods are similar in time, and that even though they each performed the same number of iterations, the inverse square root method is the faster; this is due to the method having no division operations to perform. The quickest is of course the built-in \codeinline{sqrt} function from C, this is due to an implenetation that uses several low-level features of the C language to acheive the displayed level of performance.\\
+
+In conclusion we can say that the best method that we have considered is Algorithm \ref{#ALG#} which has rapid convergence to the sought square root, while also having fast execution. However if we are in a situation where we require large numbers of digits of accuracy, and yet do not have a suitable floating point types large enough to store these values, then the digit by digit method can be used to get an aribitrary number of digits accuracy.

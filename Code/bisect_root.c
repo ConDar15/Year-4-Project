@@ -28,7 +28,6 @@ double bisect_sqrt(double N, double T)
 		e += 1;
 	}
 	
-	printf("N=%lf\ne=%d\n", N, e);
 	//Sets the initial values of a and b
 	a = 0;
 	b = 1;
@@ -39,6 +38,45 @@ double bisect_sqrt(double N, double T)
 	//fabs(f) > T is our approximation of 
 	//  f != 0, by using the given tolerance
 	while(fabs(f) > T && b - a > T)
+	{
+		//Update of the bounds a and b
+		if (f < 0)
+			a = x;
+		else
+			b = x;
+		
+		//Update of x and f
+		x = 0.5*(a + b);
+		f = x*x - N;
+	}
+	
+	return ldexp(x, e / 2);
+}
+
+double bisect_sqrt_it(double N, unsigned int I)
+{
+	assert(N >= 0);
+
+	int e;
+	double a, b, x, f;
+
+	N = frexp(N, &e);
+	if(e%2)
+	{
+		N /= 2;
+		e += 1;
+	}
+	
+	//Sets the initial values of a and b
+	a = 0;
+	b = 1;
+
+	x = 0.5*(a + b);
+	f = x*x - N;
+
+	//fabs(f) > T is our approximation of 
+	//  f != 0, by using the given tolerance
+	for(int i = 0; i < I; ++i)
 	{
 		//Update of the bounds a and b
 		if (f < 0)
@@ -241,7 +279,7 @@ int main(int argc, char** argv)
 
 	if (argc == 1)
 	{
-		printf("Usage: %s [a/b/c/d] [arguments]\n", argv[0]);
+		printf("Usage: %s [a/b/c/d/e] [arguments]\n", argv[0]);
 		exit(1);
 	}
 
@@ -337,8 +375,20 @@ int main(int argc, char** argv)
 					   "<n=nth root> <p=bits of precision>\n", argv[0]);
 			break;
 
+		case 'e':
+			if (argc == 5 && 
+					sscanf(argv[2], "%lf", &N) == 1 &&
+					sscanf(argv[3], "%u", &p) == 1 &&
+					sscanf(argv[4], "%u", &D) == 1)
+				printf("sqrt(%.*lf) =~ %.*lf\n", d(D), N, D, 
+												 bisect_sqrt_it(N, p));
+			else
+				printf("Usage: %s a <N=Value to sqrt> "
+					   "<I=iterartions> <D=Number of digits to display>\n", 
+					   argv[0]);
+			break;
 		default:
-			printf("Usage: %s [a/b/c/d] [arguments]", argv[0]);
+			printf("Usage: %s [a/b/c/d/e] [arguments]", argv[0]);
 	}
 }
 #endif

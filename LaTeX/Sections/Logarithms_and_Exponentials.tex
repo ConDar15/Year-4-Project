@@ -1,4 +1,77 @@
 \section{Logarithms and Exponentials}
+
+Exponentiation is the operation of calculating \(x^y\) where \(x\) and \(y\) are members of some field, for the purposes of this document we will be considering \(x, y \in \R\). This operation is widely used by many different branches of mathematics and industry, for example many real world phenomena can be modelled by exponentials; we would therefore like to be able to calculate \(x^y\) quickly and efficiently.\\
+
+The first thing we consider is that \(x^y\) when \(x \in \Rn\) and \(y \in \R\setminus\Z\) is not well-defined on \(\R\), and requires consideration of the function on the complex plane. Due to this we will not be considering negative numbers to non-integer bases; in particular, unless stated otherwise, we will be assuming that \(x \in \Rpz\).\\
+
+Now we also know that \(x^{-y} = \frac{1}{x^y}\) when \(y \in \R\), and as such we will also be restricting this section to the assumption that \(y \in \Rpz\). Further we consider the following facts: 
+
+\[x^0 = 1 \forall x \in \Rpz\]
+\[0^y = 0 \forall y \in \Rp\]
+
+If we take out these known trivial cases then we can restrict this section to considering only \((x, y) \in \Rp^2\).\\
+
+Now if we have \(y \in \Rp\) then it follows that \(\exists (a, b) \in \Zpz \times [0,1)\) such that \(y = a + b\). This allows us to use the identy that \(x^{m+n} = x^mx^n\) to consider the following two cases seperately:
+
+%EQN%
+\begin{equation}
+\label{EQN_"exp case 1"}
+	x^a : a \in \Zpz
+\end{equation}
+\begin{equation}
+\label{EQN_"exp case 2"}
+	x^b : b \in [0,1)
+\end{equation}
+
+%SUB%
+\subsection{Calculating \(x^a\)}
+
+As we know that \(a \in \Zpz\), then we know that \(x^a = \underbrace{x\times \cdots \times x}_a\); i.e. the problem is equivalent to finding \(x\) multiplied with itself \(a\) times. As we are only dealing with \(a \in \Zpz\), then we will be considering \(x \in \R\) as we can calculate exponentials of negative numbers.\\
+
+The naive way to go about calculating \(x^a\) is to simply perform the multiplication of \(x\) by itself \(a\) times. The algorithm for that can be seen below:
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Naive integer exponentiation},label={PCD_"Naive int exp"}]
+  naive_int_exp($x \in \R, a \in \Zpz$):
+      $n := 0$
+      $z := 1$
+      while $n < a$:
+          $z \mapsto x\cdot z$
+      return $z$
+\end{lstlisting}
+
+This algorithm is very simple and has complexity of \(\bigO(a)\), which is a reasonable complexity, but still has the chance to grow large as \(a\) grows. Instead we can consider a more informed approach, in particular we know that either \(2 \mid a\) or \(2 \nmid a\), which then gives us the following:
+
+\begin{displaymath}
+	x^a = \left\{\begin{array}{lcl}
+		(x^2)^{\tfrac{a}{2}} & : & 2 \mid a\\
+		x \cdot (x^2)^{\tfrac{a-1}{2}} & : & 2 \nmid a
+	\end{array}\right.
+\end{displaymath}
+
+We can use this fact to build a recursive method of calculating \(x^a\), where we repeatedly call the method from within itself. To ensure the method ends correctly we need to identify a base case for the recursion, i.e. where the process stops and returns the correct value. We can see that eventually the above will reach the point where \(a = 0\), in which case we know that \(x^0 = 1\); this will be the base case of our recursion.\\
+
+We want to ensure that the algorithm will terminate, which we can do by seeing that it terminates when \(a = 0\) and then considering \(a \in \Zp\). Now if \(2 \mid a\) then \(\tfrac{a}{2} \in \Zp\) and also \(\tfrac{a}{2} < a\), similarly if \(2 \nmid a\) then \(\tfrac{a-1}{2} \in \Zpz\) because \(a \ge 1\) and also \(\tfrac{a-1}{2} < a\). Thus we see that the sequence produced by \(a \in \Zp\) is a strictly decreasing sequence that is bounded below by 0 and thus we must eventually reach 0, meaning the algorithm terminates.\\
+
+Instead of a recursive algorithm that calls itself the algorithm below is an iterative version which performs the same function:
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Exponentiation by squaring},label={PCD_"exp by square"}]
+  exp_by_squaring($x \in \R, a \in \Zpz$):
+      $n := a$
+      $z := 1$
+      $\hat{x} := x$
+      while $n > 0$:
+          if $2 \nmid n$:
+              $z \mapsto \hat{x} \times z$
+              $n \mapsto n - 1$
+          $\hat{x} \mapsto \hat{x}^2$
+          $n \mapsto \tfrac{n}{2}$
+      return $z$
+\end{lstlisting}
+
+This algorithm is much more efficient than Algorithm \ref{PCD_"Naive int exp"} due to the number of times the inner loop is executed. The inner loop drives \(a\) towards 0 by dividing by 2 each step, this means that as \(a = \bigO(2^{\log_2(a)})\), then this goal is acheived in only \(\log_2(a)\) loops. Therefore the complexity of this algorithm is \(\bigO(\log_2(a))\), which is an improvement upon the previous algorithm's complexity of \(\bigO(a)\).
+
 \subsection{Taylor Series Method}
 \subsection{Hyperbolic Series Method}
 \subsection{CORDIC}

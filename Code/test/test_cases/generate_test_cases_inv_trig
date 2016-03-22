@@ -8,4 +8,4 @@ num  = int(input('Number of test cases: '))
 with open('{}_{}'.format(name,num),'w') as f:
 	f.write('{}\n'.format(num))
 	for i in range(num):
-		f.write('{}\n'.format(u(0, 100)))
+		f.write('{}\n'.format(u(-1, 1)))
