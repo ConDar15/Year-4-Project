@@ -19,9 +19,9 @@ EXE=-D COMPILE_MAIN
 #The lists of files that are used or created
 INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
 		  geometric_trig.c geometric_inv_trig.c taylor_trig.c \
-		  taylor_inv_trig.c cordic_trig.c
+		  taylor_inv_trig.c cordic_trig.c int_exp.c
 TESTFILES=test_newton_sqrt.c test_trig_methods.c test_inv_trig_methods.c \
-		  test_sqrt_methods.c
+		  test_sqrt_methods.c test_int_exp_methods.c
 OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
 OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
 TESTS   =$(addprefix $(TSTDIR)/, $(TESTFILES:.c=.out))
@@ -108,6 +108,10 @@ $(OUTDIR)/cordic_trig.out: cordic_trig.c trig_utilities.h trig_fixed.h \
 	$(CC) $(CFLAGS) $(EXE) cordic_trig.c $(UTILLIB) $(MATHLIB) -o $@
 cordic_trig: $(OUTDIR)/cordic_trig.out
 
+## LOGARITHM AND EXPONENTIAL FILES ##
+$(OUTDIR)/int_exp.out: int_exp.c int_exp.h $(LU)
+	$(CC) $(CFLAGS) $(EXE) int_exp.c $(UTILLIB) $(MPFRLIB) -o $@
+
 ## TESTING FILES ##
 $(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \
 				$(TSTDIR)/test_utilities.h \
@@ -143,3 +147,8 @@ $(TSTDIR)/test_sqrt_methods.out: $(TSTDIR)/test_sqrt_methods.c \
 		$(OBJDIR)/newton_sqrt.o $(OBJDIR)/newton_inv_sqrt.o\
 		$(MATHLIB) $(UTILLIB) -I. -o $(@)
 test_sqrt_methods: $(TSTDIR)/test_sqrt_methods.out
+
+$(TSTDIR)/test_int_exp_methods.out: $(TSTDIR)/test_int_exp_methods.c \
+				$(TSTDIR)/test_utilities.h $(OBJDIR)/int_exp.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/int_exp.o $(MPFRLIB) $(UTILLIB) -I. -o $@
+test_int_exp_methods: $(TSTDIR)/test_int_exp_methods.out

@@ -70,7 +70,83 @@ Instead of a recursive algorithm that calls itself the algorithm below is an ite
       return $z$
 \end{lstlisting}
 
-This algorithm is much more efficient than Algorithm \ref{PCD_"Naive int exp"} due to the number of times the inner loop is executed. The inner loop drives \(a\) towards 0 by dividing by 2 each step, this means that as \(a = \bigO(2^{\log_2(a)})\), then this goal is acheived in only \(\log_2(a)\) loops. Therefore the complexity of this algorithm is \(\bigO(\log_2(a))\), which is an improvement upon the previous algorithm's complexity of \(\bigO(a)\).
+This algorithm is much more efficient than Algorithm \ref{PCD_"Naive int exp"} due to the number of times the inner loop is executed. The inner loop drives \(a\) towards 0 by dividing by 2 each step, this means that as \(a = \bigO(2^{\log_2(a)})\), then this goal is acheived in only \(\log_2(a)\) loops. Therefore the complexity of this algorithm is \(\bigO(\log_2(a))\), which is an improvement upon the previous algorithm's complexity of \(\bigO(a)\).\\
+
+To see this difference in efficiency in action the following table shows the times taken for each method when comparing 1000 different pairs of values \((x, a) \in [0, 10]\times([0,100]\cap\Z)\). With these values we calculated \(x^a\) using both methods 100000 times to get the following results:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|c|r|r|}
+	\hline
+	& \codeinline{naive\_int\_exp} & \codeinline{squaring\_int\_exp}
+		\\\hline
+	\textsf{Total time:} & 16.800s & 2.593s\\\hline
+	\textsf{Average time:} & 0.016s & 0.002s\\\hline
+	\textsf{Minimum time:} & 0.000s & 0.000s\\\hline
+	\textsf{Maximum time:} & 0.037s & 0.004s\\\hline
+\end{tabular}
+\end{center}}
+
+With this we will move on to further subsections as there are few improvements that can be made on an \(\bigO(\log_2(a))\) algorithm, particularly in this instance.
+
+\subsection{Calculating \(x^b\)}
+
+If we have \(b \in (0, 1)\), then we obviously can't use the our previous sbusection for calculating \(x^y\). The most common way of calculating such exponentiation is by considering that \(x = e^{\ln(x)}\) and thus \(x^b = (e^{\ln(x)})^b = e^{b\ln(x)}\); however this now raises the problem of how to calculate both \(e^\alpha\) and \(\ln(\beta)\). The following will deal with how to calculate these values and thus use them in conjunction to calculate \(x^b\).\\
+
+\subsection{TBC}
+
+The mathematical constant \(e\) has been known since the early 1600s and was originally calculated by Jacob Bernoulli, and was studied bye Leonhard Euler, where it appeared in Euler's Mechanica in 1736. While several possible equivalent definitions of \(e\) exist the most common such definition is that \(e := \lim_{n \to \infty}(1 + \tfrac{1}{n})^n\).\\
+
+If we now consider the definition of \(e\) and also consider \(e^x\), then we can show that \(e^\alpha = \lim_{n\to\infty}(1+\tfrac{x}{n})^n\). This gives us our first basic method of how to calculate \(e^x\):
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Baisc Method for calculating \(e^\alpha\)},label={PCD_"basic exp"}]
+  basic_exp($x \in \R, n \in \N$)
+      return $(1 + \tfrac{x}{n})^n$
+\end{lstlisting}
+
+If we consider \((1+\tfrac{x}{n})^n\) as a function of a continuous \(n\) then we can find the following derivation:
+
+\begin{align*}
+	\frac{d}{dn}\left[(1 + \frac{x}{n})^n\right]
+		&= (1+\frac{x}{n})^n\frac{d}{dn}\left[n\ln(1+\frac{x}{n})\right]\\
+	&= (1+\frac{x}{n})^n(\frac{d}{dn}[n]\ln(1+\frac{x}{n}) 
+		+ n\frac{d}{dn}\left[\ln(1+\frac{x}{n})\right])\\
+	&=(1+\frac{x}{n})^n(\ln(1+\frac{x}{n}) 
+		+ \frac{n}{1 + \frac{x}{n}}\frac{d}{dn}(1 + \frac{x}{n}))\\
+	&=(1+\frac{x}{n})^n(\ln(1+\frac{x}{n}) - \frac{x}{n + x})\\
+	&=\frac{(1+\frac{x}{n})^n}{x + n}((x + n)\ln(1 + \frac{x}{n}) - x)
+\end{align*}
+
+By the last line of this we can see that because \((x, n) \in \Rp^2\) then \(\ln(1 + \frac{x}{n} > 0\) and thus we conclude that \((x+n)\ln(1+\frac{x}{n}) - x > 0\). Therefore we see that \(\frac{d}{dn}\left[(1+\frac{x}{n})^n\right] > 0\) for all \((x, n) \in \Rp^2\), and in particular this means that \((1+\frac{x}{n})^n < (1+\frac{x}{n+1})^{n+1} \forall n \in \N\).\\
+
+One consequence of this is that \((1+\frac{x}{n})^n < e^x \forall n \in \N\), therefore we can define the error of algorithm \ref{PCD_"basic exp"} as \(\epsilon_N := |e^x - (1+\frac{x}{n})^n| = e^x - (1+\frac{x}{n})^n\). Now as \(\lim_{n\to\infty}(1+\frac{x}{n})^n = e^x\) then we see that \(\lim_{n\to\infty}\epsilon_n = 0\), and thus our algorithm is correct and valid for approximating \(e^x\).\\
+
+Next we see that this method, while simple, approximates \(e^x\) very poorly. In particular the table below shows the approximation of \(e^{0.75}\) for differnt values of \(n\), where the bold digits are the correctly approximatd digits.
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(n\) & \textsf{Approximation of \(e^{0.75}\)}\\\hline
+1 & 1.800000000000000044\\\hline
+10 & \textbf{2.}158924997272786787\\\hline
+100 & \textbf{2.2}18468215957572747\\\hline
+1000 & \textbf{2.22}4829248807374831\\\hline
+10000 & \textbf{2.225}469716120127850\\\hline
+100000 & \textbf{2.2255}33806810873500\\\hline
+1000000 & \textbf{2.225540}216319864358\\\hline
+10000000 & \textbf{2.225540}857275162929\\\hline
+100000000 & \textbf{2.22554092}1370736781\\\hline
+1000000000 & \textbf{2.22554092}7780294606\\\hline
+\end{tabular}
+\end{center}}
+
+With this table we see that the method very poorly approximates \(e^x\), requiring a very large \(n\) to get just a few digits of accuracy. While this does not require more calculations from the method, requiring this large a value of \(n\) can lead to inaccuracies in the implementation of the algorithm using \codeinline{double} data types in C.\\
+
+In general there are better methods of approximating \(e^x\) and also \(\ln(x)\), which while requiring more calculations are much more accurate than the most basic method presented here.
 
 \subsection{Taylor Series Method}
 \subsection{Hyperbolic Series Method}

@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+
+from random import uniform as u, randint as r
+
+name = input('Base Filename: ').replace(' ', '_')
+num  = int(input('Number of test cases: '))
+mb	 = int(input('Minimum value for base: '))
+Mb	 = int(input('Maximum value for base: '))
+me   = int(input('Minimum value for exponent: '))
+Me   = int(input('Maximum value for exponent: '))
+
+with open('{}_{}_b{}-{}_e{}-{}'
+			.format(name,num, mb, Mb, me, Me),'w') as f:
+	f.write('{}\n'.format(num))
+	for i in range(num):
+		f.write('{}\t{}\n'.format(u(mb, Mb), r(me, Me)))
