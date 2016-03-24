@@ -90,10 +90,12 @@ To see this difference in efficiency in action the following table shows the tim
 
 With this we will move on to further subsections as there are few improvements that can be made on an \(\bigO(\log_2(a))\) algorithm, particularly in this instance.
 
+%SUB%
 \subsection{Calculating \(x^b\)}
 
 If we have \(b \in (0, 1)\), then we obviously can't use the our previous sbusection for calculating \(x^y\). The most common way of calculating such exponentiation is by considering that \(x = e^{\ln(x)}\) and thus \(x^b = (e^{\ln(x)})^b = e^{b\ln(x)}\); however this now raises the problem of how to calculate both \(e^\alpha\) and \(\ln(\beta)\). The following will deal with how to calculate these values and thus use them in conjunction to calculate \(x^b\).\\
 
+%SUB%
 \subsection{TBC}
 
 The mathematical constant \(e\) has been known since the early 1600s and was originally calculated by Jacob Bernoulli, and was studied bye Leonhard Euler, where it appeared in Euler's Mechanica in 1736. While several possible equivalent definitions of \(e\) exist the most common such definition is that \(e := \lim_{n \to \infty}(1 + \tfrac{1}{n})^n\).\\
@@ -148,7 +150,151 @@ With this table we see that the method very poorly approximates \(e^x\), requiri
 
 In general there are better methods of approximating \(e^x\) and also \(\ln(x)\), which while requiring more calculations are much more accurate than the most basic method presented here.
 
+%SUB%
 \subsection{Taylor Series Method}
+
+\theoremstyle{plain}
+\newtheorem{nat log dif}{Proposition}[subsection]
+\newtheorem{log convergence}[nat log dif]{Proposition}
+
+If we take the elementary result from calculas that \(\frac{d}{dx}e^x = e^x\), then we can calculate the McClaurin series of \(e^x\). By the definition of a McClaurin series we know that the series expansion of \(e^x\) about 0 is 
+
+\[\sum_{k=0}^\infty \frac{d^{(k)}}{dx^k}[e^x](0)\frac{x^k}{k!}\]
+
+As \(\frac{d^{(k)}}{dx^k}[e^x] = e^x \forall k \in \Zpz\) and \(e^0 = 1\) then we see that the series becomes
+
+\[\sum_{k=0}^\infty \frac{x^k}{k!}\]
+
+Using this we see that \(e^x \approx \sum_{k=0}^n \frac{x^k}{k!}\), which gives the following method for approximating \(e^x\):
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor Method for calculating \(e^x\)},label={PCD_"taylor exp"}]
+  taylor_exp($x \in \R, n \in \Zpz$)
+      $t = 1$
+      $z = 1$
+      $k = 1$
+      while $k < n$:
+          $t \mapsto \frac{t\cdot x}{n}$
+          $z \mapsto z + t$
+          $k \mapsto k + 1$
+      return $z$
+\end{lstlisting}
+
+This allows us to calculate \(e^x\) more efficiently as we can note that the error of the approximation is easy to approximate. We know that \(\epsilon_n := |e^x - \sum_{k=0}^n\frac{x^k}{k!}| \le \frac{|x|^{n+1}}{(n+1)!}\) for all \(n \in \Zpz\). While we can't guarantee the size of \(x\) in general we will consider \(x \in (0,1)\) for the purposes of analysing this function.\\
+
+As \(x \in (0,1)\) then it follows that \(x < 1\) and thus we can see that \(\epsilon_n < \frac{1}{n!} \forall n \in \Zpz\). Using this we can see that if we wish to use our method such that the error is at most \(\tau_d := 10^{-d}\), then we need to find \(\n \in \Zpz : \frac{1}{n!} < \tau_d\). The table below shows some values for \((n, d)\) pairs such that \(n\) is the smallest positive integer such that \(\frac{1}{n!} < \tau_d\):
+
+%TBL%
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d \in \N\) 
+	& \(\textrm{arg}\max\left\{n \in \N : n! > 10^d\right\}\)\\\hline
+1 & 4\\\hline
+10 & 14 \\\hline
+100 & 70 \\\hline
+1000 & 450\\\hline
+\end{tabular}
+\end{center}
+
+Thus we see that that we can guarantee 100 digits of accuracy with an input of \(n \ge 70\) and 1000 digits of accuracy with \(n \ge 450\), this is much less than our previous method where an input of \(n = 1000\) only gave 2 decimal places of accuracy.\\
+
+The inverse of the function \(z = e^x\) is the logarithm function \(\ln(z) = x\), which we can again consider for Taylor Series expansion. First we will show the result from calculas that \(\frac{d}{dx}[\ln(x)] = \frac{1}{x}\):
+
+%THM%
+\begin{nat log dif}
+\[\frac{d}{dx}[\ln(x)] = \frac{1}{x}\]
+\end{nat log dif}
+\begin{proof}
+We will prove this from the first principles using the definition that \(\frac{d}{dx}[f(x)] = \lim_{h\to 0} \frac{f(x + h) - f(x)}{h}\)
+
+\begin{align*}
+	\frac{d}{dx}[\ln(x)] 
+		&= \lim_{h\to 0}\frac{\ln(x + h) - \ln(x)}{h}\\
+		&= \lim_{h\to 0}\frac{\ln(1 + \frac{h}{x})}{h}\\
+		&= \lim_{h\to 0}\ln\left((1+\frac{h}{x})^{\frac{1}{h}}\right)
+\end{align*}
+
+If we let \(u := \frac{h}{x}\), then we get that \(ux = h\) and \(\frac{1}{h} = \frac{1}{ux}\). Also \(\lim_{h\to 0}u = 0\), and so we get the following:
+
+\begin{align*}
+	\frac{d}{dx}[\ln(x)]
+		&= \lim_{u\to 0}\ln((1+u)^{\frac{1}{ux}})\\
+		&= \frac{1}{x}\lim_{u\to 0}\ln((1+u)^{1/u})\\
+\end{align*}
+
+If we now let \(n := \frac{1}{u}\) and consider that \(\lim_{u\to 0} n = \infty\), then our derivative becomes:
+
+\begin{align*}
+	\frac{d}{dx}\ln(x) 
+		&= \frac{1}{x}\lim_{n\to\infty}\ln((1 + \frac{1}{n})^n)\\
+		&= \frac{1}{x}\ln(\lim_{n\to\infty}(1+\frac{1}{n})^n)\\
+		&= \frac{1}{x}\ln(e) &\textrm{by the definition of \(e\)}\\
+		&= \frac{1}{x}
+\end{align*}
+\end{proof}
+
+Now we know that \(\frac{d^k}{dx^k}[\frac{1}{x}] = (-1)^kk!x^{-k-1}\), and thus we can build up a Taylor Series expansion. In this case, rather than centering the series about \(x=0\) for a McClaurin series we can instead center the series around \(x=1\) which gives the following series expansion for \(\ln(x)\):
+
+\begin{align*}
+	\sum_{k=0}^\infty \frac{\frac{d^k}{dx^k}[\ln(x)](1)}{k!}(x-1)^k
+		&=\ln(1) + \sum_{k=1}^\infty\frac{\frac{d^{k-1}}{dx^{k-1}}
+			[x^{-1}](1)}{k!}(x-1)^k\\
+		&=\sum_{k=1}^\infty\frac{[(-1)^{k-1}(k-1)!x^{-k}](1)}
+			{k!}(x-1)^k\\
+		&=\sum_{k=1}^\infty\frac{(-1)^{k-1}}{k}(x-1)^k\\
+		&=-\sum_{k=1}^\infty\frac{(1-x)^k}{k}
+\end{align*}
+				
+We know that \(\ln(x) = -\sum_{k=1}^\infty\frac{(1-x)^k}{k}\) when the series \(\sum_{k=1}^\infty\frac{(1-x)^k}{k}\) converges. We thus need to know when the sum converges.
+
+%THM%
+\begin{log convergence}
+The series \(\sum_{k=1}^\infty\frac{(1-x)^k}{k}\) converges when \(x \in (0,2)\).
+\end{log convergence}
+\begin{proof}
+Let \(a_k := \frac{(1-x)^k}{k}\). We will proceed by using the ratio test to show when the series converges absolutely. The test states that the series converges when \(\lim_{k\to\intfy} \left|\frac{a_{k+1}}{a_k}\right| < 1\).\\
+
+Now we can consider the following derivation:
+
+\begin{align*}
+	\lim_{k\to\infty}\left|\frac{a_{k+1}}{a_k}\right|
+		&=\lim_{k\to\infty}\left|\frac{\frac{1}{k+1}(1-x)^{k+1}}
+			{\frac{1}{k}(1-x)^k}\right|\\
+		&=\lim_{k\to\infty}\left|\frac{k}{k+1}(1-x)\right|\\
+		&=|1-x|\lim_{k\to\infty}\left|\frac{k}{k+1}\right|\\
+		&=|1-x|
+\end{align*}
+
+Therefore our series converges when:
+\begin{align*}
+	|1-x| < 1 &\iff -1 < 1 - x < 1\\
+		&\iff -1 < x - 1 < 1\\
+		&\iff 0 < x < 2
+\end{align*}
+
+Hence \(\sum_{k=1}^\infty \frac{(1-x)^k}{k}\) converges when \(x \in (0, 2)\).
+\end{proof}
+
+Now as we can't know if \(x \in (0,2)\) then we can consider that \(\forall x \in \Rp \exists (a, b) \in [\frac{1}{2}, 1)\times\Z : x = a\cdot2^b\); thus we see that \(\ln(x) = \ln(a\cdot2^b) = b\ln(2) + \ln(a)\). As previously noted in Section \ref{#REF#} this operation, while theoretically complex, is simple to calculate for most computers by how the represent floating point values.\\
+
+With this we can then use the following method to approximate \(\ln(x)\) by the taylor polynomial \(-\sum_{k=1}^n\frac{(1-x)^k}{k}\):
+
+%PCD%
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor Method for calculating \(\ln(x)\)},label={PCD_"taylor log"}]
+  taylor_log($x \in \Rp, n \in \N$):
+      Find $(a, b) \in [\tfrac{1}{2}, 1)\times \Z$ such that $x = a\cdot2^b$
+      $y := 1 - a$
+      $t := y$
+      $z := -y$
+      $k := 1$
+      while $k < n$:
+          $t \mapsto t\cdot y$
+          $z \mapsto z + \tfrac{t}{k}$
+          $k \mapsto k + 1$
+      return $z -b\ln(2)$
+\end{lstlisting}
+
 \subsection{Hyperbolic Series Method}
 \subsection{CORDIC}
 \TODO{Fill this out with stuff}
