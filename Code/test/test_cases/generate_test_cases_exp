@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+
+from random import uniform as u, randint as r
+
+name = input('Base Filename: ').replace(' ', '_')
+num  = int(input('Number of test cases: '))
+
+with open('{}_{}'.format(name, num),'w') as f:
+	f.write('{}\n'.format(num))
+	for i in range(num):
+		f.write('{}\n'.format(u(0.5, 1)))

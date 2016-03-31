@@ -19,9 +19,10 @@ EXE=-D COMPILE_MAIN
 #The lists of files that are used or created
 INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
 		  geometric_trig.c geometric_inv_trig.c taylor_trig.c \
-		  taylor_inv_trig.c cordic_trig.c int_exp.c
+		  taylor_inv_trig.c cordic_trig.c int_exp.c taylor_exp_log.c \
+		  hyperbolic_log.c cont_frac_exp.c
 TESTFILES=test_newton_sqrt.c test_trig_methods.c test_inv_trig_methods.c \
-		  test_sqrt_methods.c test_int_exp_methods.c
+		  test_sqrt_methods.c test_int_exp_methods.c test_exp_methods.c
 OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
 OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
 TESTS   =$(addprefix $(TSTDIR)/, $(TESTFILES:.c=.out))
@@ -111,6 +112,25 @@ cordic_trig: $(OUTDIR)/cordic_trig.out
 ## LOGARITHM AND EXPONENTIAL FILES ##
 $(OUTDIR)/int_exp.out: int_exp.c int_exp.h $(LU)
 	$(CC) $(CFLAGS) $(EXE) int_exp.c $(UTILLIB) $(MPFRLIB) -o $@
+int_exp: $(OUTDIR)/int_exp.out
+
+$(OUTDIR)/taylor_exp_log.out: taylor_exp_log.c taylor_exp_log.h $(LU) \
+							  int_exp.h $(OBJDIR)/int_exp.o \
+							  log_exp_utilities.h
+	$(CC) $(CFLAGS) $(EXE) taylor_exp_log.c $(OBJDIR)/int_exp.o \
+		$(UTILLIB) $(MATHLIB) -o $@
+taylor_exp_log: $(OUTDIR)/taylor_exp_log.out
+
+$(OUTDIR)/hyperbolic_log.out: hyperbolic_log.c hyperbolic_log.h $(LU) \
+							  log_exp_utilities.h
+	$(CC) $(CFLAGS) $(EXE) hyperbolic_log.c $(UTILLIB) $(MATHLIB) -o $@
+hyperbolic_log: $(OUTDIR)/hyperbolic_log.out
+
+$(OUTDIR)/cont_frac_exp.out: cont_frac_exp.c cont_frac_exp.h int_exp.h \
+							 hyperbolic_log.h $(LU)
+	$(CC) $(CFLAGS) $(EXE) cont_frac_exp.c $(OBJDIR)/int_exp.o \
+		$(OBJDIR)/hyperbolic_log.o $(UTILLIB) $(MATHLIB) -o $@
+cont_frac_exp: $(OUTDIR)/cont_frac_exp.out
 
 ## TESTING FILES ##
 $(TSTDIR)/test_newton_sqrt.out: $(TSTDIR)/test_newton_sqrt.c \
@@ -151,4 +171,14 @@ test_sqrt_methods: $(TSTDIR)/test_sqrt_methods.out
 $(TSTDIR)/test_int_exp_methods.out: $(TSTDIR)/test_int_exp_methods.c \
 				$(TSTDIR)/test_utilities.h $(OBJDIR)/int_exp.o $(LU)
 	$(CC) $(CFLAGS) $< $(OBJDIR)/int_exp.o $(MPFRLIB) $(UTILLIB) -I. -o $@
-test_int_exp_methods: $(TSTDIR)/test_int_exp_methods.out
+test_int_exp_methods: $(TSTDIR)/test_int_exp_methods.out;
+
+$(TSTDIR)/test_exp_methods.out: $(TSTDIR)/test_exp_methods.c \
+								$(TSTDIR)/test_utilities.h \
+								$(OBJDIR)/taylor_exp_log.o \
+								$(OBJDIR)/cont_frac_exp.o \
+								$(OBJDIR)/int_exp.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/taylor_exp_log.o \
+		$(OBJDIR)/cont_frac_exp.o $(OBJDIR)/int_exp.o \
+		$(OBJDIR)/hyperbolic_log.o $(MATHLIB) $(UTILLIB) -I. -o $@
+test_exp_methods: $(TSTDIR)/test_exp_methods.out

@@ -8,7 +8,7 @@
 
 	extern const double ROOT_2, ROOT_2_INV;
 	extern mpfr_t MPFR_ROOT_2, MPFR_ROOT_2, 
-				  MPFR_ONE, MPFR_HALF, MPFR_THREE_HALF; 
+				  MPFR_ONE, MPFR_HALF, MPFR_THREE_HALF, MPFR_TWO; 
 
 	unsigned int d(unsigned int);
 	void mpfr_digits_to_tolerance(unsigned int, mpfr_t);
