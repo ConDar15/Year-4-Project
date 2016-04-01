@@ -11,7 +11,7 @@ Now we also know that \(x^{-y} = \frac{1}{x^y}\) when \(y \in \R\), and as such 
 
 If we take out these known trivial cases then we can restrict this section to considering only \((x, y) \in \Rp^2\).\\
 
-Now if we have \(y \in \Rp\) then it follows that \(\exists (a, b) \in \Zpz \times [0,1)\) such that \(y = a + b\). This allows us to use the identy that \(x^{m+n} = x^mx^n\) to consider the following two cases seperately:
+Now if we have \(y \in \Rp\) then it follows that \(\exists (a, b) \in \Zpz \times [0,1)\) such that \(y = a + b\). This allows us to use the identity that \(x^{m+n} = x^mx^n\) to consider the following two cases separately:
 
 %EQN%
 \begin{equation}
@@ -70,7 +70,7 @@ Instead of a recursive algorithm that calls itself the algorithm below is an ite
       return $z$
 \end{lstlisting}
 
-This algorithm is much more efficient than Algorithm \ref{PCD_"Naive int exp"} due to the number of times the inner loop is executed. The inner loop drives \(a\) towards 0 by dividing by 2 each step, this means that as \(a = \bigO(2^{\log_2(a)})\), then this goal is acheived in only \(\log_2(a)\) loops. Therefore the complexity of this algorithm is \(\bigO(\log_2(a))\), which is an improvement upon the previous algorithm's complexity of \(\bigO(a)\).\\
+This algorithm is much more efficient than Algorithm \ref{PCD_"Naive int exp"} due to the number of times the inner loop is executed. The inner loop drives \(a\) towards 0 by dividing by 2 each step, this means that as \(a = \bigO(2^{\log_2(a)})\), then this goal is achieved in only \(\log_2(a)\) loops. Therefore the complexity of this algorithm is \(\bigO(\log_2(a))\), which is an improvement upon the previous algorithm's complexity of \(\bigO(a)\).\\
 
 To see this difference in efficiency in action the following table shows the times taken for each method when comparing 1000 different pairs of values \((x, a) \in [0, 10]\times([0,100]\cap\Z)\). With these values we calculated \(x^a\) using both methods 100000 times to get the following results:
 
@@ -93,7 +93,7 @@ With this we will move on to further subsections as there are few improvements t
 %SUB%
 \subsection{Calculating \(x^b\)}
 
-If we have \(b \in (0, 1)\), then we obviously can't use the our previous sbusection for calculating \(x^y\). The most common way of calculating such exponentiation is by considering that \(x = e^{\ln(x)}\) and thus \(x^b = (e^{\ln(x)})^b = e^{b\ln(x)}\); however this now raises the problem of how to calculate both \(e^\alpha\) and \(\ln(\beta)\). The following will deal with how to calculate these values and thus use them in conjunction to calculate \(x^b\).\\
+If we have \(b \in (0, 1)\), then we obviously can't use the our previous subsection for calculating \(x^y\). The most common way of calculating such exponentiation is by considering that \(x = e^{\ln(x)}\) and thus \(x^b = (e^{\ln(x)})^b = e^{b\ln(x)}\); however this now raises the problem of how to calculate both \(e^\alpha\) and \(\ln(\beta)\). The following will deal with how to calculate these values and thus use them in conjunction to calculate \(x^b\).\\
 
 %SUB%
 \subsection{Naive Method}
@@ -125,7 +125,7 @@ By the last line of this we can see that because \((x, n) \in \Rp^2\) then \(\ln
 
 One consequence of this is that \((1+\frac{x}{n})^n < e^x \forall n \in \N\), therefore we can define the error of algorithm \ref{PCD_"basic exp"} as \(\epsilon_N := |e^x - (1+\frac{x}{n})^n| = e^x - (1+\frac{x}{n})^n\). Now as \(\lim_{n\to\infty}(1+\frac{x}{n})^n = e^x\) then we see that \(\lim_{n\to\infty}\epsilon_n = 0\), and thus our algorithm is correct and valid for approximating \(e^x\).\\
 
-Next we see that this method, while simple, approximates \(e^x\) very poorly. In particular the table below shows the approximation of \(e^{0.75}\) for differnt values of \(n\), where the bold digits are the correctly approximatd digits.
+Next we see that this method, while simple, approximates \(e^x\) very poorly. In particular the table below shows the approximation of \(e^{0.75}\) for different values of \(n\), where the bold digits are the correctly approximated digits.
 
 %TBL%
 {\fontfamily{pcr}\selectfont
@@ -157,7 +157,7 @@ In general there are better methods of approximating \(e^x\) and also \(\ln(x)\)
 \newtheorem{nat log dif}{Proposition}[subsection]
 \newtheorem{log convergence}[nat log dif]{Proposition}
 
-If we take the elementary result from calculas that \(\frac{d}{dx}e^x = e^x\), then we can calculate the McClaurin series of \(e^x\). By the definition of a McClaurin series we know that the series expansion of \(e^x\) about 0 is 
+If we take the elementary result from calculus that \(\frac{d}{dx}e^x = e^x\), then we can calculate the McClaurin series of \(e^x\). By the definition of a McClaurin series we know that the series expansion of \(e^x\) about 0 is 
 
 \[\sum_{k=0}^\infty \frac{d^{(k)}}{dx^k}[e^x](0)\frac{x^k}{k!}\]
 
@@ -199,7 +199,7 @@ As \(x \in (0,1)\) then it follows that \(x < 1\) and thus we can see that \(\ep
 
 Thus we see that that we can guarantee 100 digits of accuracy with an input of \(n \ge 70\) and 1000 digits of accuracy with \(n \ge 450\), this is much less than our previous method where an input of \(n = 1000\) only gave 2 decimal places of accuracy.\\
 
-The inverse of the function \(z = e^x\) is the logarithm function \(\ln(z) = x\), which we can again consider for Taylor Series expansion. First we will show the result from calculas that \(\frac{d}{dx}[\ln(x)] = \frac{1}{x}\):
+The inverse of the function \(z = e^x\) is the logarithm function \(\ln(z) = x\), which we can again consider for Taylor Series expansion. First we will show the result from calculus that \(\frac{d}{dx}[\ln(x)] = \frac{1}{x}\):
 
 %THM%
 \begin{nat log dif}
@@ -234,7 +234,7 @@ If we now let \(n := \frac{1}{u}\) and consider that \(\lim_{u\to 0} n = \infty\
 \end{align*}
 \end{proof}
 
-Now we know that \(\frac{d^k}{dx^k}[\frac{1}{x}] = (-1)^kk!x^{-k-1}\), and thus we can build up a Taylor Series expansion. In this case, rather than centering the series about \(x=0\) for a McClaurin series we can instead center the series around \(x=1\) which gives the following series expansion for \(\ln(x)\):
+Now we know that \(\frac{d^k}{dx^k}[\frac{1}{x}] = (-1)^kk!x^{-k-1}\), and thus we can build up a Taylor Series expansion. In this case, rather than centring the series about \(x=0\) for a McClaurin series we can instead centre the series around \(x=1\) which gives the following series expansion for \(\ln(x)\):
 
 \begin{align*}
 	\sum_{k=0}^\infty \frac{\frac{d^k}{dx^k}[\ln(x)](1)}{k!}(x-1)^k
@@ -278,7 +278,7 @@ Hence \(\sum_{k=1}^\infty \frac{(1-x)^k}{k}\) converges when \(x \in (0, 2)\).
 
 Now as we can't know if \(x \in (0,2)\) then we can consider that \(\forall x \in \Rp \exists (a, b) \in [\frac{1}{2}, 1)\times\Z : x = a\cdot2^b\); thus we see that \(\ln(x) = \ln(a\cdot2^b) = b\ln(2) + \ln(a)\). As previously noted in Section \ref{#REF#} this operation, while theoretically complex, is simple to calculate for most computers by how the represent floating point values.\\
 
-With this we can then use the following method to approximate \(\ln(x)\) by the taylor polynomial \(-\sum_{k=1}^n\frac{(1-x)^k}{k}\):
+With this we can then use the following method to approximate \(\ln(x)\) by the Taylor polynomial \(-\sum_{k=1}^n\frac{(1-x)^k}{k}\):
 
 %PCD%
 \begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor Method for calculating \(\ln(x)\)},label={PCD_"taylor log"}]
@@ -314,7 +314,7 @@ Using this approximation we can see that if we wish to guarantee \(d\) decimal p
 \end{tabular}
 \end{center}
 
-As we now have Taylor methods for approximating both \(e^x\) and \(\ln(x)\), then we can use the two to derive a taylor method of calculating \(x^y\) and \(\log_x(y)\). To start we will consider \(x^y = e^{y\ln(x)}\) and \(x = a\cdot2^b\), giving the solution as \(x^y = e^{y(b\ln(2) + \ln(a))}\). Similarly we not that \(\log_x(y) = \frac{\ln(y)}{\ln(x)}\), and if we consider that \(x = a\cdot2^b\) and \(y = c\cdot2^d\), then we see that \(\log_x(y) = \frac{d\ln(2) + \ln(c)}{b\ln(2) + \ln(a)}\). Below are the Taylor methods for approximating these functions:
+As we now have Taylor methods for approximating both \(e^x\) and \(\ln(x)\), then we can use the two to derive a Taylor method of calculating \(x^y\) and \(\log_x(y)\). To start we will consider \(x^y = e^{y\ln(x)}\) and \(x = a\cdot2^b\), giving the solution as \(x^y = e^{y(b\ln(2) + \ln(a))}\). Similarly we not that \(\log_x(y) = \frac{\ln(y)}{\ln(x)}\), and if we consider that \(x = a\cdot2^b\) and \(y = c\cdot2^d\), then we see that \(\log_x(y) = \frac{d\ln(2) + \ln(c)}{b\ln(2) + \ln(a)}\). Below are the Taylor methods for approximating these functions:
 
 %PCD%
 \begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Taylor Method for calculating \(x^y\) and \(\log_x(y)\)},label={PCD_"taylor pow/log"}]
@@ -384,7 +384,7 @@ This shows that \textrm{taylor\_log} converges better than \textrm{taylor\_exp},
 %SUB%
 \subsection{Hyperbolic Series Method}
 
-Tere are more efficient series which can be used to find \(\ln\), which converge quicker than the Taylor approximation; one such method is to consider the Hyperbolic Trigonometric function \(\tanh\). We start by considering the definition that \(\tanh(x) := \frace^x - e^{-x}}{e^x + e^{-x}}\), and then find a formula for \(\tanh^{-1}(x)\):
+There are more efficient series which can be used to find \(\ln\), which converge quicker than the Taylor approximation; one such method is to consider the Hyperbolic Trigonometric function \(\tanh\). We start by considering the definition that \(\tanh(x) := \frace^x - e^{-x}}{e^x + e^{-x}}\), and then find a formula for \(\tanh^{-1}(x)\):
 
 \begin{align*}
 z = \frac{e^x - e^{-x}}{e^x + e^{-x}} 
@@ -396,9 +396,9 @@ z = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 	&\implies x = \frac{1}{2}\ln\left(\frac{1+z}{1-z}\right)
 \end{align*}
 
-Using this e can see that \(2\tanh^{-1}\left(\frac{x-1}{x+1}\right) = \ln(x)\), and we can use the Taylor Expansion of \(\tanh^{-1}\) to approximate \(\ln\).\\
+Using this we can see that \(2\tanh^{-1}\left(\frac{x-1}{x+1}\right) = \ln(x)\), and we can use the Taylor Expansion of \(\tanh^{-1}\) to approximate \(\ln\).\\
 
-Now to attain the taylor series for \(\tanh^{-1}(x)\) we can use the same method as when we calculated the taylor series for \(\ln\). The exact calculations are ommited, but the end result is that we get that:
+Now to attain the Taylor series for \(\tanh^{-1}(x)\) we can use the same method as when we calculated the Taylor series for \(\ln\). The exact calculations are omitted, but the end result is that we get that:
 
 \[\tanh^{-1}(x) = \sum_{n=0}^\infty\frac{x^{2n+1}}{2n+1} \forall x \in \Rp\]
 
@@ -439,7 +439,7 @@ By considering the final simplification that \(\epsilon_n < \frac{1}{3^{2n+3}}\)
 \end{tabular}
 \end{center}
 
-As can be seen in the table, fewer iterations are needed to approximate \(\ln(x)\) to the same degree of accuracy using hyperbolic series as when using the taylor series. Further the calculations performed each iteration are very similar in complexity, both being \(\bigO(1)\), and thus we can expect that Algorithm \ref{PCD_"hyperbolic ln"} will execute faster than \ref{PCD_"taylor log"}.
+As can be seen in the table, fewer iterations are needed to approximate \(\ln(x)\) to the same degree of accuracy using hyperbolic series as when using the Taylor series. Further the calculations performed each iteration are very similar in complexity, both being \(\bigO(1)\), and thus we can expect that Algorithm \ref{PCD_"hyperbolic ln"} will execute faster than \ref{PCD_"taylor log"}.
 
 %SUB%
 \subsection{Continued fractions}
@@ -509,7 +509,7 @@ One of the most useful formulas regarding continued fractions was formulated by 
 \end{align*}
 \end{equation}
 
-Many taylor series have a structure that is compatible with equation \ref{EQN_"euler cont frac"} and so can be approximated by a continued fraction in this way. In particular we are looking at \(e^x = \sum_{k=0}^n \frac{x^n}{n!}\) where we note that we can re-write the series as \(e^x = 1 + \sum_{i=1}^n (\prod_{j=1}^i \frac{x}{j})\) and therefore by using Euler's Continued Fraction Formula we see that:
+Many Taylor series have a structure that is compatible with equation \ref{EQN_"euler cont frac"} and so can be approximated by a continued fraction in this way. In particular we are looking at \(e^x = \sum_{k=0}^n \frac{x^n}{n!}\) where we note that we can re-write the series as \(e^x = 1 + \sum_{i=1}^n (\prod_{j=1}^i \frac{x}{j})\) and therefore by using Euler's Continued Fraction Formula we see that:
 
 \begin{align}
 e^x &= 1 + \cfrac{x}{1 -
@@ -529,7 +529,7 @@ e^x &= 1 + \cfrac{x}{1 -
 			\end{array}\right.\nonumber
 \end{align}
 
-We would like to simplify the the above equation to remove the fractional co-efficients. If we consider multiplying \(\alpha_1\) by some constant \(c_1\), then to have an equivalent fraction we would have to multiply it's denominator by \(c_1\); in practice this means multiplying \(\beta_1\) and \(\alpha_2\) by \(c_1\). We can suppose that we could continue in a similar manner for constants \(c_2, c_3, \ldots\) multiplying \(\alpha_2, \alpha_3, \ldots\).
+We would like to simplify the above equation to remove the fractional coefficients. If we consider multiplying \(\alpha_1\) by some constant \(c_1\), then to have an equivalent fraction we would have to multiply it's denominator by \(c_1\); in practice this means multiplying \(\beta_1\) and \(\alpha_2\) by \(c_1\). We can suppose that we could continue in a similar manner for constants \(c_2, c_3, \ldots\) multiplying \(\alpha_2, \alpha_3, \ldots\).
 
 %THM%
 \begin{equiv cont frac}
@@ -569,7 +569,7 @@ Now let us define \(b'_i\) as:
 \right.
 \end{displaymath}
 
-Therfore we can continue and see that:
+Therefore we can continue and see that:
 	\begin{align*}
 		b_0 + \mathbf{K}_{i=1}^{n+1}\frac{c_{i-1}c_ia_i}{c_ib_i}
 			&= b_0 + \mathbf{K}_{i=1}^n\frac{c_{i-1}c_ia_i}{c_ib'_i}\\
@@ -651,13 +651,13 @@ Further computations show that convergence of \(x \in (0, 1)\) is better than th
 
 As \(a \in (0,1)\) and \(2^b \in \Zp\) then we can calculate \(z = 2^a\) algorithm \ref{#ALG#}. Then we can calculate \(z^{2^b}\) using algorithm \ref{#ALG#}, to find our approximation of \(e^x\). Performing the calculation in this way allows us to use the our continued fraction method to guarantee fast convergence and the \(\bigO(1)\) integer exponential algorithm to guarantee the correct approximation without increasing the algorithmic complexity of the calculations by more than a constant factor.\\
 
-With this restriction in place we know that algorithm \ref{PCD_"cont exp v1"} converges at least as quickly as it does for \(x = 1\), and thus we can use it's convergence to guarantee the convergence of our method. Below is a table that shows the minimum \(n\) needed to acheive the associated \(d\) decimal places of accuracy:
+With this restriction in place we know that algorithm \ref{PCD_"cont exp v1"} converges at least as quickly as it does for \(x = 1\), and thus we can use it's convergence to guarantee the convergence of our method. Below is a table that shows the minimum \(n\) needed to achieve the associated \(d\) decimal places of accuracy:
 
 %TBL%
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline
-\(d\) & Minumum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
+\(d\) & Minimum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
 1 & 2 \\\hline
 10 & 22 \\\hline
 100 & 235 \\\hline
@@ -665,7 +665,7 @@ With this restriction in place we know that algorithm \ref{PCD_"cont exp v1"} co
 \end{tabular}
 \end{center}
 
-An alternative continued fraction for \(e^x\) that arrises from the generalized hypergeometric series is:
+An alternative continued fraction for \(e^x\) that arises from the generalized hyper geometric series is:
 
 \begin{align}
 e^x &= \cfrac{1}{1 -
@@ -729,7 +729,7 @@ By implementing this with a computer we get similar results to above, particular
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline
-\(d\) & Minumum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
+\(d\) & Minimum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
 1 & 4 \\\hline
 10 & 12 \\\hline
 100 & 61 \\\hline
@@ -758,10 +758,10 @@ while the limit of the even convergent is:
 \end{displaymath}
 \end{odd even conv}
 \begin{proof}
-Ommitted
+Omitted
 \end{proof}
 
-If we apply proposition \ref{THM_"equiv cont frac"} to \ref{EQN_"exp cont frac 2"}, to acheive the form \(\mathbf{K}_{i=1}^\infty \frac{a_i}{1}\) then we end up with the following fraction:
+If we apply proposition \ref{THM_"equiv cont frac"} to \ref{EQN_"exp cont frac 2"}, to achieve the form \(\mathbf{K}_{i=1}^\infty \frac{a_i}{1}\) then we end up with the following fraction:
 
 \begin{equation}
 	e^x = \cfrac{1}{1 +
@@ -822,7 +822,7 @@ If we implement this method by using the Fundamental Recurrence Formula then we 
       return $\tfrac{A_k}{B_K}$
 \end{lstlisting}
 
-As with the previous two continued fraction methods of approximating \(e^x\) we can apply proposition \ref{THM_"equiv cont frac"} to \ref{EQN_"exp cont frac 3"} to find the following equivalen continued fraction:
+As with the previous two continued fraction methods of approximating \(e^x\) we can apply proposition \ref{THM_"equiv cont frac"} to \ref{EQN_"exp cont frac 3"} to find the following equivalent continued fraction:
 
 \begin{displaymath}
 	1 + \cfrac{1}{\frac{1}{x} - \frac{1}{2} +
@@ -831,13 +831,13 @@ As with the previous two continued fraction methods of approximating \(e^x\) we 
 		\cfrac{1}{\frac{28}{x} + \ddots } } } }
 \end{displaymath}
 
-Again a computer was used to evaluate \(B_k\) of the above fraction, which gave the expected results of quick convergence for \(x \in (0,1)\) and more rapid convergence for \(x \in (0,1)\) than \(x = 1\). Using this the table below was generated to show the minumum \(n \in \N\) that guarantees \(d\) digits of accuracy:
+Again a computer was used to evaluate \(B_k\) of the above fraction, which gave the expected results of quick convergence for \(x \in (0,1)\) and more rapid convergence for \(x \in (0,1)\) than \(x = 1\). Using this the table below was generated to show the minimum \(n \in \N\) that guarantees \(d\) digits of accuracy:
 
 %TBL%
 \begin{center}
 \begin{tabular}{|l|l|}
 \hline
-\(d\) & Minumum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
+\(d\) & Minimum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
 1 & 2 \\\hline
 10 & 6 \\\hline
 100 & 30 \\\hline
@@ -847,13 +847,13 @@ Again a computer was used to evaluate \(B_k\) of the above fraction, which gave 
 
 This has the fastest theoretical convergence of the three methods, and thus is expected to perform the best.
 
-\subsection{Comparrison of Methods}
+\subsection{Comparison of Methods}
 
-We have introduced several methods for calculating both logarithms and exponentials in this chapter, and considered their theoretical convergence; we now look at a direct comparrison of the methods as implemented in C.\\
+We have introduced several methods for calculating both logarithms and exponentials in this chapter, and considered their theoretical convergence; we now look at a direct comparison of the methods as implemented in C.\\
 
 The first consideration is which values to use while comparing methods. While all the methods converge for all values, or can be made to by using transformations of the inputs and outputs, most methods converge best for small values. Therefore values being tested will typically be in the range of \([0.5, 1)\).\\
 
-The first methods to be compared here are the versions of the continued fraction method discussed previously. Below we have the outputs of different versions of the program for differnt values of \(n\), with the bold digits being the correctly approximated digits.
+The first methods to be compared here are the versions of the continued fraction method discussed previously. Below we have the outputs of different versions of the program for different values of \(n\), with the bold digits being the correctly approximated digits.
 
 
 %TBL%
@@ -877,9 +877,9 @@ The first methods to be compared here are the versions of the continued fraction
 \end{tabular}
 \end{center}}
 
-As can be seen here the first two methods have similar convergence, however despite having a very poor theoretical convergence the first method converges better than the second version. However it is obvious that the thrid method has the fastest convergence, and thus should be the one to use in further comparrisons.\\
+As can be seen here the first two methods have similar convergence, however despite having a very poor theoretical convergence the first method converges better than the second version. However it is obvious that the third method has the fastest convergence, and thus should be the one to use in further comparisons.\\
 
-Now we can compare the speed of the taylor and continued fraction methods of calulating exponential values. For this we will use 1000 values in the range \([\frac{1}{2}, 1)\) and calculate each 100000 times to comapre the speed of the method. We will be using values of \(n\) which guarantee 10 decimal places of accuracy, in particular \(n = 14\) for \codeinline{taylor\_exp} and \(n = 6\) for \codeinline{cont\_frac\_exp\_v3}.\\
+Now we can compare the speed of the Taylor and continued fraction methods of calculating exponential values. For this we will use 1000 values in the range \([\frac{1}{2}, 1)\) and calculate each 100000 times to compare the speed of the method. We will be using values of \(n\) which guarantee 10 decimal places of accuracy, in particular \(n = 14\) for \codeinline{taylor\_exp} and \(n = 6\) for \codeinline{cont\_frac\_exp\_v3}.\\
 
 The results of the tests run on my computer are included in the table below alongside those for the built in \codeinline{exp} function in \codeinline{math.h}:
 
@@ -896,9 +896,9 @@ The results of the tests run on my computer are included in the table below alon
 \end{tabular}
 \end{center}}
 
-This shows that the continued fractions method of evaluating exponential functions is almost three times as efficient as the standard taylor series method. However both fall short of the built in method, despite the hyperbolic series method being a close second. This is likely due to a lower level implementation of the exponential function with various highly efficient programming practices implemented to optimize the code execution speed.\\
+This shows that the continued fractions method of evaluating exponential functions is almost three times as efficient as the standard Taylor series method. However both fall short of the built in method, despite the hyperbolic series method being a close second. This is likely due to a lower level implementation of the exponential function with various highly efficient programming practices implemented to optimize the code execution speed.\\
 
-However one consideration is that if we instead test values in the range \([-5, 50]\), then while both \codeinline{taylor\_exp} and \codeinline{cont\_frac\_exp} have similar results the total time for \codeinline{cont\_frac\_exp} becomes {\fontfamily{pcr}\selectfont 9.347s}. This deiscrepency is due to the aditional calculations needed by \codeinline{cont\_frac\_exp} so that it evaluates only values in the range \([\frac{1}{2}, 1)\) for a quicker convergence.\\
+However one consideration is that if we instead test values in the range \([-5, 50]\), then while both \codeinline{taylor\_exp} and \codeinline{cont\_frac\_exp} have similar results the total time for \codeinline{cont\_frac\_exp} becomes {\fontfamily{pcr}\selectfont 9.347s}. This discrepancy is due to the additional calculations needed by \codeinline{cont\_frac\_exp} so that it evaluates only values in the range \([\frac{1}{2}, 1)\) for a quicker convergence.\\
 
 The two methods discussed to evaluate \(\ln\) have their convergence for different values of \(n\) shown below, where they are approximating the value 0.7, with the bold digits representing the correctly approximated digits:
 
@@ -922,7 +922,7 @@ The two methods discussed to evaluate \(\ln\) have their convergence for differe
 \end{tabular}
 \end{center}}
 
-We can see here that the hyperbolic method converges a lot faster than the taylor method; one particular note is that the hyperbolic series accurately approximates the first 12 decimal places of \(\ln(0.7)\) accurately in just 6 iterations while the taylor method only acheives 6 decimal places after 10 iterations.\\
+We can see here that the hyperbolic method converges a lot faster than the Taylor method; one particular note is that the hyperbolic series accurately approximates the first 12 decimal places of \(\ln(0.7)\) accurately in just 6 iterations while the Taylor method only achieves 6 decimal places after 10 iterations.\\
 
 To further test the two methods the table below shows the timings of calculating 1000 values in the range \([0.02, 50]\), each of which will be calculated to 10 decimal places 100000 times by each method. To guarantee 10 decimal places of accuracy with \codeinline{taylor\_log} we can use \(n = 34\) and \(n = 8\) for \codeinline{hyperbolic\_log}, below is the table that displays the results alongside the results for the built in \codeinline{log} function:
 
@@ -939,7 +939,7 @@ To further test the two methods the table below shows the timings of calculating
 \end{tabular}
 \end{center}}
 
-Here we can see that the hyperbolic method of approximating \(\ln(x)\) is the better of the two methods discussed, being around three times faster in execution. While the built in function is, as to be expected, the fastest executing function, \codeinline{hyperbolic\_log} is not far behind, implying that \codeinline{builtin\_log} may use an optimized bersion of \codeinline{hyperbolic\_log}.\\
+Here we can see that the hyperbolic method of approximating \(\ln(x)\) is the better of the two methods discussed, being around three times faster in execution. While the built in function is, as to be expected, the fastest executing function, \codeinline{hyperbolic\_log} is not far behind, implying that \codeinline{builtin\_log} may use an optimized version of \codeinline{hyperbolic\_log}.\\
 
 Finally we get to comparing the general exponential, \(x^y\), and logarithm, \(log_x(y)\), functions. First we will test the convergence of the two variations of the \(log_x(y)\) function for different values of \(n\), using \((x,y) = (1.5, 15)\):
 
@@ -991,9 +991,9 @@ This table clearly demonstrates that \codeinline{hyperbolic\_log} converges fast
 \end{tabular}
 \end{center}}
 
-Both of these methods for the general exponential function have slow convergences, though the improved method does converge faster. This implies that there may be a more efficent method for approximating \(x^y\).\\
+Both of these methods for the general exponential function have slow convergences, though the improved method does converge faster. This implies that there may be a more efficient method for approximating \(x^y\).\\
 
-Next we will consider the actual speed of both the logarithm and exponential functions presented. One note is that C does not have a general \(\log\) function for an arbitrary base in \codeinline{math.h}, and so to implement this we will ues \codeinline{log(y)/log(x)} for the built in logarithm. All of the functions will have values of \((x, y) \in (0,2]\times[0,3)\) and will use a value of \(n\) sufficient to calculate their answer accurate to 10 decimal places. Below are the calculations for 1000 random values calculated 10000 times for each method:
+Next we will consider the actual speed of both the logarithm and exponential functions presented. One note is that C does not have a general \(\log\) function for an arbitrary base in \codeinline{math.h}, and so to implement this we will use \codeinline{log(y)/log(x)} for the built in logarithm. All of the functions will have values of \((x, y) \in (0,2]\times[0,3)\) and will use a value of \(n\) sufficient to calculate their answer accurate to 10 decimal places. Below are the calculations for 1000 random values calculated 10000 times for each method:
 
 %TBL%
 {\fontfamily{pcr}\selectfont
@@ -1013,6 +1013,6 @@ Next we will consider the actual speed of both the logarithm and exponential fun
 
 Again we see that the methods that we showed to be theoretically superior, do in fact have superior execution speeds; however our methods still fail to match the execution speed of those built into C.\\
 
-Overall we can conclude that if one were to want to implement calculating logartihms of a number then the hyperbolic series method is the best choice discussed, while the best choice for evaluating exponentials is the continued fraction method.\\
+Overall we can conclude that if one were to want to implement calculating logarithms of a number then the hyperbolic series method is the best choice discussed, while the best choice for evaluating exponentials is the continued fraction method.\\
 
 The special case of the exponentiation by squaring is worth considering in the case where a computer only supports integers. This is because the algorithm will still work for integer only values, while most of the others will not, and has a computational complexity of \(\bigO(1)\).

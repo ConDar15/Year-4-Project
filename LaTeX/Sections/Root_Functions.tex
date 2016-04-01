@@ -2,7 +2,7 @@
 \section{Root Functions}
 \label{SEC_"Root Functions"}
 
-Root functions are a vital part of mathematics and have been used for millenia, originally studied for their useful relation to architecture root functions also have many modern day applications. The majority of this section will be dealing with the commonly used sqare root function \(\sqrt{N}\), which always gives an irrational answer if \(N\) is not a square number.\\
+Root functions are a vital part of mathematics and have been used for millennia, originally studied for their useful relation to architecture root functions also have many modern day applications. The majority of this section will be dealing with the commonly used square root function \(\sqrt{N}\), which always gives an irrational answer if \(N\) is not a square number.\\
 
 We will consider several methods for approximating root functions, but for our purposes here we are only going to consider roots of \(N \in \Rpz\), this is because if \(N \in \R^-\) then it follows that \(\sqrt{N} = i\sqrt{|N|}\).
 
@@ -10,15 +10,15 @@ We will consider several methods for approximating root functions, but for our p
 \subsection{Digit by Digit Method}
 \label{SUB_"Digit by Digit Method"}
 
-The first method we will examine is an old method, that has been observed in Babylonian Mathematics over 2000 years ago, which is used to accurately generate the square root of numbers one digit at a time. This method differs from others discussed as it generates each digit of the root with perfect accuarcy, one at a time, thus in a theoretical sense this algorithm is the most accurate of the methods we will view; we will see however that this method is slow.\\
+The first method we will examine is an old method, that has been observed in Babylonian Mathematics over 2000 years ago, which is used to accurately generate the square root of numbers one digit at a time. This method differs from others discussed as it generates each digit of the root with perfect accuracy, one at a time, thus in a theoretical sense this algorithm is the most accurate of the methods we will view; we will see however that this method is slow.\\
 
 Now suppose we are looking for \(\sqrt{N}\), then we know that \(\sqrt{N} = a_010^n + a_110^{n-1} + a_210^{n-2} + \dots\) for some \(n \in \Z\); it then follows that \(N = (a_010^n + a_110^{n-1} + a_210^{n-1} + \dots)^2\). By expanding the quadratic value we get that \[N = a_0^210^{2n} + (20a_0 + a_1)a_110^{2n-2} + (20(a_010 + a_1) + a_2)a_210^{2n-4} + \dots + (20\sum_{i=0}^{k-1}a_i10^{k-i-1} + a_k)a_k10^{2n - 2k}\]
 
 An observation should be made regarding the value of \(n\) that we use for the theorem. We could of course try different values of \(n\), in some structured procedure, that will find the largest \(n\) such that \(10^n \le N\). However we can note that \(log_{10}(\sqrt{N}) = \tfrac{1}{2}log_{10}(N)\), thus \(10^{\frac{1}{2}log_{10}(N)} = \sqrt{N}\). Using this information, and the fact that \(n \in \Z\), we can have \(n := \left\lfloor \tfrac{1}{2}log_{10}(N) \right\rfloor\). \\
 
-This allows us to get successive apporximations of \(N\) where \(N_0 = a_0^210^{2n}\), \(N_1 = N_0 + (20a_0 + a_1)a_110^{2n-2}\), \(N_2 = N_1 + (20(a_010 + a_1) + a_2)a_210^{2n-4}\). This will alllow us to create an algorithm that will give successive approximations of \(sqrt{N} = a_010^n + a_110^{n-1} + \dots\), more importantly each approximation will give us the exact next digit in the decimal representation of \(\sqrt{N}\).\\
+This allows us to get successive approximations of \(N\) where \(N_0 = a_0^210^{2n}\), \(N_1 = N_0 + (20a_0 + a_1)a_110^{2n-2}\), \(N_2 = N_1 + (20(a_010 + a_1) + a_2)a_210^{2n-4}\). This will allow us to create an algorithm that will give successive approximations of \(sqrt{N} = a_010^n + a_110^{n-1} + \dots\), more importantly each approximation will give us the exact next digit in the decimal representation of \(\sqrt{N}\).\\
 
-Thus we can have an iterative method to solve the problem, where at each stage we are trying to find the largest digit which satisfies the inequality \((20\sum_{i=0}^{k-1}a_i10^{k-i-1} + a_k)a_k10^{2n-2k} \le N - N_{k-1}\). Thus we get the following pseudocode, which outputs two sequences, one indicating the digits before the decimal point and one afterwards. I will use set notation to indicate the sequences, but in this case order is important and repetition is allowed.
+Thus we can have an iterative method to solve the problem, where at each stage we are trying to find the largest digit which satisfies the inequality \((20\sum_{i=0}^{k-1}a_i10^{k-i-1} + a_k)a_k10^{2n-2k} \le N - N_{k-1}\). Thus we get the following pseudo-code, which outputs two sequences, one indicating the digits before the decimal point and one afterwards. I will use set notation to indicate the sequences, but in this case order is important and repetition is allowed.
 
 %PCD%
 \begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Exact Digit by Digits Square Root}]
@@ -74,7 +74,7 @@ This calculation of \(P_k\), then carries over to reduce the complexity of line 
       return $(Digits_a, Digits_b)$
 \end{lstlisting}
 
-This method is usefull, but can be difficult to implement as it requires high precision for the representation of the real value of \(N\). In my implementation using C, I utilised the MPFR library to utilise high precision integers, but still encountered issues regarding loss of precision.\\
+This method is useful, but can be difficult to implement as it requires high precision for the representation of the real value of \(N\). In my implementation using C, I utilised the MPFR library to utilise high precision integers, but still encountered issues regarding loss of precision.\\
 
 As an example the table below shows the number of digits of accuracy I was able to calculate for \(\sqrt{2}\) using the above algorithm, compared to the number of bits of precision used in the calculations.\\
 
@@ -99,13 +99,13 @@ Bits of Precision & Maximum Accuracy\\ \hline
 
 This data is highly structured and so we can hope to create a simple function that would allow us to calculate how much precision would be needed for a given number of digits of accuracy, at least for single digit inputs for \(N\). We can see that the average ratio of Precision to Accuracy is 3.41259..., which ranges from 3.31928... to 4.0. From this we can draw a general trend that Digits of Accuracy \(\approx\) 3.4 \(\times\) Bits of Precision; thus if we take the more generous assumption that Digits of Accuracy \(\appprox\) 4 \(\times\) Bits of Precision, we can use this to pre-determine the accuracy needed.\\
 
-It should be noted that to ensure accuracy we should over-estimate the required precision, however if we overestimate the precision, then our calculations will be performed using unnecsarily large data structures and thus computation time will increase.\\
+It should be noted that to ensure accuracy we should over-estimate the required precision, however if we overestimate the precision, then our calculations will be performed using unnecessarily large data structures and thus computation time will increase.\\
 
-One particular use of this technique is to find an approximation of a squar root to it's integer part, calculated in base 2. This algorithm is of note as we will see that it has a computation time of \(\bigo(1)\).\\
+One particular use of this technique is to find an approximation of a square root to it's integer part, calculated in base 2. This algorithm is of note as we will see that it has a computation time of \(\bigo(1)\).\\
 
 The algorithm uses the same basis as the base 10 version, for it's calculations, but due to the nature of being in binary several changes can be made for computational efficiency. To do this we will view the problem as follows: if we know some \(r \in \Zpz\) which is our current approximation of our root, we are looking for some \(e \in \Zpz\) such that \((r+e)^2 \le N\). Expanding this out we get \(r^2 + 2re + e^2 \le N\), and if we keep track of \(M = N - r^2\), we can test if \(2re + e^2 \le M\).\\
 
-Now we can consider our choice of \(e\), the most practical method is to test successeive \(e_m := 2^m\), where \(m\) is descending starting with \(m = \max{m \in \Zpz : 4^m \le N}\). We can use an iterative formula to build up the integer square root, where we start with \(r = 0, M = N\) and have \(r \mapto r + e_m\) whenever \(2re_m + e_m^2 \le M\), stopping when \(m < 0\). This is then implemented as follows:\\
+Now we can consider our choice of \(e\), the most practical method is to test successive \(e_m := 2^m\), where \(m\) is descending starting with \(m = \max{m \in \Zpz : 4^m \le N}\). We can use an iterative formula to build up the integer square root, where we start with \(r = 0, M = N\) and have \(r \mapto r + e_m\) whenever \(2re_m + e_m^2 \le M\), stopping when \(m < 0\). This is then implemented as follows:\\
 
 %PCD%
 \begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Integer Square Root Algorithm}]
@@ -121,11 +121,11 @@ Now we can consider our choice of \(e\), the most practical method is to test su
       return $r$
 \end{lstlisting}
 
-If we now conisder an implementation of the above algorithm using an unsigned integer system with \(K\) bits, where \(2 | K\). We will use \codeinline{res} to represent \(2re_m\), which means at the start of the algorihtm we will have \codeinline{res = 0}; similarly we can use \codeinline{bit} to represent \(e_m^2\). As we know that \(K\) bits are used and \(2 | K\), it then follows that the largest power of 4 less than the maximum representable value (\(2^K - 1\) is \(2^{K-2}\), which can be calculated as \codeinline{bit = 1 << (K - 2)} using bitshift operations. Finally we will use \codeinline{num} to represent \(M\).\\
+If we now consider an implementation of the above algorithm using an unsigned integer system with \(K\) bits, where \(2 | K\). We will use \codeinline{res} to represent \(2re_m\), which means at the start of the algorithm we will have \codeinline{res = 0}; similarly we can use \codeinline{bit} to represent \(e_m^2\). As we know that \(K\) bits are used and \(2 | K\), it then follows that the largest power of 4 less than the maximum representable value (\(2^K - 1\) is \(2^{K-2}\), which can be calculated as \codeinline{bit = 1 << (K - 2)} using bit shift operations. Finally we will use \codeinline{num} to represent \(M\).\\
 
-Now that we have discussed the setup we can consider how to implement some of the steps above. First to implement line 3 we can simply keep dividing \codeinline{bit} by 4 while \codeinline{bit > num}, which can be efficiently implemented as \codeinline{bit >> 2} by using bitshifts in place of division by powers of 2. The same technique can be used in place of line 9, which leads us to re-evaluating our usage of line 5. As we are using bitshifting and a bitshift that would take a number past 0 instead results in 0, we also know that \(2 | K\) and so eventually we will reach \codeinline{bit == 1}, which represents \(m = 0\); therefore we can use \codeinline{bit > 0} as our stopping criteria on line 5.\\
+Now that we have discussed the set-up we can consider how to implement some of the steps above. First to implement line 3 we can simply keep dividing \codeinline{bit} by 4 while \codeinline{bit > num}, which can be efficiently implemented as \codeinline{bit >> 2} by using bit shifts in place of division by powers of 2. The same technique can be used in place of line 9, which leads us to re-evaluating our usage of line 5. As we are using bit shifting and a bit shift that would take a number past 0 instead results in 0, we also know that \(2 | K\) and so eventually we will reach \codeinline{bit == 1}, which represents \(m = 0\); therefore we can use \codeinline{bit > 0} as our stopping criteria on line 5.\\
 
-Line 6 is easy to convert, given our definitions of \codeinline{res}, \codeinline{bit} and \{num}, as is line 7. All that remains is to consider how to update \codeinline{res}, which has two different ways of being updated depending on whether \codeinline{res + bit <= num}. If it is false that \codeinline{res + bit <= num}, then we wish for \codeinline{res} to represent \(2re_{m-1}\); this is easily acheived if we consider that \(2re_{m-1} = \frac{1}{2}(2re_m)\), which prompts the update \codeinline{res = res >> 1}. For the second case, when \codeinline{res + bit <= num} is true, we want \codeinline{res} to represent \(2(r+e_m)e_{m-1}\); to implement this we consider the following derivation:
+Line 6 is easy to convert, given our definitions of \codeinline{res}, \codeinline{bit} and \{num}, as is line 7. All that remains is to consider how to update \codeinline{res}, which has two different ways of being updated depending on whether \codeinline{res + bit <= num}. If it is false that \codeinline{res + bit <= num}, then we wish for \codeinline{res} to represent \(2re_{m-1}\); this is easily achieved if we consider that \(2re_{m-1} = \frac{1}{2}(2re_m)\), which prompts the update \codeinline{res = res >> 1}. For the second case, when \codeinline{res + bit <= num} is true, we want \codeinline{res} to represent \(2(r+e_m)e_{m-1}\); to implement this we consider the following derivation:
 
 \begin{displaymath}
 \begin{align*}
@@ -136,7 +136,7 @@ Line 6 is easy to convert, given our definitions of \codeinline{res}, \codeinlin
 \end{align*}
 \end{displaymath}
 
-Using this above derivation we see that we can calculate this as \codeinline{res = (res >> 1) + bit}. Below is a simple implementaion of this in C using the unsigned 32 bit integer type \codeinline{uint32\_t}. A more commented and slightly modified version can be found in Appendix \ref{#APP#}, File \ref{#FILE#}.
+Using this above derivation we see that we can calculate this as \codeinline{res = (res >> 1) + bit}. Below is a simple implementation of this in C using the unsigned 32 bit integer type \codeinline{uint32\_t}. A more commented and slightly modified version can be found in Appendix \ref{#APP#}, File \ref{#FILE#}.
 
 %PCD%
 \begin{codelisting}{Integer Square Root in C}
@@ -167,7 +167,7 @@ uint32_t int_sqrt(uint32_t num)
 
 We should consider the final step of the loop, when \codeinline{bit == 1}. In this case when \codeinline{res} is updated we have \codeinline{res} represent either \(2(r+e_0)e_{-1} = r + e_0\), or \(2re_{-1} = r\); thus the algorithm exits with the correct value.\\
 
-Now that the algorithm is correctly constructed using simple unsigned integer addition, subtraction and bitshifting (which we can assume all have computational time of \(\bigO{1}\)), we can look at the worst case complexity of the algorithm:
+Now that the algorithm is correctly constructed using simple unsigned integer addition, subtraction and bit shifting (which we can assume all have computational time of \(\bigO{1}\)), we can look at the worst case complexity of the algorithm:
 
 \begin{itemize}
 \item The complexity of the set up of variables is constant time.
@@ -181,7 +181,7 @@ Now that the algorithm is correctly constructed using simple unsigned integer ad
 \end{itemize}
 \end{itemize}
 
-Therefore we see that the algorithm has \(\bigO(1)\) time complexity, and even has the same in storage complexity. In particular our 32 bit example requires 163 opertaions, including assignments, comparrisons and calucluations. This means that the integer square root of any number up to 4294967295 can be calculated extremely quickly.
+Therefore we see that the algorithm has \(\bigO(1)\) time complexity, and even has the same in storage complexity. In particular our 32 bit example requires 163 operations, including assignments, comparisons and calculations. This means that the integer square root of any number up to 4294967295 can be calculated extremely quickly.
 
 %SUB%
 \subsection{Bisection Method}
@@ -191,7 +191,7 @@ Therefore we see that the algorithm has \(\bigO(1)\) time complexity, and even h
 
 The Bisection Method is a general method for approximating the zero, \(\alpha\), of a function, \(f\), on a bounded interval, \(I := [a,b]\), where \(f\) has the property \(f(x)f(y) < 0 \forall (x,y) \in [a,\alpha)\times(\alpha, b]\); we may assume, without loss of generality, that \(f(x) < 0 \forall x \in [a, \alpha]\).\\
 
-The bisection method starts with initial bounds \(a_0 = a, b_0 = b\), where the initial approximation for the root is \(x_0 = \frac{1}{2}(a+b)\). We will consider pseudocode of the iteration process, that uses \(b_n - a_a < \tau\) or \(f(x_n) = 0\) as exit criteria. Here \(\tau\) is a tolerance threshold, and if the exit criteria is met it means that \(|x_n - \alpha| \le \frac{\tau}{2}\), while the other exit criteria means we have reached an exact solution.\\
+The bisection method starts with initial bounds \(a_0 = a, b_0 = b\), where the initial approximation for the root is \(x_0 = \frac{1}{2}(a+b)\). We will consider pseudo-code of the iteration process, that uses \(b_n - a_a < \tau\) or \(f(x_n) = 0\) as exit criteria. Here \(\tau\) is a tolerance threshold, and if the exit criteria is met it means that \(|x_n - \alpha| \le \frac{\tau}{2}\), while the other exit criteria means we have reached an exact solution.\\
 
 %PCD%
 \label{PCD_"General Bisection Method"}
@@ -234,7 +234,7 @@ For our purposes we are trying to find the zero of \(f(x) = x^2 - N\), which is 
       return $x_n$
 \end{lstlisting}\\
 
-The implementation of this method is efficiently acheived in C using only addition, subtraction and multiplication by a constant. Before this method is implemented, however, we must first consider if and or when it converges to the correct answer. From an intuitive standpoint we would assume that if there is only one root in the interval, it would follow that we would converge to the root.
+The implementation of this method is efficiently achieved in C using only addition, subtraction and multiplication by a constant. Before this method is implemented, however, we must first consider if and or when it converges to the correct answer. From an intuitive standpoint we would assume that if there is only one root in the interval, it would follow that we would converge to the root.
 
 %THM%
 \begin{Bisection Converges}
@@ -273,7 +273,7 @@ As \(sqrt{N} \in [a_0, b_0]\) then we see that \(\sqrt{N} \in [a_n, b_n] \forall
 Let \(n \in \N\) be arbitrary.\\
 As \(x_n := \frac{1}{2}(a_n + b_n)\) then we see that \(|a_n - x_n| = |b_n - x_n| = \frac{1}{2}(b_n - a_n)\).\\
 Now as \(\sqrt{N} \in [a_n, b_n]\) it follows that \(|\sqrt{N} - x_n| \le \frac{1}{2}(b_n - a_n\).\\
-As the modulas function is a mapping from \(\R\) to \(\Rpz\), it is clear that \(|\sqrt{N} - x_n|\) is bounded below by 0.\\
+As the modulus function is a mapping from \(\R\) to \(\Rpz\), it is clear that \(|\sqrt{N} - x_n|\) is bounded below by 0.\\
 Now as for each \(n \in \N\), either \(a_{n+1} = x_n\) or \(b_{n+1} = x_n\), we see that \(b_{n+1} - a_{n+1} = \frac{1}{2}(b_n - a_n)\). Further we can see that \(b_n - a_n \ge 0 \forall n \in \N\) because \(b_n \ge a_n\).\\
 Therefore the sequence of \(\frac{1}{2}(b_n - a_n)\) is a strictly decreasing sequence that is bounded below, by 0. Thus \(\lim_{n\to\infty} \frac{1}{2}(b_n - a_n) = 0\)\\ 
 Therefore \(\lim_{n\to\infty} |x_n - \sqrt{N}| = \lim_{n\to\infty}\frac{1}{2}(b_n - a_n) = 0\)
@@ -306,11 +306,11 @@ The algorithm can be generalised to search for \(\sqrt{k}{N}\), where \(k \in [2
 
 The proof that this converges to the correct value is very similar to the proof for square roots.\\
 
-We can now consider the accuracy that can be acheived by our algorithm, for our purposes we will be considering \(\sqrt{N}\), though the same applies for \(\sqrt{k}{N}\). We know that \(\sqrt{N} \in [a_n, b_n] \forall n \in \N\), and in particular we know that either \(\sqrt{N} \in [a_n, x_n]\) or \(\sqrt{N} \in [x_n, b_n] \forall n \in \N\); therefore we know that \(\epsilon_n := \left|x_n - \sqrt{N}\right| \le \tfrac{1}{2}(b_n - a_n) \forall n \in \N\). Then as we know that \(b_{n+1} - a_{n+1} = \tfrac{1}{2}(b_n - a_n)\), we know that \(\epsilon_n \le \tfrac{1}{2^n}(b_0 - a_0)\).\\
+We can now consider the accuracy that can be achieved by our algorithm, for our purposes we will be considering \(\sqrt{N}\), though the same applies for \(\sqrt{k}{N}\). We know that \(\sqrt{N} \in [a_n, b_n] \forall n \in \N\), and in particular we know that either \(\sqrt{N} \in [a_n, x_n]\) or \(\sqrt{N} \in [x_n, b_n] \forall n \in \N\); therefore we know that \(\epsilon_n := \left|x_n - \sqrt{N}\right| \le \tfrac{1}{2}(b_n - a_n) \forall n \in \N\). Then as we know that \(b_{n+1} - a_{n+1} = \tfrac{1}{2}(b_n - a_n)\), we know that \(\epsilon_n \le \tfrac{1}{2^n}(b_0 - a_0)\).\\
 
 We can consider that \(\forall N \in \Rpz \exists (r,k) \in [\frac{1}{4},1)\times\Z : N = r \cdot 2^{2k}\); using this we know that \(\sqrt{N} = \sqrt{r} \cdot 2^k\). As we have the fixed initial bounds of \(a_0 = 0\) and \(b_0 = 1\), then if we are finding \(\sqrt{r}\) we know that \(\epsilon_n \le \tfrac{1}{2^n} \forall n \in \N\). Hence we can calculate the precision of our current estimate beforehand for any \(n \in \N\), and thus we can guarantee \(d\) significant digits of accuracy for \(r \in [\frac{1}{4}, 1)\).\\
 
-To get this accuracy must find \(n \in \N\) such that \(\epsilon_n \le \tfrac{1}{10^d}\), to acheive this we must find \(n \in \N\) such that \(2^n \ge 10^d\). For example the following table indicates the required \(n\), required for certain significant digits of accuracy.
+To get this accuracy must find \(n \in \N\) such that \(\epsilon_n \le \tfrac{1}{10^d}\), to achieve this we must find \(n \in \N\) such that \(2^n \ge 10^d\). For example the following table indicates the required \(n\), required for certain significant digits of accuracy.
 
 %TBL%
 \begin{center}
@@ -327,7 +327,7 @@ To get this accuracy must find \(n \in \N\) such that \(\epsilon_n \le \tfrac{1}
 	\end{tabular}
 \end{center}
 
-Now ususally finding \(r\) and \(k\) as above would be as hard as calculating the logorithm of \(N\); however due to the way that C stores real numbers as either \codeinline{double} or in the MPFR library, finding these values are actually fairly trivial. Both provide a functionality to find \((a, b) \in [\frac{1}{2}, 1)\times \Z : N = a\cdot2^b\), and from this we merely require a simple comparison and division by 2 if \(b\) is not even. This leads to the following algorithm, which has the above maximum number of iterations for a required accuracy:
+Now usually finding \(r\) and \(k\) as above would be as hard as calculating the logarithm of \(N\); however due to the way that C stores real numbers as either \codeinline{double} or in the MPFR library, finding these values are actually fairly trivial. Both provide a functionality to find \((a, b) \in [\frac{1}{2}, 1)\times \Z : N = a\cdot2^b\), and from this we merely require a simple comparison and division by 2 if \(b\) is not even. This leads to the following algorithm, which has the above maximum number of iterations for a required accuracy:
 
 
 %PCD%
@@ -364,9 +364,9 @@ Now ususally finding \(r\) and \(k\) as above would be as hard as calculating th
 
 If we consider our equation \(f(x) = x^2 - N\), then we can see that it is differentiable on \(x \in \Rp\) with \(f'(x) = 2x\); we can therefore hope to use the Newton-Raphson method to approximate \(x^\ast \in \Rp : f(x^\ast) = 0\). Now it is obvious that if \(f(\x^\ast) = 0\) then \(x^\ast = \sqrt{N}\) and so the Newton-Raphson method should converge to the \(\sqrt{N}\) provided we start at a suitable \(x_0\).\\
 
-The iterative step of Newton's method for square roorts is \(x_{n+1} = x_n - \frac{x_n^2 - N}{2x_n}\) which when implemented in C, requires the calculation of \codeinline{x = x - (x*x - N) / (2*x)} each iteration, which requires 5 operations. However if we re-arrange our equation, we instead get \(x_{n+1} = \frac{1}{2}\right(x_n + \frac{N}{x}\right)\), which when implements is \codeinline{x = 0.5 * (x + N/x)}, which now uses only 3 operations.\\
+The iterative step of Newton's method for square roots is \(x_{n+1} = x_n - \frac{x_n^2 - N}{2x_n}\) which when implemented in C, requires the calculation of \codeinline{x = x - (x*x - N) / (2*x)} each iteration, which requires 5 operations. However if we re-arrange our equation, we instead get \(x_{n+1} = \frac{1}{2}\right(x_n + \frac{N}{x}\right)\), which when implements is \codeinline{x = 0.5 * (x + N/x)}, which now uses only 3 operations.\\
 
-We can then use the following pseudocode as the basis of our implementaions of the Newton-Raphson Method for Square Roots:
+We can then use the following pseudo-code as the basis of our implementations of the Newton-Raphson Method for Square Roots:
 
 %PCD%
 \label{PCD_"Newton Square Root Basic"}
@@ -386,7 +386,7 @@ Next we want to consider our initial estimate \(x_0\); it is prudent to first co
 %THM%
 \begin{SRNM Right-hand Convergence}
 \label{THM_"SRNM Right-Hand Convergence"}
-If \(x_0 \in \right(\sqrt{N}, \infty\right)\) and \(\left\{x_n : n\in\N\right\}\) is a sequnence of approximations of \(\sqrt{N}\) found via the Newton-Raphson Method, as detailed above, then:
+If \(x_0 \in \right(\sqrt{N}, \infty\right)\) and \(\left\{x_n : n\in\N\right\}\) is a sequence of approximations of \(\sqrt{N}\) found via the Newton-Raphson Method, as detailed above, then:
 \[\lim_{n\to\infty} x_n = \sqrt{N}\]
 \end{SRNM Right-hand Convergence}
 
@@ -421,7 +421,7 @@ The most obvious choice for \(x_0\) would be \(N\), but we see that \(N \in (0,1
 
 In our choice of \(x_0\), we have so far left out the cases where \(N \in \{0, 1}\). In both of these case we already know the correct answer, namely \(\sqrt{N} = N\) provided \(N \in {0, 1}\). Therefore we can exclude them from our calculations, as we can pre-asses the value of \(N\), simply returning the correct answer if one of these cases is encountered.\\
 
-This then leads to an updated version of the above pseudocode:\\
+This then leads to an updated version of the above pseudo-code:\\
 
 %PCD%
 \label{PCD_"Newton Square Root v1"}
@@ -442,7 +442,6 @@ This then leads to an updated version of the above pseudocode:\\
           $n \mapsto n + 1$
 \end{lstlisting}
 
-\TODO{Write up examination and implementation of this pseudocode}\\
 
 An alternative would be to use the integer square root method discussed in Section \ref{SUB_"Digit by Digit Method"} to improve our initial choice of \(x_0\). We will start by showing, that for intervals \(I \subset \Rp\), the first two criteria for quadratic convergence of the Newton Raphson method are met.
 
@@ -465,7 +464,7 @@ Now the integer square root function will always produce a root that is at most 
 
 If \(N > 1\) we need to find when we can satisfy \(NR_3\). First, we remember that \(M := \sup{\left|\tfrac{f''(x)}{f'(x)}\right| : x \in I}\) and \(\epsilon_0 := \left|x_0 - \sqrt(N)\right|\). Then to satisfy \(NR_3\), we must have that \(M\epsilon_0 < 1\).\\
 
-We can guarantee that \(\epsilon_0 \le 1\) because \(x_0 \in I\) from the integer square root algortihm; therefore it suffices to find the situation where \(M < 1\). As both \(f'\) and \(f''\) are continuous and non-zero on \(I\) it follows that \(M = \sup{x^{-1} : x \in I} = (\sqrt{N} - 1)^{-1}\). We then see that:
+We can guarantee that \(\epsilon_0 \le 1\) because \(x_0 \in I\) from the integer square root algorithm; therefore it suffices to find the situation where \(M < 1\). As both \(f'\) and \(f''\) are continuous and non-zero on \(I\) it follows that \(M = \sup{x^{-1} : x \in I} = (\sqrt{N} - 1)^{-1}\). We then see that:
 \begin{displaymath}
 	\begin{align*}
 		M < 1 &\iff \sqrt{N} - 1 > 1\\
@@ -474,7 +473,7 @@ We can guarantee that \(\epsilon_0 \le 1\) because \(x_0 \in I\) from the intege
 	\end{align*}
 \end{displaymath}
 
-Therefore we can get the following new choice for \(x_0\), and thus new pseudocode:
+Therefore we can get the following new choice for \(x_0\), and thus new pseudo-code:
 \begin{displaymath}
 	x_0 := \left\{\begin{array}{lcl}
 		1 &: &N \in (0,1)\\
@@ -505,7 +504,6 @@ Therefore we can get the following new choice for \(x_0\), and thus new pseudoco
           $n \mapsto n + 1$
 \end{lstlisting}
 
-\TODO{Write up examination of different versions tried, such as using \(x_0 = N\), etc...}\\
 
 If we consider any \(N \in \Rpz\), then \(\exists a \in \left[\frac{1}{2}, 1\right), b \in \Z : N = a \times 2^b\). Finding this value would be a hard as finding the logarithm of \(N\) base 2, but due to the representation of numbers within C, both standard C and MPFR have functions that allow us to extract these two values with minimal computational expenditure.\\
 
@@ -553,7 +551,7 @@ With this observation can then consider \(N \in \left[\tfrac{1}{2}, 1\right)\). 
 Algorithm \ref{PCD_"Newton Method for Square Root v3"}, satisfies the criteria of Theorem \ref{THM_"Quad Conv Newton"}, and thus has quadratic convergence to \(\sqrt{N}\).
 \end{SRNM NR3 for v3}
 \begin{proof}
-To fulfill the criteria of Theorem \ref{THM_"Quad Conv Newton"}, we must find and interval \(I := [\sqrt{N}-r, \sqrt{N} + r]\) for some \(r \ge \epsilon_0\).\\
+To fulfil the criteria of Theorem \ref{THM_"Quad Conv Newton"}, we must find and interval \(I := [\sqrt{N}-r, \sqrt{N} + r]\) for some \(r \ge \epsilon_0\).\\
 
 Consider \(\epsilon_0 = |\sqrt{N} - x_0| = 1 - \sqrt{N}\). We see that as \(N \ge \frac{1}{2}\) then \(\sqrt{N} \ge \sqrt{2}^-1\), and thus \(\epsilon_0 \le 1 - \sqrt{2}^-1\). Let us have \(r := 1 - \frac{1}{\sqrt{2}}\), and \(I\) as defined above.\\
 
@@ -567,7 +565,7 @@ If we look at the lower bound of \(I\), then we see that:
 \end{align*}
 \end{displaymath}
 
-Therefore we see that \(I \subset \Rp\), and so by Proposition \ref{THM_"SRNM NR1 and NR2} we get that \(\mathrm{NR}_1\) and \(\mathrm{NR}_2\) ar satisfied. It then remains to show that \(\mathrm{NR}_3\) is satisfied on \(I\).\\
+Therefore we see that \(I \subset \Rp\), and so by Proposition \ref{THM_"SRNM NR1 and NR2} we get that \(\mathrm{NR}_1\) and \(\mathrm{NR}_2\) are satisfied. It then remains to show that \(\mathrm{NR}_3\) is satisfied on \(I\).\\
 
 Now by the definition in Theorem \ref{THM_"Quad Conv Newton"}, we have that \(M = \sup\left\{\frac{1}{2}\left|\frac{f''(x)}{f'(y)}\right| : x, y \in I\right\}\). We know that \(I\) is bounded, \(f''(x) = 2\) and \(f'(x) = 2x\) meaning that \(\frac{1}{2}\left|\frac{f''(x)}{f'(y)}\right| = \frac{1}{f'(x)}\) as \(x \in \Rp\).\\ 
 
@@ -596,7 +594,7 @@ Using the previous proposition we can, similar to our previous methods, consider
 We know that \(M\epsilon_0 \le \frac{1}{2\sqrt{2}}\) and that \(\epsilon_0 \le 1 - \frac{1}{\sqrt{2}}\), giving:
 \[\epsilon_n \le \left(\frac{1}{2\sqrt{2}}\right)^{2^n - 1}\left(1 - \frac{1}{\sqrt{2}}\right)\]
 
-Thus if we want to acheive a tolerance of \(\epsilon_n \le \tau\), then it suffices to find \(n \in \N_0\) such that:
+Thus if we want to achieve a tolerance of \(\epsilon_n \le \tau\), then it suffices to find \(n \in \N_0\) such that:
 \[\left(\frac{1}{2\sqrt{2}}\right)^{2^n - 1} \le \tau\]
 
 Then,
@@ -611,11 +609,11 @@ Once this is rearranged we get the following inequality:
 By taking logarithms again and re-arranging we get that
 \[n \ge \frac{\log\left(\frac{\log\left(\frac{2(\sqrt{2} - 1)}{\tau}\right)}{\log(2\sqrt{2})}\right)}{\log(2)} = \log_2\left(\log_{2\sqrt{2}}\left(2\frac{\sqrt{2} - 1}{\tau}\right)\right)\]
 
-Now for an example, suppose we want to know how many iterations we need to perform to find \(\sqrt{N}\) to within 10 decimal places, i.e. \(\tau = 10^-10 = 0.0000000001\). We remember that \(\sqrt{N} \in [\frac{1}{2}, 1)\), and then we will apply transformations to this value afterwards, therefore this is equivalent to finding 10 significant digits of accuracy for our square root (ignoring any loss of accuracy that may arrise from multiplications afterwards).\\
+Now for an example, suppose we want to know how many iterations we need to perform to find \(\sqrt{N}\) to within 10 decimal places, i.e. \(\tau = 10^-10 = 0.0000000001\). We remember that \(\sqrt{N} \in [\frac{1}{2}, 1)\), and then we will apply transformations to this value afterwards, therefore this is equivalent to finding 10 significant digits of accuracy for our square root (ignoring any loss of accuracy that may arise from multiplications afterwards).\\
 
 Now in this case we want to find \(n \in \N\) such that \(n \ge log_2(log_{2\sqrt{2}}(2\cdot10^{10}(\sqrt{2}-1)))\). Using Wolfram Alpha to calculate this value we get that we need \(n \ge 4.457144...\) and so we can take \(n = 5\). This means that we could modify our algorithm and implementation to do 5 fixed iterations of Newton's Method to guarantee at least 10 decimal places of accuracy.\\
 
-In terms of efficiency versus accuracy tradeoff modifying the problem thus would improve it's efficiency by removing, now unneccesary, calculation and comparrison of \(\delta_n\) at each stage. However this does need a fixed guaranteed accuracy, and therefore such a program would no longer be suitable if we needed to calculate a square root accurate to 15 decimal places.\\
+In terms of efficiency versus accuracy trade-off modifying the problem thus would improve it's efficiency by removing, now unnecessary, calculation and comparison of \(\delta_n\) at each stage. However this does need a fixed guaranteed accuracy, and therefore such a program would no longer be suitable if we needed to calculate a square root accurate to 15 decimal places.\\
 
 Below is a table that lists the minimum \(n \in \N\) such that \(n\) satisfies our inequality, where our tolerance is \(10^k\) for some \(k \in \N\). This will give us the maximum number of iterations that must be performed for the required accuracy.
 
@@ -643,7 +641,7 @@ While the Newton's method discussed in the previous section is good, it has a sm
 
 If we consider \(f(x) = N - \frac{1}{x^2}\) then if \(x^\ast\) is a solution to \(f(x) = 0\) we see that \(x^\ast = \frac{1}{\sqrt{N}}\). As \(f'(x) = \frac{2}{x^3}\), then the Newton's Method, will give \[x_{n+1} = x_n - \frac{N - \frac{1}{x_n^2}}{\frac{2}{x_n^3}} = x_n\left(\frac{3}{2} - \frac{N}{2}x_n^2\right)\] where \(x_0\) is a given initial guess. As can be seen this algorithm requires no division if we multiply by real constants rather than the division implied above.\\
 
-We can then consider that, similar to Algorithm \ref{PCD_"Newton Method for Square Root v3"}, any \(N\) can be represented as \(a \cdot 2^b\) where \(a \in \left[\tfrac{1}{2}, 1\right)\). This will, again allow us to narrow our problem to a known range of values, by using the following transormations.
+We can then consider that, similar to Algorithm \ref{PCD_"Newton Method for Square Root v3"}, any \(N\) can be represented as \(a \cdot 2^b\) where \(a \in \left[\tfrac{1}{2}, 1\right)\). This will, again allow us to narrow our problem to a known range of values, by using the following transformations.
 \begin{displaymath}
 \begin{align*}
 N = a \cdot 2^b &\implies \tfrac{1}{N} = \tfrac{1}{a} \cdot 2^{-b}\\
@@ -696,7 +694,7 @@ Now let \(r := \epsilon_0 = \sqrt{N} - 1\) and \(I := [\sqrt{N}^{-1} - r, \sqrt{
 
 Next we know that \(f(x) = N - x^{-2}\), and therefore we get \(f'(x) = 2x^{-3}\), \(f''(x) = -6x^{-4}\). It is obvious that \(\nexists x \in \R : f'(x) = 0\), which means that \(f'(x) \neq 0 \forall x \in I\) and so \(\mathrm{NR}_1\) is satisfied. Also as \(f''\) is only discontinuous at \(x = 0\) and \(0 \notin I\), then \(f''(x)\) is continuous \(\forall x \in I\), meaning this satisfies \(\mathrm{NR}_2\).\\
 
-Now \(M = \sup\left\{\tfrac{1}{2}\left|\frac{2x^3}{6y^4}\right| : x, y \in I\rifht\}\), we can simplify the function we are trying to minimise to get \(\tfrac{1}{6}\frac{x^3}{y^4}\). It is obvious that in order to maximise this function we should find the largest possibe \(x\) and smallest possible \(y\), as both are positive. Hence by taking \(x = \sqrt{N}^{-1} + r\) and \(y = 1\), then \(M = \frac{1}{6}(2\sqrt{N}^{-1} - 1)^3 \le \frac{1}{6}(2\sqrt{2} - 1)^3\).\\
+Now \(M = \sup\left\{\tfrac{1}{2}\left|\frac{2x^3}{6y^4}\right| : x, y \in I\rifht\}\), we can simplify the function we are trying to minimise to get \(\tfrac{1}{6}\frac{x^3}{y^4}\). It is obvious that in order to maximise this function we should find the largest possible \(x\) and smallest possible \(y\), as both are positive. Hence by taking \(x = \sqrt{N}^{-1} + r\) and \(y = 1\), then \(M = \frac{1}{6}(2\sqrt{N}^{-1} - 1)^3 \le \frac{1}{6}(2\sqrt{2} - 1)^3\).\\
 
 Now we consider \(M\epsilon_0\):\\
 
@@ -713,9 +711,9 @@ Therefore as \(M\epsilon_0 < 1\) we have satisfied \(\mathrm{NR}_3\), and as suc
 \end{proof}
  
 %SUB%
-\subsection{Comparrison of Methods}
+\subsection{Comparison of Methods}
 
-We have observed several methods that can be used to calculate Square Roots, and so now we will see how the methods compare to each other in practice. The exact root method that we first discussed is the hardest to compare to the other methods as it works in a very different manner to the others. For now we will merely observe that it is an inefficient method that can be will be shown to tae longer than the others.\\
+We have observed several methods that can be used to calculate Square Roots, and so now we will see how the methods compare to each other in practice. The exact root method that we first discussed is the hardest to compare to the other methods as it works in a very different manner to the others. For now we will merely observe that it is an inefficient method that can be will be shown to take longer than the others.\\
 
 Second we need to compare the different methods discussed for the Newton Square Root method. As they work in the same general method, we really only need to test the computation time of the different methods. To do this we will be testing 1000 values in the range \((0,1000)\) and will calculate each of these values 100000 times, accurate to within a tolerance of \(10^-1)\), for each method to give the most accurate results. The table below gives the calculated results:
 
@@ -733,9 +731,9 @@ Second we need to compare the different methods discussed for the Newton Square 
 \end{tabular}
 \end{center}}
 
-Here we see that our third method, as expected, is the fastest of the proposed methods and so we will use this method going forwards. One unexpected result is that the second method is actually slwer than the first, which is likely due to the extra conversions, comparrisons and method calls; this slows down the execution more than it is sped up by reduction in number of iterations required.\\
+Here we see that our third method, as expected, is the fastest of the proposed methods and so we will use this method going forwards. One unexpected result is that the second method is actually slower than the first, which is likely due to the extra conversions, comparisons and method calls; this slows down the execution more than it is sped up by reduction in number of iterations required.\\
 
-Now for the comparrison of methods we will be comparing modified versions of Algorithms \ref{PCD_"Square Root Bisection Method fixed bounds"}, \ref{PCD_"Newton Method for Square Root v3"} and \ref{PCD_"Newton Inverse Square Root"}, which will execute for a given number of steps, rather than testing for the approximate error. To do this we need to consider how many iterations each method needs  to reach a particular number of decimal places of accuracy.\\
+Now for the comparison of methods we will be comparing modified versions of Algorithms \ref{PCD_"Square Root Bisection Method fixed bounds"}, \ref{PCD_"Newton Method for Square Root v3"} and \ref{PCD_"Newton Inverse Square Root"}, which will execute for a given number of steps, rather than testing for the approximate error. To do this we need to consider how many iterations each method needs  to reach a particular number of decimal places of accuracy.\\
 
 We have seen the required number of iterations for a tolerance \(\tau = 10^{-k} : k \in \N\), for both the bisection and basic newton square root methods, and similar to the basic newton method, we can show that for the inverse newton method we are looking for \(n \in \N\) that satisfies the following inequality:
 
@@ -756,7 +754,7 @@ This gives the following table:
 \end{tabular}
 \end{center}
 
-To show the above in action we have the table below which shows the convergence of all 3 methods to \(\sqrt{0.75} \approx 0.86602540378\), for differnct numbers of iterations \(n\) with the bold digits being those correct:
+To show the above in action we have the table below which shows the convergence of all 3 methods to \(\sqrt{0.75} \approx 0.86602540378\), for different numbers of iterations \(n\) with the bold digits being those correct:
 
 {\fontfamily{pcr}\selectfont
 %TBL%
@@ -790,7 +788,7 @@ To show the above in action we have the table below which shows the convergence 
 \end{tabular}
 \end{center}}
 
-If we compare the methods so that they guarantee an accuracy of 10 decimal places, then we will be able to see their relative efficiency. In particular we will again be testing the three methods using 1000 values in the range \((0,1000)\), and calculating the square root of each of these values 10000 times for each method; further we will be including the the digit by digit method and the built-in C \codeinline{sqrt} function. The results calculated are present in the following table:
+If we compare the methods so that they guarantee an accuracy of 10 decimal places, then we will be able to see their relative efficiency. In particular we will again be testing the three methods using 1000 values in the range \((0,1000)\), and calculating the square root of each of these values 10000 times for each method; further we will be including the digit by digit method and the built-in C \codeinline{sqrt} function. The results calculated are present in the following table:
 
 {\fontfamily{pcr}\selectfont
 %TBL%
@@ -813,6 +811,6 @@ If we compare the methods so that they guarantee an accuracy of 10 decimal place
 \end{tabular}
 \end{center}}
 
-Here we see the expected result that the digit by digit method is the least efficient method, taking two orders of magnitude more time than the second least efficient. We also see that while the two differnt newton methods are similar in time, and that even though they each performed the same number of iterations, the inverse square root method is the faster; this is due to the method having no division operations to perform. The quickest is of course the built-in \codeinline{sqrt} function from C, this is due to an implenetation that uses several low-level features of the C language to acheive the displayed level of performance.\\
+Here we see the expected result that the digit by digit method is the least efficient method, taking two orders of magnitude more time than the second least efficient. We also see that while the two different newton methods are similar in time, and that even though they each performed the same number of iterations, the inverse square root method is the faster; this is due to the method having no division operations to perform. The quickest is of course the built-in \codeinline{sqrt} function from C, this is due to an implementation that uses several low-level features of the C language to achieve the displayed level of performance.\\
 
-In conclusion we can say that the best method that we have considered is Algorithm \ref{#ALG#} which has rapid convergence to the sought square root, while also having fast execution. However if we are in a situation where we require large numbers of digits of accuracy, and yet do not have a suitable floating point types large enough to store these values, then the digit by digit method can be used to get an aribitrary number of digits accuracy.
+In conclusion we can say that the best method that we have considered is Algorithm \ref{#ALG#} which has rapid convergence to the sought square root, while also having fast execution. However if we are in a situation where we require large numbers of digits of accuracy, and yet do not have a suitable floating point types large enough to store these values, then the digit by digit method can be used to get an arbitrary number of digits accuracy.

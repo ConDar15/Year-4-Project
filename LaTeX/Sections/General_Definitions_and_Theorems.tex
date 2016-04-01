@@ -39,7 +39,7 @@ Given \(f \in \mathcal{C}(\R)\), \(f'\) being the derivative of \(f\), and \(x_0
 \end{displaymath}
 \end{Newton Method}
 
-The Newton Raphson method is not suitable for all problems and there are infact many cases in which it behaves poorly. One such case is when \(f'(x_n) \approx 0\) as the value of \(x_{n+1}\) will be very close to \(x_n\) and thus \(f'(x_{n+1}) \approx 0\). Further bad choices of \(x_0\) can lead to the method diverging or entering cycles between two points indefinitely, however we will see that we do not need to be concerned with these issues for our uses of the method.
+The Newton Raphson method is not suitable for all problems and there are in fact many cases in which it behaves poorly. One such case is when \(f'(x_n) \approx 0\) as the value of \(x_{n+1}\) will be very close to \(x_n\) and thus \(f'(x_{n+1}) \approx 0\). Further bad choices of \(x_0\) can lead to the method diverging or entering cycles between two points indefinitely, however we will see that we do not need to be concerned with these issues for our uses of the method.
 
 %SUBSUB%
 \subsubsection{Taylor Series Expansion}
@@ -53,11 +53,11 @@ The Taylor Series formulation was created by Brook Taylor in 1715, based off of 
 %DEF%
 \begin{Taylor Series}
 \label{DEF_"Taylor Series"}
-Given \(f : \R \to \R\) which is infinitely differentiable on an open ball \(B\) centered at \(a \in \R\), we define the Taylor Series of \(f\) on \(B\) to be:
+Given \(f : \R \to \R\) which is infinitely differentiable on an open ball \(B\) centred at \(a \in \R\), we define the Taylor Series of \(f\) on \(B\) to be:
 \[\sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n\]
 \end{Taylor Series}
 
-It was shown that on the open ball \(B\) from the above definition we have that \(f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n\), i.e. a function is equal to it's taylor polynomial on the ball for which it is defined. We can then, use this fact to define a polynomial that will approximate our function \(f\) at \(x \in \mathcal{I} \subset \R\)
+It was shown that on the open ball \(B\) from the above definition we have that \(f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n\), i.e. a function is equal to it's Taylor polynomial on the ball for which it is defined. We can then, use this fact to define a polynomial that will approximate our function \(f\) at \(x \in \mathcal{I} \subset \R\)
 
 %DEF%
 \begin{Taylor Polynomial}
@@ -67,7 +67,7 @@ Given \(f : \R \to \R\) which has a Taylor Series of
 \[ p_N(x) := \sum_{n=0}^N c_n x^n = c_0 + c_1 x + c_2 x^2 + \dotsb + c_N x^N\]
 \end{Taylor Polynomial}
 
-A commonly used type of Taylor series is the McClaurin series which is a Taylor series in a ball around \(a = 0\). Thus a McCluarin series has the form:
+A commonly used type of Taylor series is the McClaurin series which is a Taylor series in a ball around \(a = 0\). Thus a McClaurin series has the form:
 \[\sum_{n=0}^N \frac{f^{(n)}(0)}{n!}x^n\]
 
 Some examples of simple McClaurin Series are:
@@ -163,7 +163,7 @@ If \((x_n \in \R : n \in \N)\) is a sequence that converges to \(x\), then it is
 \end{itemize}
 \end{Rate of Convergence}
 
-The higher the order of convergce of a sequence the faster it approaches it's limit, therefore we are looking for algorithms with high orders of convergence. Many regular series have linear convergence and quadratic convergence is typically very rapid, while orders above quadratic are hard to construct for useful functions.\\
+The higher the order of convergence of a sequence the faster it approaches it's limit, therefore we are looking for algorithms with high orders of convergence. Many regular series have linear convergence and quadratic convergence is typically very rapid, while orders above quadratic are hard to construct for useful functions.\\
 
 A useful result is that, under the correct circumstances, the Newton-Raphson method can be shown to have quadratic convergence. The following proof assumes that \(\epsilon_n := |x^\ast - x_n|\):
 
@@ -213,7 +213,7 @@ Then we get the following derivation:
 		&\textrm{by taking absolute values}
 \end{align*}
 \end{displaymath}
-As \(\textrm{NR}_2\) holds then \(M\) exists and is positive, and thereforewe have:
+As \(\textrm{NR}_2\) holds then \(M\) exists and is positive, and therefore we have:
 \[\epsilon_n \le M\epsilon_{n-1}^2 \le M^{2^n - 1}\epsilon_0^{2^n}\]
 
 We now aim to show that we have convergence, i.e. \(\lim_{n \to \infty} x_n = x^\ast\); to do this it suffices to show that \(\lim_{n\to\infty}\epsilon_n = 0\).\\
@@ -248,10 +248,10 @@ Hence as the above limit exists and is positive then the sequence is quadratical
 
 Now that we have discussed how to measure the accuracy of our results by their errors, we wish to consider the efficiency method. There is typically a trade-off between accuracy and efficiency in that to gain a more accurate result, more calculations are required thus taking up more resources. In general though we will be using efficiency metrics to compare how efficient two different algorithms are at getting the same result.\\
 
-There are two main ways in which we will measure the efficiency of an algorithm. The first of these methods is the theoritical complexity of the algorithm, which represents the number of steps/operations an algorithm needs to acheive it's goal. The complexity of an algorithm is denoted by the big O notation, which represents the order of the complexity, i.e. the highest order term in the number of operations required.\\
+There are two main ways in which we will measure the efficiency of an algorithm. The first of these methods is the theoretical complexity of the algorithm, which represents the number of steps/operations an algorithm needs to achieve it's goal. The complexity of an algorithm is denoted by the big O notation, which represents the order of the complexity, i.e. the highest order term in the number of operations required.\\
 
 Typically the execution of an algorithm depends on the size of the input and so if we consider that an input has size \(n\) we can discuss different complexities. The first consideration is that if one algorithm takes \(2n\) operations while another takes \(20n\) operations, then both algorithms have a complexity of \(\bigO(n)\). \\
 
-A complexity of \(\bigO(n)\) is not a bad complxity for an algorithm as the number of operations needed rises linearly with the size of the input. Complexities of \(\bigO(n^2)\), \(\bigO(2^n)\) and \(\bigO(n!)\) are all poor complexities for an algorithm with the latter two becoming infeasible for larger \(n\). On the other hand complexities better than \(\bigO(n)\) include \(\bigO(\log(n))\) and \(\bigO(1)\), the latter of these is particularly significant as it means that the algorithm takes the same number of steps regardless of the size of the input.\\
+A complexity of \(\bigO(n)\) is not a bad complexity for an algorithm as the number of operations needed rises linearly with the size of the input. Complexities of \(\bigO(n^2)\), \(\bigO(2^n)\) and \(\bigO(n!)\) are all poor complexities for an algorithm with the latter two becoming infeasible for larger \(n\). On the other hand complexities better than \(\bigO(n)\) include \(\bigO(\log(n))\) and \(\bigO(1)\), the latter of these is particularly significant as it means that the algorithm takes the same number of steps regardless of the size of the input.\\
 
-The second method of assesing efficiency is timing of functions during execution. This method directly observes how long it takes a computer to perform the calculations for a given algorithm and can be used to empirically test the speed of two algorithms. One remark is that due to the speed of modern computers it is infeasible to time the execution of a single function, and one typically times the same algorithm with the same input being calculated multiple times to get accurate and measurable timings.
+The second method of assessing efficiency is timing of functions during execution. This method directly observes how long it takes a computer to perform the calculations for a given algorithm and can be used to empirically test the speed of two algorithms. One remark is that due to the speed of modern computers it is infeasible to time the execution of a single function, and one typically times the same algorithm with the same input being calculated multiple times to get accurate and measurable timings.
