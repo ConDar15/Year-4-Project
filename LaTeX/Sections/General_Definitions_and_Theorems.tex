@@ -1,20 +1,32 @@
 %SEC%
 \section{General Definitions and Theorems}
 \label{SEC_"General Definitions and Theorems"}
-This section will discuss those definitions and theorems that will be applicable and refferenced later in the document.
+
+This section will list some general definitions and theorems which will be used throughout the document. This will not be an exhaustive or in depth view of such concepts but merely an overview to allow easier reading of the material going forwards.
 
 %SUB%
 \subsection{Methods}
 
-In this document we will look at various functions, such as root functions, trigonometric functions, among others. Despite the variety of functions being analysed there are several methods that are useful for more than one function, we will discuss these methods below.
+In this document we will look at various functions, such as root functions, trigonometric functions, among others. Despite the variety of functions being analysed there are several methods that are useful for more than one function, or are worth analysing before their use.
 
 %SUBSUB%
 \subsubsection{Newton-Raphson Method}
 \label{SUBSUB_"Newton-Raphson Method"}
+
 \theoremstyle{definition}
 \newtheorem{Newton Method}{Definition}[subsubsection]
 
 The Newton-Raphson Method is named after Sir Isaac Newton and Joseph Raphson. It is a method that takes a continuously differentiable function \(f\) and it's derivative \(f'\), as well as an initial guess \(x_0\), to create successively more accurate solutions to \(x\) where \(f(x) = 0\).\\
+
+The motivation of the method can be seen in figure \ref{FIG_"Newton-Raphson Demonstration"}, where we take an initial guess \(x_0\) of the root \(x^\ast\). The tangent to the curve above \(x_0\) is then found, and has the equation \(y = f'(x_0)(x-x_0) + f(x_0)\), by setting \(y = 0\) and solving for \(x\) we find \(x_1\). By repeating this process and starting from a good enough \(x_0\) we hope to find successively closer approximations to \(x^\ast\).
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Newton-Raphson Demonstration"}
+	\caption{Demonstration of Newton-Raphson Method}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Newton-Raphson Diagram"}
+\end{figure}
 
 The specific definition of the Newton-Raphson method that I will be using in this document is below:
 
@@ -27,17 +39,7 @@ Given \(f \in \mathcal{C}(\R)\), \(f'\) being the derivative of \(f\), and \(x_0
 \end{displaymath}
 \end{Newton Method}
 
-The hope is that, if we start with a good initial guess, that the method will converge to some \(x \in \R : f(x) = 0\).\\
-
-We derive the above method in the following way. If we have an approximation \(x_n \in \R : f(x_n) \approx 0\) we consider the tangent to \(f(x)\) at \(x_n\), which is given by \(y = f'(x_n)(x-x_n) + f(x_n)\). If we set \(y = 0\) and solve for \(x\) we get that \[x = x_n - \frac{f(x)}{f'(x)}\]
-
-The iterative formula follows by letting \(x_{n+1} := x\) in the above.\\
-
-\TODO{Re-arrange into a better order}
-
-\TODO{Refferences}
-
-\TODO{Possibly include discussions of pros and cons}
+The Newton Raphson method is not suitable for all problems and there are infact many cases in which it behaves poorly. One such case is when \(f'(x_n) \approx 0\) as the value of \(x_{n+1}\) will be very close to \(x_n\) and thus \(f'(x_{n+1}) \approx 0\). Further bad choices of \(x_0\) can lead to the method diverging or entering cycles between two points indefinitely, however we will see that we do not need to be concerned with these issues for our uses of the method.
 
 %SUBSUB%
 \subsubsection{Taylor Series Expansion}
@@ -46,16 +48,16 @@ The iterative formula follows by letting \(x_{n+1} := x\) in the above.\\
 \newtheorem{Taylor Series}{Definition}[subsubsection]
 \newtheorem{Taylor Polynomial}[Taylor Series]{Definition}
 
-The Taylor Series formulation was created by Brook Taylor in 1715, based off of the work of Scottish mathematician James Gregory. The Taylor Series describes a method of representing a given function by a polynomial, where any finite number of terms will give an approximation to the function itself.
+The Taylor Series formulation was created by Brook Taylor in 1715, based off of the work of Scottish mathematician James Gregory. The Taylor Series describes a method of representing any infinitely differentiable function as an infinite power series.
 
 %DEF%
 \begin{Taylor Series}
 \label{DEF_"Taylor Series"}
-Given \(f : \R \to \R\) which is infinitely differentiable at \(a \in \R\), we define the Taylor Series of \(f\) at \(a\) to be:
+Given \(f : \R \to \R\) which is infinitely differentiable on an open ball \(B\) centered at \(a \in \R\), we define the Taylor Series of \(f\) on \(B\) to be:
 \[\sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n\]
 \end{Taylor Series}
 
-We can then, from our definition of a Taylor Series, define a polynomial that will approximate our function \(f\) at \(x \in \mathcal{I} \subset \R\)
+It was shown that on the open ball \(B\) from the above definition we have that \(f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n\), i.e. a function is equal to it's taylor polynomial on the ball for which it is defined. We can then, use this fact to define a polynomial that will approximate our function \(f\) at \(x \in \mathcal{I} \subset \R\)
 
 %DEF%
 \begin{Taylor Polynomial}
@@ -65,37 +67,26 @@ Given \(f : \R \to \R\) which has a Taylor Series of
 \[ p_N(x) := \sum_{n=0}^N c_n x^n = c_0 + c_1 x + c_2 x^2 + \dotsb + c_N x^N\]
 \end{Taylor Polynomial}
 
-Some examples of simple Taylor Series are:
+A commonly used type of Taylor series is the McClaurin series which is a Taylor series in a ball around \(a = 0\). Thus a McCluarin series has the form:
+\[\sum_{n=0}^N \frac{f^{(n)}(0)}{n!}x^n\]
+
+Some examples of simple McClaurin Series are:
 \begin{align*}
 \frac{1}{1-x} &= \sum_{n=0}^\infty x^n &\forall x \in {({-1},1)}\\
+(1 + x)^k	  &= \sum_{n=0}^\infty \binom{k}{n} x^n 
+					&\forall x \in (-1,1), k \in \N
 \end{align*}
-
-\TODO{Eloquate this section}
-
-\TODO{Discuss when a Taylor Series is not equal to it's function}
-
-\TODO{Describe intervals for which Taylor Series converge}
-
-\TODO{Create more examples of Taylor Series that are not used later in the document}
-
-\TODO{Possibly prove Taylor's Theorem}
-
-%SUBSUB%
-\subsubsection{CORDIC}
-\label{SUBSUB_"CORDIC"}
-\TODO{Describe the CORDIC Algorithm in general}
-
-\TODO{Let other sections define specific changes to CORDIC}
 
 %SUB%
 \subsection{Errors}
 \label{SUB_"Error Definitions"}
 \theoremstyle{definition}
 \newtheorem{Absolute Error}{Definition}[subsection]
-\newtheorem{Relative Error}[Absolute Error]{Definition}
 \newtheorem{Iteration Error}[Absolute Error]{Definition}
 
-Errors are very useful in this document for discussing convergence and measuring the accuracy of a particular method. There are two distinct types of error that we are interested in:
+The error of an approximation \(x_n\) for some \(x^\ast\) is a measure of how much \(x_n\) differs from \(x^\ast\). We will use the error of approximations to discuss the convergence of methods as well as describing their accuracy.\\
+
+There are several ways of evaluating the error of an approximation which each have their own uses. The error measures that we will use in this document are detailed below:
 
 %DEF%
 \begin{Absolute Error}
@@ -104,18 +95,9 @@ If we have a value \(v\) and it's approximation \(\tilde{v}\), then the absolute
 \[ \epsilon := \left| v - \tilde{v} \right| \]
 \end{Absolute Error}
 
-The absolute error will be useful in guaranteeing a certain level of accuracy that a given implementation of a method will give. Uses of absolute error in the document will use \(\epsilon\) as their absolute error variable.
+The absolute error is useful in guaranteeing a certain level of accuracy that a given implementation of a method will give; for instance if \(epsilon < 10^{-3}\) then the approximation is accurate to at least 3 decimal places. Uses of absolute error in the document will use \(\epsilon\) as their absolute error variable.
 
-%DEF%
-\begin{Relative Error}
-\label{DEF_"Relative Error"}
-If we have a value \(v\) and it's approximation \(\tilde{v}\), then the relative error is
-\[ \eta := \frac{\epsilon}{\left| v \right|} = \left| 1 - \frac{\tilde{v}}{v} \right|\]
-\end{Relative Error}
-
-The relative error will also be useful in guaranteeing a certain level of accuracy that a given implementation of a method will give, particularly when the absolute error varies with the size of the input. Uses of relative error in the document will use \(\eta\) as their absolute error variable.\\
-
-As the previous two errors are hard or impossible to accurately estimate, in a practical manner, then we want an error estimate that we can calculate in an algorithm. Thus we define the iteration error, as the absolute difference of consecutive iterations.
+As the absolute error of an approximation is hard or impossible to accurately calculate during program execution, we want a way to estimate it. Typically our computations will produce a sequence of approximations \(x_0, x_1, x_2, \ldots\), and thus we define the following:
 
 %DEF%
 \begin{Iteration Error}
@@ -124,7 +106,7 @@ If we have the sequence \(\left(x_n\right)_{n \in \N}\), then the iteration erro
 \[ \delta_n := \left|x_n - x_{n-1}\right| \]
 \end{Iteration Error}
 
-For our practical purposes we can note that it is almost impossible to calculate \(\epsilon_n\) exactly, while \(\delta_n\) is easy to calculate and tends to be a good enough approximation of \(\epsilon_n\); particularly if the convergence is rapid.\\ 
+While it is often impossible to calculate \(\epsilon_n\) it is very easy to calculate \(\delta_n\) from the generated approximations. This estimate is best used when we know that the convergence is rapid, as in these cases \(\delta_n\) is a good approximation of \(\epsilon_n\).
 
 %SUB%
 \subsection{Convergence}
@@ -141,7 +123,7 @@ For our practical purposes we can note that it is almost impossible to calculate
 \newtheorem{Uniform Convergence Thm}{Theorem}[subsection]
 \newtheorem{Quad Convergence of Newton}[Uniform Convergence Thm]{Theorem}
 
-In this section we consider what it means for a sequence to converge to a limit value, and some results that will be useful in future chapters.
+As our methods of approximating functions will typically generate a sequence of values \(x_0, x_1, x_2, \ldots\) then we want to ensure that the approximations are approaching the correct value. We consider here what it means for a sequence to converge to a limit value, and some useful results for later chapters.
 
 %DEF%
 \begin{Uniform Convergence}
@@ -170,6 +152,8 @@ For \(\Leftarrow\):\\
 Omitted for brevity.
 \end{proof}
 
+We have shown now what it means for a value to converge to a limit, but not all sequences that approach a limit do so at the same pace. For example if we consider the sequences \(x_n := 2^-n\) and \(y_n := 10^-n\), then it is obvious that the limit of both sequences is \(0\), but \(y_n\) approaches the limit faster. This leads to the following definition of the rate of convergence.
+
 \begin{Rate of Convergence}
 If \((x_n \in \R : n \in \N)\) is a sequence that converges to \(x\), then it is said to converge:
 \begin{itemize}
@@ -179,7 +163,9 @@ If \((x_n \in \R : n \in \N)\) is a sequence that converges to \(x\), then it is
 \end{itemize}
 \end{Rate of Convergence}
 
-For the following proof we will have \(\epsilon_n := |x^\ast - x_n|\).
+The higher the order of convergce of a sequence the faster it approaches it's limit, therefore we are looking for algorithms with high orders of convergence. Many regular series have linear convergence and quadratic convergence is typically very rapid, while orders above quadratic are hard to construct for useful functions.\\
+
+A useful result is that, under the correct circumstances, the Newton-Raphson method can be shown to have quadratic convergence. The following proof assumes that \(\epsilon_n := |x^\ast - x_n|\):
 
 %THM%
 \begin{Quad Convergence of Newton}
@@ -257,6 +243,15 @@ Hence as the above limit exists and is positive then the sequence is quadratical
 \end{proof}
 
 %SUB%
-\subsection{Efficiency and Accuracy Metrics}
-\label{SUB_"Efficiency and Accuracy Metrics"}
+\subsection{Efficiency Metrics}
+\label{SUB_"Efficiency Metrics"}
 
+Now that we have discussed how to measure the accuracy of our results by their errors, we wish to consider the efficiency method. There is typically a trade-off between accuracy and efficiency in that to gain a more accurate result, more calculations are required thus taking up more resources. In general though we will be using efficiency metrics to compare how efficient two different algorithms are at getting the same result.\\
+
+There are two main ways in which we will measure the efficiency of an algorithm. The first of these methods is the theoritical complexity of the algorithm, which represents the number of steps/operations an algorithm needs to acheive it's goal. The complexity of an algorithm is denoted by the big O notation, which represents the order of the complexity, i.e. the highest order term in the number of operations required.\\
+
+Typically the execution of an algorithm depends on the size of the input and so if we consider that an input has size \(n\) we can discuss different complexities. The first consideration is that if one algorithm takes \(2n\) operations while another takes \(20n\) operations, then both algorithms have a complexity of \(\bigO(n)\). \\
+
+A complexity of \(\bigO(n)\) is not a bad complxity for an algorithm as the number of operations needed rises linearly with the size of the input. Complexities of \(\bigO(n^2)\), \(\bigO(2^n)\) and \(\bigO(n!)\) are all poor complexities for an algorithm with the latter two becoming infeasible for larger \(n\). On the other hand complexities better than \(\bigO(n)\) include \(\bigO(\log(n))\) and \(\bigO(1)\), the latter of these is particularly significant as it means that the algorithm takes the same number of steps regardless of the size of the input.\\
+
+The second method of assesing efficiency is timing of functions during execution. This method directly observes how long it takes a computer to perform the calculations for a given algorithm and can be used to empirically test the speed of two algorithms. One remark is that due to the speed of modern computers it is infeasible to time the execution of a single function, and one typically times the same algorithm with the same input being calculated multiple times to get accurate and measurable timings.

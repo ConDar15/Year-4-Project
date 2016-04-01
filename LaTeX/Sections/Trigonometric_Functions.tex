@@ -1,9 +1,40 @@
 %SEC%
 \section{Trigonometric Functions}
 
-This section will focus on trigonometric functions, which are commonly used cyclic functions. These functions have been studied for hundreds of years, and can be challenging to calculate. We will discuss several methods of calculating them below before comparing methods.
+The trigonometric functions have been studied since antiquity, originally for their relation to triangles, which were incredibly important to early mathematical understanding. Nowadays the trigonometric functions have found applications in a vast array of problems from musical theory to satelite navigation.\\
 
-\TODO{Extend and Eloquate introduction}
+Here we will discuss various methods for approximating the trigonometric functions \(\sin\), \(\cos\) and \(\tan\). Further we will explore the inverse trigonometric functions \(\sin^{-1}\), \(\cos^{-1}\) and \(\tan^{-1}\) which also have many practical uses in modern life.\\
+
+Trigonometric functions can be calculated using either degrees of an angle (e.g. \(\sin(60^{\circ}) = \frac{\sqrt{3}}{2}\)) or in radians(e.g. \(\sin(\frac{pi}{3}) = \frac{\sqrt{3}}{2}\)). For this document we will only discuss the use of radians and consider that \(\theta^\textrm{rad} = \theta^\circ \cdot \frac{\pi}{180}\) can be used to convert between the two units if needed.
+
+%SUB%
+\subsection{Trigonometric Identities}
+
+Most readers will be well aware of the standard trigonometric identities: useful equalities that help in the analysis of trigonometric functions; this section will recap such identities that will prove useful in this document. As with section \ref{#SEC#} this is not meant to be an exhaustive overview, merely a reminder and as such identities not listed here may be used in the document.\\
+
+The first identities to consider are the basic ones taught in secondary school such as \(\sin^2x + \cos^2x = 1\). In particular we are interested in the shifts, reflections and periods of \(\sin\) and \(\cos\). Some of the relevant functions are included below:
+
+\begin{displaymath}
+\begin{array}{rclrcl}
+	\sin(-x) &=& -\sin(x) &\cos(-x) &=& \cos(x)\\
+	\sin(x + \tfrac{\pi}{2}) &=& \cos(x) 
+		&\cos(x + \tfrac{\pi}{2}) &=& -\sin(x)\\
+	\sin(x + \pi) &=& -\sin(x) &\cos(x + \pi) &=& -\cos(x)\\
+	\sin(x + 2\pi) &=& \sin(x) &\cos(x + 2\pi) &=& \cos(x)
+\end{array}
+\end{displaymath}
+
+Another useful formula to remember is the sine rule, which is detailed in figure \ref{FIG_"Sine Rule"} as well as the combined angle formulas \(\sin(x\pmy) = \sin(x)\cos(y) \pm \sin(y)\cos(x)\), \(\cos(x \pm y) = \cos(x)\cos(y) \mp \sin(x)\sin(y)\) and \(\tan(x\pmy) = \frac{\tan(x) \pm \tan(y)}{1 \mp \tan(x)\tan(y)}\).
+	
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Sine Rule"}
+	\caption{The Sine Rule}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Sine Rule Diagram"}
+\end{figure}
+
+A final note in this section is the derivatives of the trigonometric functions, in particular \(\frac{d}{dx}\sin(x) = \cos(x)\), \(\frac{d}{dx}\cos(x) = -\sin(x)\) and \(\frac{d}{dx}\tan(x) = \sec^2(x)\) will be useful later on in the development of methods.
 
 %SUB%
 \subsection{Calculating \pi}
@@ -640,9 +671,19 @@ By taking taking smaller and smaller values of $\gamma$ we can create an iterati
 	\end{array} \right)
 \end{displaymath}
 
-To do this we repreately add and subtract our values for \(\gamma\) from \(\beta\) to bring it as close to 0 as possible. For our purposes we wish to have a sequence \((\gamma_k : k \in [0, n] \cap \Z)\) which will allow us to construct all angles in the range \((-\frac{\pi}{2}, \frac{\pi}{2})\) to within a known level of accuracy. There are many possible choices here, but we wish to consider \((\gamma_k : k \in [0, n] \cap \Z)\) such that \(\tan \gamma_k = 2^{-k} \forall k \in [0,n] \cap \Z\).\\
+To do this we repreately add and subtract our values for \(\gamma\) from \(\beta\) to bring it as close to 0 as possible. For our purposes we wish to have a sequence \((\gamma_k : k \in [0, n] \cap \Z)\) which will allow us to construct all angles in the range \((-\frac{\pi}{2}, \frac{\pi}{2})\) to within a known level of accuracy. \\
 
-We can note that the powers of 2 have a useful property, in that if \(m > n \in \N\) we see that \(\sum_{k=n}^{m-1} 2^k = 2^m - 2^n\). We wish to show that our choice for \(\gamma_k\) have a similar property which will be usefull in showing that they are a good choice for our CORIC algorithm.
+The way that this works can be thought of like a paper fan where each section is smaller than the last and to approximate the desired angle we repeatedly fold the angle back and forth. An visualisation of this is in figure \ref{FIG_"Fan Diagram"}, which shows three views of the CORDIC fan. The top left view is the unfolded fan, the top right is the fan folded to approximate the angle shown by the red line and the view at the bottom is a close up of the previous view.
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Fan Diagram"}
+	\caption{The CORDIC fan}
+	\centering
+	\includegraphics[width=0.75\textwidth]{"./Diagrams/Fan Diagram"}
+\end{figure}
+
+While there are many possible choices for \(\gamma_k\) we wish to consider \((\gamma_k : k \in [0, n] \cap \Z)\) such that \(\tan \gamma_k = 2^{-k} \forall k \in [0,n] \cap \Z\). We can note that the powers of 2 have a useful property, in that if \(m > n \in \N\) we see that \(\sum_{k=n}^{m-1} 2^k = 2^m - 2^n\). We wish to show that our choice for \(\gamma_k\) have a similar property which will be usefull in showing that they are a good choice for our CORIC algorithm.
 
 %THM%
 \begin{Cordic Gamma Property}

@@ -22,7 +22,8 @@ INFILES  =bisect_root.c exact_root.c newton_inv_sqrt.c newton_sqrt.c \
 		  taylor_inv_trig.c cordic_trig.c int_exp.c taylor_exp_log.c \
 		  hyperbolic_log.c cont_frac_exp.c
 TESTFILES=test_newton_sqrt.c test_trig_methods.c test_inv_trig_methods.c \
-		  test_sqrt_methods.c test_int_exp_methods.c test_exp_methods.c
+		  test_sqrt_methods.c test_int_exp_methods.c test_exp_methods.c \
+		  test_log_methods.c test_log_pow_methods.c
 OUTFILES=$(addprefix $(OUTDIR)/, $(INFILES:.c=.out))
 OBJECTS =$(addprefix $(OBJDIR)/, $(INFILES:.c=.o))
 TESTS   =$(addprefix $(TSTDIR)/, $(TESTFILES:.c=.out))
@@ -182,3 +183,21 @@ $(TSTDIR)/test_exp_methods.out: $(TSTDIR)/test_exp_methods.c \
 		$(OBJDIR)/cont_frac_exp.o $(OBJDIR)/int_exp.o \
 		$(OBJDIR)/hyperbolic_log.o $(MATHLIB) $(UTILLIB) -I. -o $@
 test_exp_methods: $(TSTDIR)/test_exp_methods.out
+
+$(TSTDIR)/test_log_methods.out: $(TSTDIR)/test_log_methods.c \
+								$(TSTDIR)/test_utilities.h \
+								$(OBJDIR)/taylor_exp_log.o \
+								$(OBJDIR)/hyperbolic_log.o \
+								$(OBJDIR)/int_exp.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/taylor_exp_log.o $(OBJDIR)/int_exp.o\
+		$(OBJDIR)/hyperbolic_log.o $(MATHLIB) $(UTILLIB) -I. -o $@
+test_log_methods: $(TSTDIR)/test_log_methods.out
+
+$(TSTDIR)/test_log_pow_methods.out: $(TSTDIR)/test_log_pow_methods.c \
+				$(TSTDIR)/test_utilities.h $(OBJDIR)/taylor_exp_log.o \
+				$(OBJDIR)/hyperbolic_log.o $(OBJDIR)/int_exp.o \
+				$(OBJDIR)/cont_frac_exp.o $(LU)
+	$(CC) $(CFLAGS) $< $(OBJDIR)/taylor_exp_log.o $(OBJDIR)/int_exp.o\
+		$(OBJDIR)/hyperbolic_log.o $(OBJDIR)/cont_frac_exp.o \
+		$(MATHLIB) $(UTILLIB) -I. -o $@
+test_log_pow_methods: $(TSTDIR)/test_log_pow_methods.out

@@ -1,0 +1,15 @@
+#!/usr/bin/python3
+
+from random import uniform as u, randint as r
+
+name = input('Base Filename: ').replace(' ', '_')
+num  = int(input('Number of test cases: '))
+mb   = float(input('Minimum value of x: '))
+Mb   = float(input('Maximum value of x: '))
+ms   = float(input('Minimum value of x: '))
+Ms   = float(input('Maximum value of x: '))
+
+with open('{}_{}_b({})-({})_s({})-({})'.format(name, num, mb, Mb, ms, Ms),'w') as f:
+	f.write('{}\n'.format(num))
+	for i in range(num):
+		f.write('{}\t{}\n'.format(u(mb, Mb), u(ms, Ms)))

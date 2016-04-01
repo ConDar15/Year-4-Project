@@ -2,7 +2,9 @@
 \section{Root Functions}
 \label{SEC_"Root Functions"}
 
-In this section of the document we will consider several methods for approximating root functions. For our purposes we are only going to consider roots of \(N \in \Rpz\), this is because if \(N \in \R^-\) then it follows that \(\sqrt{N} = i\sqrt{|N|}\).
+Root functions are a vital part of mathematics and have been used for millenia, originally studied for their useful relation to architecture root functions also have many modern day applications. The majority of this section will be dealing with the commonly used sqare root function \(\sqrt{N}\), which always gives an irrational answer if \(N\) is not a square number.\\
+
+We will consider several methods for approximating root functions, but for our purposes here we are only going to consider roots of \(N \in \Rpz\), this is because if \(N \in \R^-\) then it follows that \(\sqrt{N} = i\sqrt{|N|}\).
 
 %SUB%
 \subsection{Digit by Digit Method}
@@ -360,9 +362,9 @@ Now ususally finding \(r\) and \(k\) as above would be as hard as calculating th
 \newtheorem{SRNM NR1 and NR2}[SRNM Right-hand Convergence]{Proposition}
 \newtheorem{SRNM NR3 for v3}[SRNM Right-hand Convergence]{Proposition}
 
-If we consider $f(x) = x^2 - N$ then if $x^\ast$ is a solution to $f(x) = 0$ we see that $x^\ast = \sqrt{N}$. As $f'(x) = 2x$, then the Newton's Method, will give $x_{n+1} = x_n - \frac{x^2 - N}{2x}$, where $x_0$ is a given initial guess.\\
+If we consider our equation \(f(x) = x^2 - N\), then we can see that it is differentiable on \(x \in \Rp\) with \(f'(x) = 2x\); we can therefore hope to use the Newton-Raphson method to approximate \(x^\ast \in \Rp : f(x^\ast) = 0\). Now it is obvious that if \(f(\x^\ast) = 0\) then \(x^\ast = \sqrt{N}\) and so the Newton-Raphson method should converge to the \(\sqrt{N}\) provided we start at a suitable \(x_0\).\\
 
-We can see that, in C, each iteration will calculate \codeinline{x = x - (x*x - N) / (2*x)}, which requires 5 operations; however if we re-arrange our equation, we instead get \(x_{n+1} = \frac{1}{2}\right(x_n + \frac{N}{x}\right)\). Implementing our new iterative formula we get \codeinline{x = 0.5 * (x + N/x)}, which now uses only 3 operations.\\
+The iterative step of Newton's method for square roorts is \(x_{n+1} = x_n - \frac{x_n^2 - N}{2x_n}\) which when implemented in C, requires the calculation of \codeinline{x = x - (x*x - N) / (2*x)} each iteration, which requires 5 operations. However if we re-arrange our equation, we instead get \(x_{n+1} = \frac{1}{2}\right(x_n + \frac{N}{x}\right)\), which when implements is \codeinline{x = 0.5 * (x + N/x)}, which now uses only 3 operations.\\
 
 We can then use the following pseudocode as the basis of our implementaions of the Newton-Raphson Method for Square Roots:
 
@@ -637,7 +639,7 @@ Below is a table that lists the minimum \(n \in \N\) such that \(n\) satisfies o
 \theoremstyle{plain}
 \newtheorem{Inv Sqrt Quad Conv}{Proposition}[subsection]
 
-As discussed in Section \ref{#SEC#}, computers are more efficient at multiplication over division. We would therefore prefer to find a way of utilising Neton's Method without having to perform any costly division operations.\\
+While the Newton's method discussed in the previous section is good, it has a small issue when it comes to performance, namely that division is slow for a computer to perform compared to multiplication. With this knowledge we would like to find a way of utilising Newton's method without having to perform any division operations.\\
 
 If we consider \(f(x) = N - \frac{1}{x^2}\) then if \(x^\ast\) is a solution to \(f(x) = 0\) we see that \(x^\ast = \frac{1}{\sqrt{N}}\). As \(f'(x) = \frac{2}{x^3}\), then the Newton's Method, will give \[x_{n+1} = x_n - \frac{N - \frac{1}{x_n^2}}{\frac{2}{x_n^3}} = x_n\left(\frac{3}{2} - \frac{N}{2}x_n^2\right)\] where \(x_0\) is a given initial guess. As can be seen this algorithm requires no division if we multiply by real constants rather than the division implied above.\\
 
