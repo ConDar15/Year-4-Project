@@ -5,7 +5,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[a4paper, margin=2.5cm]{geometry}
-\usepackage{natbib}
+%\usepackage{cite}
+\usepackage[backend=biber]{biblatex}
+%\usepackage{natbib}
 \usepackage{chngcntr}
 \usepackage{color}
 \usepackage{listings}
@@ -16,7 +18,11 @@
 \definecolor{cCm}{RGB}{0, 105, 0}
 \definecolor{cSt}{RGB}{155, 0, 0}
 \definecolor{cKw}{RGB}{0, 0, 105}
+\definecolor{pBg}{RGB}{255,220,205}
 
+\addbibresource{mybib.bib}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
 \newcommand{\TODO}[1]{\textcolor{red}{TODO: #1}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}
@@ -54,8 +60,12 @@
 %\counterwithin{lstlisting}{subsubsection}
 \renewcommand{\familydefault}{\sfdefault}
 \renewcommand{\lstlistingname}{Algorithm}
-\lstset{basicstyle=\rmfamily,mathescape}
-\bibpunct{[}{]}{;}{s}{,}{,}
+\lstset{
+	basicstyle=\rmfamily,
+	mathescape,
+	frame=lines,
+	numbers=left}
+%\bibpunct{[}{]}{;}{s}{,}{,}
 \numberwithin{equation}{subsection}
 
 \AtBeginDocument{%
@@ -75,12 +85,6 @@
 	}%
 }
 
-%\includeonly{./Sections/Introduction}
-%\includeonly{./Sections/Trigonometric_Functions}
-%\includeonly{./Sections/Root_Functions}
-%\includeonly{./Sections/Logarithms_and_Exponentials}
-%\includeonly{}
-
 \begin{document}
 
 \author{Jake Darby}
@@ -90,7 +94,7 @@
 
 \begin{abstract}
 \begin{center}
-This document will discuss and analyse various numerical methods for computing functions commonly found on calculators. The aim of this paper is to, for each set of functions, compare and contrast several algorithms in regards to their effiency and accuracy.
+This document will discuss and analyse various numerical methods for computing functions commonly found on calculators. The aim of this paper is to compare and contrast several algorithms, for each function, in regards to their efficiency and accuracy.
 \end{center}
 \end{abstract}
 
@@ -107,12 +111,10 @@ This document will discuss and analyse various numerical methods for computing f
 \input{./Sections/Logarithms_and_Exponentials}
 \input{./Sections/Conclusion}
 
-\section{Preliminary References}
-http://math.exeter.edu/rparris/peanut/cordic.pdf \\
-Inside your Calculator by Gerald R Rising \\
-Wolfram Alpha \\
+\nocite{*}
+\printbibliography
 
 \appendix
-%\input{./Appendices/Code}
+\input{./Appendices/Code}
 
 \end{document}

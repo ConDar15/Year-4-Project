@@ -27,7 +27,7 @@ This allows us to get successive approximations of \(N\) where \(N_0 = a_0^210^{
 Thus we can have an iterative method to solve the problem, where at each stage we are trying to find the largest digit which satisfies the inequality \((20\sum_{i=0}^{k-1}a_i10^{k-i-1} + a_k)a_k10^{2n-2k} \le N - N_{k-1}\). Thus we get the following pseudo-code, which outputs two sequences, one indicating the digits before the decimal point and one afterwards. I will use set notation to indicate the sequences, but in this case order is important and repetition is allowed.
 
 %PCD%
-\begin{lstlisting}[caption={Exact Digit by Digits Square Root}]
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Exact Digit by Digits Square Root}]
   exactRootDigits($N \in \Rpz, d \in \N$):
       $Digits_a := \emptyset$
       $Digits_b := \emptyset$
@@ -57,7 +57,7 @@ Second we note that on line 7 we calculate \(\sum_{i=0}^{k-1}a_i10^{k-i-1}\) for
 This calculation of \(P_k\), then carries over to reduce the complexity of line 8 to be \(\bigO(1)\) instead of \(\bigO(k)\). Combining this we can create the modified algorithm below:
 
 %PCD%
-\begin{lstlisting}[caption={Exact Digit by Digits Square Root version 2}]
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Exact Digit by Digits Square Root version 2}]
   exactRootDigits_v2($N \in \Rpz, d \in \N$):
       $Digits_a := \emptyset$
       $Digits_b := \emptyset$
@@ -114,7 +114,7 @@ The algorithm uses the same basis as the base 10 version, for it's calculations,
 Now we can consider our choice of \(e\), the most practical method is to test successive \(e_m := 2^m\), where \(m\) is descending starting with \(m = \max{m \in \Zpz : 4^m \le N}\). We can use an iterative formula to build up the integer square root, where we start with \(r = 0, M = N\) and have \(r \mapto r + e_m\) whenever \(2re_m + e_m^2 \le M\), stopping when \(m < 0\). This is then implemented as follows:\\
 
 %PCD%
-\begin{lstlisting}[caption={Integer Square Root Algorithm}]
+\begin{lstlisting}[numbers=left,frame=single,mathescape,caption={Integer Square Root Algorithm}]
   integerSquareRoot($N \in \Zpz$):
       $M := N$
       $m := \max{m \in \Zpz : 4^m \le M}$
@@ -201,7 +201,7 @@ The bisection method starts with initial bounds \(a_0 = a, b_0 = b\), where the 
 
 %PCD%
 \label{PCD_"General Bisection Method"}
-\begin{lstlisting}[caption={General Bisection Method}]
+\begin{lstlisting}[frame=single,mathescape,caption={General Bisection Method}]
   bisectionMethod($a \in \R, b \in (a, \infty), f \in \mathcal{C}[a,b], \tau \in \Rp$)
       $a_0 := a$
       $b_0 := b$
@@ -222,7 +222,7 @@ The bisection method starts with initial bounds \(a_0 = a, b_0 = b\), where the 
 For our purposes we are trying to find the zero of \(f(x) = x^2 - N\), which is a strictly increasing function on \(\Rpz\). If \(N >= 1\), then \(\sqrt{N} \in [0, N]\), while \(N < 1 \implies \sqrt{N} \in [0, 1]\). It is obvious that our function has the required property, and thus we get the following method for finding the square root of \(N\):\\
 
 %PCD%
-\begin{lstlisting}[caption={Bisection Method for Square Roots},label={PCD_"Square Root Bisection Method"}]
+\begin{lstlisting}[frame=single,mathescape,caption={Bisection Method for Square Roots},label={PCD_"Square Root Bisection Method"}]
   bisectionSquareRoot($N \in \Rpz, \tau \in \Rp$)
       $a_0 := 0$
       $b_0 := \max{1, N}$
@@ -292,7 +292,7 @@ The algorithm can be generalised to search for \(\sqrt[k]{N}\), where \(k \in [2
  
 %PCD%
 \label{PCD_"Bisection Method for General Roots"}
-\begin{lstlisting}[caption={Bisection Method for General Roots}]
+\begin{lstlisting}[frame=single,mathescape,caption={Bisection Method for General Roots}]
   kRootBisectionMethod($N \in \Rpz, k \in [2, \infty) \cap \Z, \tau \in \Rp$)
       $a_0 := 0$
       $b_0 := \max{1, N}$
@@ -337,7 +337,7 @@ Now usually finding \(r\) and \(k\) as above would be as hard as calculating the
 
 
 %PCD%
-\begin{lstlisting}[caption={Bisection Method for Square Roots with fixed bounds},label={PCD_"Square Root Bisection Method fixed bounds"}]
+\begin{lstlisting}[frame=single,mathescape,caption={Bisection Method for Square Roots with fixed bounds},label={PCD_"Square Root Bisection Method fixed bounds"}]
   bisectionSquareRoot($N \in \Rpz, \tau \in \Rp$)
       Let $(r, e) \in [\tfrac{1}{2}, 1) : N = r\cdot2^e$
       if $2 \nmid e$:
@@ -376,7 +376,7 @@ We can then use the following pseudo-code as the basis of our implementations of
 
 %PCD%
 \label{PCD_"Newton Square Root Basic"}
-\begin{lstlisting}[caption={Basic Newton Method for Square Root}]
+\begin{lstlisting}[frame=single,mathescape,caption={Basic Newton Method for Square Root}]
   NewtonSquareRoot($N \in \R, x_0 \in \R, \tau \in (0,1)$):
       $n := 0$
       loop:
@@ -431,7 +431,7 @@ This then leads to an updated version of the above pseudo-code:\\
 
 %PCD%
 \label{PCD_"Newton Square Root v1"}
-\begin{lstlisting}[caption={Basic Newton Method for Square Root}]
+\begin{lstlisting}[frame=single,mathescape,caption={Basic Newton Method for Square Root}]
   NewtonSquareRoot($N \in \Rpz, \tau \in (0,1)$):
       if $N \in \{0, 1\}$:
           return $N$
@@ -490,7 +490,7 @@ Therefore we can get the following new choice for \(x_0\), and thus new pseudo-c
 
 %PCD%
 \label{PCD_"Newton Square Root v2"}
-\begin{lstlisting}[caption={Basic Newton Method for Square Root}]
+\begin{lstlisting}[frame=single,mathescape,caption={Basic Newton Method for Square Root}]
   NewtonSquareRoot($N \in \Rpz, \tau \in (0,1)$):
       if $N \in \{0, 1\}$:
           return $N$
@@ -527,7 +527,7 @@ This helps as we can then narrow our problem, to only finding \(\sqrt{a} : a \in
 Where \(\lfloor\cdot\rceil : \R \to \Z\) is the nearest integer function. We can then implement the above observations in the following algorithm:
 
 %PCD%
-\begin{lstlisting}[caption={Newton Method for Square Root v3},label={PCD_"Newton Method for Square Root v3"}]
+\begin{lstlisting}[frame=single,mathescape,caption={Newton Method for Square Root v3},label={PCD_"Newton Method for Square Root v3"}]
   NewtonSquareRoot($N \in \Rpz, \tau \in (0,1)$):
       Let $(a, b) :\in \left[\tfrac{1}{2}, 1\right)\times\Z$ s.t. $N = a\cdot2^b$
       $x_0 := 1$
@@ -547,7 +547,7 @@ Where \(\lfloor\cdot\rceil : \R \to \Z\) is the nearest integer function. We can
           $n \mapsto n + 1$
 \end{lstlisting}
 
-We must first consider the fact that the algorithm requires the pre-calculation of both \(\sqrt{2}\) and \(\tfrac{1}{\sqrt{2}}\), to be able to calculate all values. However, it is the case that we can use the algorithm itself to generate these values as \(2 = \tfrac{1}{2} \cdot 2^2\), and as the exponent of 2 is even then the algorithm does not require \(\sqrt{2}\) for this computation. Similarly \(\tfrac{1}{2} = \tfrac{1}{2} \cdot 2^0\), which again is an even exponent. We can thus run our algorithm to find an arbitrarily accurate values for \(\sqrt{2}\) and \(\tfrac{1}{\sqrt{2}}\) to allow us to run the algorithm for other values.\\
+We must first consider the fact that the algorithm requires the pre-calculation of both \(\sqrt{2}\) and \(\tfrac{1}{\sqrt{2}}\), to be able to calculate all values. However, it is the case tha we can use the algorithm itself to generate these values as \(2 = \tfrac{1}{2} \cdot 2^2\), and as the exponent of 2 is even then the algorithm does not require \(\sqrt{2}\) for this computation. Similarly \(\tfrac{1}{2} = \tfrac{1}{2} \cdot 2^0\), which again is an even exponent. We can thus run our algorithm to find an arbitrarily accurate values for \(\sqrt{2}\) and \(\tfrac{1}{\sqrt{2}}\) to allow us to run the algorithm for other values.\\
 
 With this observation can then consider \(N \in \left[\tfrac{1}{2}, 1\right)\). As this is a small range and, as per our previous algorithm, we use an initial guess of \(x_0 = 1\), we can then prove that our algorithm will converge quadratically to \(\sqrt{N}\).
 
@@ -665,7 +665,7 @@ N = a \cdot 2^b &\implies \tfrac{1}{N} = \tfrac{1}{a} \cdot 2^{-b}\\
 Therefore we only need to calculate inverse square roots for values of \(N\) in the range \([\tfrac{1}{2}, 1)\). Thus giving us the following algorithm:\\
 
 %PCD%
-\begin{lstlisting}[caption={Newton Inverse Square Root Method},label={PCD_"Newton Inverse Square Root"}]
+\begin{lstlisting}[frame=single,mathescape,caption={Newton Inverse Square Root Method},label={PCD_"Newton Inverse Square Root"}]
   NewtonInvSquareRoot($N \in \Rpz, \tau \in (0,1)$):
       Let $(a, b) :\in \left[\tfrac{1}{2}, 1\right)\times\Z$ s.t. $N = a\cdot2^b$
       $x_0 := 1$
@@ -721,7 +721,7 @@ Therefore as \(M\epsilon_0 < 1\) we have satisfied \(\mathrm{NR}_3\), and as suc
 
 We have observed several methods that can be used to calculate Square Roots, and so now we will see how the methods compare to each other in practice. The exact root method that we first discussed is the hardest to compare to the other methods as it works in a very different manner. For now we will merely observe that it is an inefficient method that will be shown to take longer than the others.\\
 
-Second we need to compare the different methods discussed for the Newton Square Root method. As the methods discussed work by the same mechanism of successive approximations, and have similar complexity for each iteration; then we will compare the efficiency of these methods by their computation time. To do this we will be testing 1000 values in the range \((0,1000)\) and will calculate each of these values 100000 times, accurate to within a tolerance of \(10^-1)\), for each method to give the most accurate results. The table below gives the calculated results:
+Second we need to compare the different methods discussed for the Newton Square Root method. As the methods discussed work by the same mechanism of successive approximations, and have similar complexity for each iteration; then we will compare the efficency of these methods by their computation time. To do this we will be testing 1000 values in the range \((0,1000)\) and will calculate each of these values 100000 times, accurate to within a tolerance of \(10^-1)\), for each method to give the most accurate results. The table below gives the calculated results:
 
 {\fontfamily{pcr}\selectfont
 %TBL%
@@ -812,4 +812,4 @@ If we compare the methods so that they guarantee an accuracy of 10 decimal place
 
 Here we see the expected result that the digit by digit method is the least efficient method, taking two orders of magnitude more time than the second least efficient. We also see that while the two different newton methods are similar in time, and that even though they each performed the same number of iterations, the inverse square root method is the faster; this is due to the method having no division operations to perform. The quickest is of course the built-in \codeinline{sqrt} function from C, this is due to an implementation that uses several low-level features of the C language to achieve the displayed level of performance.\\
 
-In conclusion we can say that the best method that we have considered is Algorithm \ref{PCD_"Newton Inverse Square Root"} which has rapid convergence to the sought square root, while also having fast execution. However if we are in a situation where we require large numbers of digits of accuracy, and yet do not have a suitable floating point types large enough to store these values, then the digit by digit method can be used to get an arbitrary number of digits of accuracy.
+In conclusion we can say that the best method that we have considered is Algorithm \ref{} which has rapid convergence to the sought square root, while also having fast execution. However if we are in a situation where we require large numbers of digits of accuracy, and yet do not have a suitable floating point types large enough to store these values, then the digit by digit method can be used to get an arbitrary number of digits accuracy.
