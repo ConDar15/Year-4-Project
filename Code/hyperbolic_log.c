@@ -17,21 +17,26 @@ mpfr_t MPFR_NAT_LOG_2;
 
 double hyperbolic_nat_log(double x, unsigned int n)
 {
+	//Ensuers that x is positive
 	assert(x > 0);
 
 	double t, y, z, a;
 	unsigned int d;
 	int b;
 
+	//Ensures 1/2 <= a < 1 and a*2^b == x
 	a = frexp(x, &b);
 	
+	//Sets the initial values to be used
 	t = (a-1)/(a+1);
 	d = 1;
 	y = t*t;
 	z = t;
 	
+	//Main loop
 	for(unsigned int k = 1; k <= n; ++k)
 	{
+		//Performs a single Taylor Series update step
 		t *= y;
 		d += 2;
 		z += t/d;

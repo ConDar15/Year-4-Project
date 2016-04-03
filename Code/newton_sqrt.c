@@ -28,13 +28,21 @@ double newton_sqrt_v1(double N, double T)
 
 	double x, px, d;
 
+	//sets the initial guess for x
 	x = N > 1 ? N : 1;
+	//initial iterative error set to a high value to ensure it is larger
+	//	than the given tolerance, provided T is a reasonable tolerance.
 	d = 1000000;
 
+	//Continues while the current iterative error is more than the
+	//	provided tolerance.
 	while(d > T)
 	{
+		//Updates store of the previously approximation
 		px = x;
+		//Calculates the next approximation
 		x = 0.5 * (x + N/x);
+		//Updates the iterative error
 		d = fabs(x - px);
 	}
 	return x;
@@ -47,17 +55,26 @@ double newton_sqrt_v2(double N, double T)
 
 	double x, px, d;
 
+	//Sets the initial guess as explained in the report section on
+	//	Newton Square Root approximations
 	if(N >= 4)
 		x = uint_sqrt((unsigned long) N);
 	else
 		x = N > 1 ? N : 1;
 
+	//initial iterative error set to a high value to ensure it is larger
+	//	than the given tolerance, provided T is a reasonable tolerance.
 	d = 1000000;
-	
+
+	//Continues while the current iterative error is more than the
+	//	provided tolerance.
 	while(d > T)
 	{
+		//Updates store of the previously approximation
 		px = x;
+		//Calculates the next approximation
 		x = 0.5 * (x + N/x);
+		//Updates the iterative error
 		d = fabs(x - px);
 	}
 
@@ -71,21 +88,33 @@ double newton_sqrt_v3(double N, double T)
 
 	int e;
 	double x, px, d;
-	
+
+	//frexp ensures 1/2 <= N < 1 and N*2^e = input N	
 	N = frexp(N, &e);
 
+	//Initial approximation is now a fixed constant
 	x = 1;
+	//initial iterative error set to a high value to ensure it is larger
+	//	than the given tolerance, provided T is a reasonable tolerance.
 	d = 1000000;
 
+	//Continues while the current iterative error is more than the
+	//	provided tolerance.
 	while(d > T)
 	{
+		//Updates store of the previously approximation
 		px = x;
+		//Calculates the next approximation
 		x = 0.5 * (x + N/x);
+		//Updates the iterative error
 		d = fabs(x - px);
 	}
 
+	//If e is odd then the result must be multiplied by either sqrt(2) or
+	//	1/sqrt(2) to give the correct approximation
 	if(e%2)
 		x *= e > 0 ? ROOT_2 : ROOT_2_INV;
+	//return x*2^(e/2)
 	return ldexp(x, e / 2);
 }
 

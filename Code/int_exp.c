@@ -7,10 +7,13 @@
 
 double naive_int_exp(const double x, const int a)
 {
+	//x^a == 1/x^(-a) for all a
 	if(a < 0)
 		return 1/naive_int_exp(x, -a);
+	//Sets the initial values
 	double z = 1;
 	int n = a;
+	//Loops until n == 0
 	while(n--)
 		z *= x;
 	return z;
@@ -18,12 +21,16 @@ double naive_int_exp(const double x, const int a)
 
 double squaring_int_exp(const double x, const int a)
 {
+	//x^a == 1/x^(-a) for all a
 	if(a < 0)
 		return 1/squaring_int_exp(x, -a);
+	//Sets the initial values
 	double y = x, z = 1;
 	int n = a;
+	//Loops until n == 0
 	while(n)
 	{
+		//n%2 is true if n is odd
 		if(n%2)
 		{
 			z *= y;

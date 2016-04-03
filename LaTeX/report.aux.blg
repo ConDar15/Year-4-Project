@@ -1,5 +1,0 @@
-[1] Config.pm:320> INFO - This is Biber 1.9
-[2] Config.pm:323> INFO - Logfile is 'report.aux.blg'
-[42] biber:277> INFO - === Sat Apr  2, 2016, 17:40:31
-[156] Utils.pm:160> ERROR - Cannot find control file 'report.aux.bcf'! - did you pass the "backend=biber" option to BibLaTeX?
-[156] Biber.pm:110> INFO - ERRORS: 1

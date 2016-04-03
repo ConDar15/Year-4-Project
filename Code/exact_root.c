@@ -35,8 +35,9 @@ char *root_digits_precise(char *N, unsigned int D)
 	//T is initially floor(n/2) where N == K*10^n and K is in [0, 10)
 	//T is of the form 10^t
 	mpfr_init(T);
-	//The mpfr_log10 function is used here as placeholder
-	//	this may be replaced by my own log function later
+	
+	//The mpfr_log10 function is used to help find the exponent (power 10)
+	//	of Nr
 	mpfr_log10(T, Nr, MPFR_RNDN);
 	mpfr_div_ui(T, T, 2, MPFR_RNDN);
 	mpfr_floor(T, T);
@@ -83,8 +84,7 @@ char *root_digits_precise(char *N, unsigned int D)
 		}
 
 		//Decrements a and adds the correct digit to the result string
-		a--;
-		R[i+o] = DIGITS[a];
+		R[i+o] = DIGITS[--a];
 		
 		//Reduces Nr by the largest Yr found in the previous loop
 		mpfr_sub(Nr, Nr, tmpr_1, MPFR_RNDN);

@@ -26,19 +26,27 @@ double cont_frac_exp_v1(double x, unsigned int n)
 {
 	double a = x, pA, A, nA, ca, pB, B, nB, cb;
 	unsigned int b = 0;
-	
+
 	if (x < 0)
+		//Calculates the reciprocal if x < 0
 		return 1/cont_frac_exp_v1(-x, n);
 	else if (x == 0)
+		//Basic value check
 		return 1;
 	else if (x > 1)
+		//1/2 <= a < 1 and x == a*2^b
 		a = frexp(x, &b);
 	
+	//Initialises the previous values
+	//	pA = A_1, pB = B_1
 	pA = a + 1;
 	pB = 1;
+	//Initialises the current values
+	//	A = A_2, B = B_2
 	A  = a*a + 2*a + 2;
 	B  = 2;
-		
+	
+	//Initialises the co-efficients
 	ca = -a;
 	cb = 2 + a;
 	
@@ -47,15 +55,18 @@ double cont_frac_exp_v1(double x, unsigned int n)
 		ca -= a;
 		++cb;
 		
+		//Calculates the updates to A and B
 		nA = cb*A + ca*pA;
 		nB = cb*B + ca*pB;
 		
+		//Ensures the variables hold the correct values
 		pA = A;
 		pB = B;
 		A  = nA;
 		B  = nB;
 	}
 	
+	//If b b==0 then return A/B, otherwise return (A/B)^(2^b)
 	return b ? squaring_int_exp(A/B, (unsigned int)squaring_int_exp(2, b))
 			 : A/B;
 }
@@ -66,20 +77,28 @@ double cont_frac_exp_v2(double x, unsigned int n)
 	unsigned int b = 0, cb;
 	
 	if (x < 0)
-		return 1/cont_frac_exp_v2(-x, n);
+		//Calculates the reciprocal if x < 0
+		return 1/cont_frac_exp_v1(-x, n);
 	else if (x == 0)
+		//Basic value check
 		return 1;
 	else if (x > 1)
+		//1/2 <= a < 1 and x == a*2^b
 		a = frexp(x, &b);
-	
+
+	//Sets the initial values
+	//	pA = A_1, pB = B_1
+	//	A  = A_2,  B = B_2	
 	pA = 1;
 	pB = 1;
 	A  = 1;
 	B  = 1 - a;
 
+	//Initialises the co-efficients
 	ca = 0;
 	cb = 1;
 
+	//Main Loop
 	for(unsigned int k = 3; k <= n; ++k)
 	{
 		++cb;
@@ -102,6 +121,7 @@ double cont_frac_exp_v2(double x, unsigned int n)
 		B  = nB;
 	}
 
+	//If b b==0 then return A/B, otherwise return (A/B)^(2^b)
 	return b ? squaring_int_exp(A/B, (unsigned int)squaring_int_exp(2, b))
 			 : A/B;
 }
@@ -112,20 +132,28 @@ double cont_frac_exp_v3(double x, unsigned int n)
 	unsigned int b = 0, cb;
 	
 	if (x < 0)
-		return 1/cont_frac_exp_v3(-x, n);
+		//Calculates the reciprocal if x < 0
+		return 1/cont_frac_exp_v1(-x, n);
 	else if (x == 0)
+		//Basic value check
 		return 1;
 	else if (x > 1)
+		//1/2 <= a < 1 and x == a*2^b
 		a = frexp(x, &b);
 		
+	//Sets the initial values
+	//	pA = A_0, pB = B_0
+	//	A  = A_1,  B = B_1	
 	pA = 1;
 	pB = 1;
 	A  = 2 + a;
 	B  = 2 - a;
 
+	//Initialises the co-efficients
 	ca = a*a;
 	cb = 2;
 
+	//Main loop
 	for(unsigned int k = 2; k <= n; ++k)
 	{
 		cb += 4;
@@ -139,6 +167,7 @@ double cont_frac_exp_v3(double x, unsigned int n)
 		B  = nB;
 	}
 
+	//If b b==0 then return A/B, otherwise return (A/B)^(2^b)
 	return b ? squaring_int_exp(A/B, (unsigned int)squaring_int_exp(2, b))
 			 : A/B;
 }

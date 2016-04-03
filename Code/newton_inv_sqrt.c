@@ -28,22 +28,33 @@ double newton_inv_sqrt(double N, double T)
 	int e;
 	double x, px, d, NN, N_2;
 
+	//Keeps the initial input N, required at the end.
 	NN  = N;
+	//frexp ensures that 1/2 <= N < 1 and N*2^e == NN
 	N   = frexp(N, &e);
+	//Pre-calculates N/2
 	N_2 = 0.5*N;
 
+	//Sets initial approximation as a constant and initial iterative
+	//	error to be a high value
 	x = 1;
 	d = 1000000;
 
+	//Continues while the iterative error is still too large
 	while(d > T)
 	{
+		//Updates the previously calculated approximation
 		px = x;
+		//Performs the update step of the method
 		x = x * (1.5 - N_2*x*x);
+		//Updates the iterative error
 		d = fabs(x - px);
 	}
 
+	//Corrects for the case when e is odd
 	if(e%2)
 		x *= e > 0 ? ROOT_2_INV : ROOT_2;
+	//x == 1/sqrt(N), so x*NN == NN/(2^(e/2)*N) == NN/sqrt(NN) == sqrt(NN)
 	x *= NN;
 	return ldexp(x, -e / 2);
 }

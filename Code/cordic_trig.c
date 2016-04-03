@@ -6,19 +6,26 @@
 #include "cordic_trig.h"
 #include "utilities.h"
 
+//FIXED_ANGLES and FIXED_K_VALUES are defined in "cordic_trig.h",
+//	they represent arrays of fixed point pre calculated constants
 const cordic_fixed_t TRIG_ANGLES[]  = FIXED_ANGLES;
 const cordic_fixed_t TRIG_K_VALUES[] = FIXED_K_VALUES;
 
 double *cordic_trig(const double theta, const unsigned int iter)
 {
+	//Checks that -pi/2 <= theta <= pi/2 before continuing
 	assert(-HALF_PI <= theta && theta <= HALF_PI);
+	//If the given iter value is more thant the value of MAX_ITER, or
+	//	iter is 0 then n is set to MAX_ITER, otherwise n is set to iter
 	unsigned int n = (iter > MAX_ITER || iter == 0) ? MAX_ITER : iter;
 	
+	//Initialises the initial values for 
 	cordic_fixed_t x = TRIG_K_VALUES[n-1], y = 0, t;
 	cordic_fixed_t beta = double_to_fixed(theta);
-	
+	//Assigns memory for the return array
 	double *result = malloc(2*sizeof(*result));
 
+	//Checks for the extreme values of -pi/2, 0 and pi/2
 	if(beta == 0)
 	{
 		x = FIXED_ONE;
@@ -37,10 +44,14 @@ double *cordic_trig(const double theta, const unsigned int iter)
 		beta = 0;
 	}
 	
+	//Executes if beta != 0
 	if(beta)
 	{
+		//Main loop
 		for(int i = 0; i < n; i++)
 		{
+			//t is a temporary variable for x, to help in the update
+			//	process
 			t = x;
 			if(beta >= 0)
 			{
@@ -64,15 +75,21 @@ double *cordic_trig(const double theta, const unsigned int iter)
 
 double cordic_atan_bounded(const double z, const unsigned int iter)
 {
+	//Ensures that the given value is in the range of 0 <= z <= 1
 	assert(0 <= z && z <= 1);
+	//If the given iter value is more thant the value of MAX_ITER, or
+	//	iter is 0 then n is set to MAX_ITER, otherwise n is set to iter
 	unsigned int n = (iter > MAX_ITER || iter == 0) ? MAX_ITER : iter;
-	
+
+	//Sets the initial values, note that y/x = z is the important factor
 	cordic_fixed_t x = FIXED_ONE >> 1, y = double_to_fixed(z) >> 1, t;
 	cordic_fixed_t beta = 0;
 
+	//Checks for the extreme case
 	if(y == 0)
 		return 0;
 	
+	//Main loop
 	for(int i = 0; i < n; i++)
 	{
 		t = x;

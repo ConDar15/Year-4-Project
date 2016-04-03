@@ -47,13 +47,16 @@ void mpfr_naive_exp(mpfr_t R, mpfr_t x, mpz_t n)
 }
 
 double taylor_exp(double x, unsigned int n)
-{	
+{
+	//Sets initial values	
 	double t, z;
 	t = 1;
 	z = 1;
 	
+	//Main loop
 	for(int k = 1; k < n; ++k)
 	{
+		//Performs the taylor series update
 		t *= x;
 		t /= k;
 		z += t;
@@ -82,20 +85,24 @@ void mpfr_taylor_exp(mpfr_t R, mpfr_t x, mpz_t n)
 
 double taylor_nat_log(double x, unsigned int n)
 {
+	//Ensures that both the provided values are positive
 	assert(n > 0);
 	assert(x > 0);
 
 	double a, t, z;
 	int b;
 
+	//1/2 <= a < 1 and a*2^b = x
 	a = frexp(x, &b);
 	a = 1 - a;
 	
 	t = a;
 	z = a;
 	
+	//main loop
 	for(int k = 2; k < n; ++k)
 	{
+		//Performs the taylor series update step
 		t *= a;
 		z += t/k;
 	}

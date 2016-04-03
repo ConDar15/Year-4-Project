@@ -21,15 +21,19 @@ double taylor_asin(double x, unsigned int N)
 {
 	assert(x >= -1 && x <= 1);
 	
+	//Checks for boundry cases
 	if(x == 1)
 		return HALF_PI;
 	else if(x == -1)
 		return -1 * HALF_PI;
 	
+	//Sets the initial variables, t takes the place of a, b, c and y from
+	//	the report text
 	double s = x, x_2 = x*x, t = x;
 
 	for(int n = 1; n < N; n++)
 	{
+		//Performs a single taylor series update step
 		t *= 2*n*(2*n - 1)*x_2;
 		t /= 4*n*n;
 		s += t/(2*n+1);
@@ -81,9 +85,11 @@ void mpfr_taylor_acos(mpfr_t R, mpfr_t x, unsigned int N)
 double taylor_atan_bounded(double x, unsigned int N)
 {
 	assert(x >= 0 && x <= 1);
+	//Sets initial values
 	double t = 0, x_2 = x*x, y = x;
 	for(int n = 0; n < N; n++)
 	{
+		//Performs 2 taylor series updates of the value
 		t += y/(2*(n++) + 1);
 		y *= x_2;
 		t -= y/(2*n + 1);

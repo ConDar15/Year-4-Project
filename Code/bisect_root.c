@@ -21,7 +21,10 @@ double bisect_sqrt(double N, double T)
 	int e;
 	double a, b, x, f;
 
+	//frexp finds a,b such that a*2^b = N and 1/2 <= a < 1
 	N = frexp(N, &e);
+	//Corrects for the case of odd exponents
+	//	e%2 is true when e is odd
 	if(e%2)
 	{
 		N /= 2;
@@ -60,7 +63,10 @@ double bisect_sqrt_it(double N, unsigned int I)
 	int e;
 	double a, b, x, f;
 
+	//frexp finds a,b such that a*2^b = N and 1/2 <= a < 1
 	N = frexp(N, &e);
+	//Corrects for the case of odd exponents
+	//	e%2 is true when e is odd
 	if(e%2)
 	{
 		N /= 2;

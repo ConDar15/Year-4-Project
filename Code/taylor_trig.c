@@ -21,12 +21,15 @@ mpfr_t MPFR_PI, MPFR_HALF_PI, MPFR_TWO_PI;
 double taylor_cos_bounded(double x, unsigned int N)
 {
 	assert(x >= 0 && x <= HALF_PI);
+	//Sets the initial values
 	double c = 1, x_2 = x*x, a = 1, b = 1;
 	for(int n = 1; n < N; n++)
 	{
+		//Performs first taylor series update
 		a /= (2*n - 1)*(2*(n++));
 		b *= x_2;
 		c -= a*b;
+		//Performs second taylor series update
 		a /= (2*n - 1)*(2*(n));
 		b *= x_2;
 		c += a*b;
