@@ -1,3 +1,6 @@
 *
 !*.tex
 !.gitignore
+!Sections
+!Appendices
+!Diagrams

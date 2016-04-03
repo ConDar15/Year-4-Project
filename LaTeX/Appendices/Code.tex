@@ -1,0 +1,100 @@
+\section{Code}
+\lstset{basicstyle=\ttfamily,
+		language=C,
+		backgroundcolor=\color{cBg},
+		basicstyle=\footnotesize,
+		commentstyle=\color{cCm},
+		frame=L,
+		keywordstyle=\color{cKw},
+		showstringspaces=false,
+		stringstyle=\color{cSt},
+		tabsize=2,
+		mathescape=false}
+\renewcommand{\thelstlisting}{}
+\renewcommand{\lstlistingname}{File}
+
+In this appendix I list the entirety of the code which implement the algorithms discussed in the body of this document. The entirety of the codebase, as well as LaTeX files related to this document can be found on GitHub at \url{https://github.com/Ybrad/Year-4-Project}.
+
+\subsection{General Code}
+\label{SUB_"General Code"}
+
+\\General Utilities File:
+\lstinputlisting[caption={utilities.c}]{../Code/utilities.c}
+
+\\Trigonometric Utilities File:
+\lstinputlisting[caption={trig\_utilities.c}]{../Code/trig_utilities.c}
+
+\\Header Files for Utilities:
+\lstinputlisting[caption={utilities.h}]{../Code/utilities.h}
+\lstinputlisting[caption={trig\_utilities.h}]{../Code/trig_utilities.h}
+\lstinputlisting[caption={log\_exp\_utilities.h}]{../Code/log_exp_utilities.h}
+
+\\Makefile for the project:
+\lstinputlisting[caption={makefile},language=make]{../Code/makefile}
+
+\subsection{Square Root Code}
+\label{SUB_"Square Root Code"}
+
+\\Code for Exact Square Root Metods:
+\lstinputlisting[caption={exact\_root.c}]{../Code/exact_root.c}
+
+\\Code for the Bisection Methods:
+\lstinputlisting[caption={bisect\_root.c}]{../Code/bisect_root.c}
+
+\\Code for Newton Square Root Methods:
+\lstinputlisting[caption={newton\_root.c}]{../Code/newton_sqrt.c}
+
+\\Code for Newton Inverse Square Root Methods:
+\lstinputlisting[caption={newton\_inv\_sqrt.c}]{../Code/newton_inv_sqrt.c}
+
+\\Header files for Square Root Code:
+\lstinputlisting[caption={exact\_root.h}]{../Code/exact_root.h}
+\lstinputlisting[caption={bisect\_root.h}]{../Code/bisect_root.h}
+\lstinputlisting[caption={newton\_root.h}]{../Code/newton_sqrt.h}
+\lstinputlisting[caption={newton\_inv\_sqrt.h}]{../Code/newton_inv_sqrt.h}
+
+\subsection{Trigonometric Code}
+\label{SUB_"Trigonometric Code"}
+
+\\Code for Geometric Trigonometric Functions:
+\lstinputlisting[caption={geometric\_trig.c}]{../Code/geometric_trig.c}
+
+\\Code for Geometric Inverse Trigonometric Functions:
+\lstinputlisting[caption={geometric\_inv\_trig.c}]{../Code/geometric_inv_trig.c}
+
+\\Code for Taylor Trigonometric Functions:
+\lstinputlisting[caption={taylor\_trig.c}]{../Code/taylor_trig.c}
+
+\\Code for Taylor Inverse Trigonometric Functions:
+\lstinputlisting[caption={taylor\_inv\_trig.c}]{../Code/taylor_inv_trig.c}
+
+\\Code for CORDIC Functions:
+\lstinputlisting[caption={cordic\_trig.c}]{../Code/cordic_trig.c}
+
+\\Header files for Trigonometric Functions:
+\lstinputlisting[caption={geometric\_trig.h}]{../Code/geometric_trig.h}
+\lstinputlisting[caption={geometric\_inv\_trig.h}]{../Code/geometric_inv_trig.h}
+\lstinputlisting[caption={taylor\_trig.h}]{../Code/taylor_trig.h}
+\lstinputlisting[caption={taylor\_inv\_trig.h}]{../Code/taylor_inv_trig.h}
+\lstinputlisting[caption={cordic\_trig.h}]{../Code/cordic_trig.h}
+
+\subsection{Exponential and Logarithm Code}
+\label{SUB_"Exponential and Logarithm Code"}
+
+\\Code for Integer Exponentiation:
+\lstinputlisting[caption={int\_exp.c}]{../Code/int_exp.c}
+
+\\Code for Taylor Exponentials and Logarithms:
+\lstinputlisting[caption={taylor\_exp\_log.c}]{../Code/taylor_exp_log.c}
+
+\\Code for Hyperbolic Logarithms:
+\lstinputlisting[caption={hyperbolic\_log.c}]{../Code/hyperbolic_log.c}
+
+\\Code for Continued Fraction Exponentials:
+\lstinputlisting[caption={cont\_frac\_exp.c}]{../Code/cont_frac_exp.c}
+
+\\Header Files for Exponential and Logarithmic Functions:
+\lstinputlisting[caption={int\_exp.h}]{../Code/int_exp.h}
+\lstinputlisting[caption={taylor\_exp\_log.h}]{../Code/taylor_exp_log.h}
+\lstinputlisting[caption={hyperbolic\_log.h}]{../Code/hyperbolic_log.h}
+\lstinputlisting[caption={cont\_frac\_exp.h}]{../Code/cont_frac_exp.h}

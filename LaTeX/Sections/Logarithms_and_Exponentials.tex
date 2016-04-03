@@ -1,0 +1,1017 @@
+\section{Logarithms and Exponentials}
+
+Exponentiation is the operation of calculating \(x^y\) where \(x\) and \(y\) are members of some field, for the purposes of this document we will be considering \(x, y \in \R\). This operation is widely used by many different branches of mathematics and industry, for example many real world phenomena can be modelled by exponentials\cite{ONL_ExpPres}; we therefore need to calculate \(x^y\) quickly and efficiently.\\
+
+The first thing we consider is that \(x^y\) when \(x \in \mathbb{R}^{-}\) and \(y \in \R\setminus\Z\) is not well-defined on \(\R\), and requires consideration of the function on the complex plane. Due to this we will not be considering negative numbers to non-integer bases; in particular, unless stated otherwise, we will be assuming that \(x \in \Rpz\).\\
+
+Now we also know that \(x^{-y} = \frac{1}{x^y}\) when \(y \in \R\), and as such we will also be restricting this section to the assumption that \(y \in \Rpz\). Further we consider the following facts: 
+
+\[x^0 = 1\quad \forall\: x \in \Rpz\]
+\[0^y = 0\quad \forall\: y \in \Rp\]
+
+If we take out these known trivial cases then we can restrict this section to considering only \((x, y) \in (\Rp)^2\).\\
+
+Now if we have \(y \in \Rp\) then it follows that \(\exists (a, b) \in \Zpz \times [0,1)\) such that \(y = a + b\). This allows us to use the identity that \(x^{m+n} = x^mx^n\) to consider the following two cases separately:
+
+%EQN%
+\begin{equation}
+\label{EQN_"exp case 1"}
+	x^a : a \in \Zpz
+\end{equation}
+\begin{equation}
+\label{EQN_"exp case 2"}
+	x^b : b \in [0,1)
+\end{equation}
+
+%SUB%
+\subsection{Calculating \(x^a\)}
+
+As we know that \(a \in \Zpz\), then we know that \(x^a = \underbrace{x\times \cdots \times x}_a\); i.e. the problem is equivalent to finding \(x\) multiplied with itself \(a\) times. As we are only dealing with \(a \in \Zpz\), then we will be considering \(x \in \R\) as we can calculate exponentials of negative numbers.\\
+
+The naive way to go about calculating \(x^a\) is to simply perform the multiplication of \(x\) by itself \(a\) times. The algorithm for that can be seen below:
+
+%PCD%
+\begin{lstlisting}[caption={Naive integer exponentiation},label={PCD_"Naive int exp"}]
+  naive_int_exp($x \in \R, a \in \Zpz$):
+      $n := 0$
+      $z := 1$
+      while $n < a$:
+          $z \mapsto x\cdot z$
+          $n \mapsto n + 1$
+      return $z$
+\end{lstlisting}
+
+This algorithm is very simple and has complexity of \(\bigO(a)\), which is a reasonably low complexity, but still has the chance to grow large as \(a\) grows. Instead we can consider a more informed approach, in particular we know that either \(2 \mid a\) or \(2 \nmid a\), which then gives us the following:
+\:
+\begin{displaymath}
+	x^a = \left\{\begin{array}{lcl}
+		(x^2)^{\tfrac{a}{2}} & : & 2 \mid a\\
+		x \cdot (x^2)^{\tfrac{a-1}{2}} & : & 2 \nmid a
+	\end{array}\right.
+\end{displaymath}
+
+We can use this fact to build a recursive method of calculating \(x^a\), where we repeatedly call the method from within itself. To ensure the method ends correctly we need to identify a base case for the recursion, i.e. where the process stops and returns the correct value. We can see that eventually the above will reach the point where \(a = 0\), in which case we know that \(x^0 = 1\); this will be the base case of our recursion.\\
+
+We want to ensure that the algorithm will terminate, which we can do by seeing that it terminates when \(a = 0\) and then considering \(a \in \Zp\). Now if \(2 \mid a\) then \(\tfrac{a}{2} \in \Zp\) and also \(\tfrac{a}{2} < a\), similarly if \(2 \nmid a\) then \(\tfrac{a-1}{2} \in \Zpz\) because \(a \ge 1\) and also \(\tfrac{a-1}{2} < a\). Thus we see that the sequence produced by \(a \in \Zp\) is a strictly decreasing sequence that is bounded below by 0 and thus we must eventually reach 0, meaning the algorithm terminates.\\
+
+Instead of a recursive algorithm that calls itself, the algorithm below is an iterative version which performs the same function:
+
+%PCD%
+\begin{lstlisting}[caption={Exponentiation by squaring},label={PCD_"exp by square"}]
+  exp_by_squaring($x \in \R, a \in \Zpz$):
+      $n := a$
+      $z := 1$
+      $\hat{x} := x$
+      while $n > 0$:
+          if $2 \nmid n$:
+              $z \mapsto \hat{x} \times z$
+              $n \mapsto n - 1$
+          $\hat{x} \mapsto \hat{x}^2$
+          $n \mapsto \tfrac{n}{2}$
+      return $z$
+\end{lstlisting}
+
+This algorithm is much more efficient than Algorithm \ref{PCD_"Naive int exp"} due to the number of times the inner loop is executed. The inner loop drives \(a\) towards 0 by dividing by 2 each step, this means that as \(a = \bigO(2^{\log_2(a)})\), then this goal is achieved in only \(\log_2(a)\) loops. Therefore the complexity of this algorithm is \(\bigO(\log_2(a))\), which is an improvement upon the previous algorithm's complexity of \(\bigO(a)\).\\
+
+To see this difference in efficiency in action the following table shows the times taken for each method when comparing 1000 different pairs of values \((x, a) \in [0, 10]\times([0,100]\cap\Z)\). With these values we calculated \(x^a\) using both methods 100000 times to get the following results:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|c|r|r|r|r|}
+\hline
+&\textsf{Total time:} & \textsf{Average time:} & \textsf{Minimum time:}
+	&\textsf{Maximum time:}\\\hline
+\codeinline{naive\_int\_exp}& 16.800s & 0.016s & 0.000s & 0.037s\\\hline
+\codeinline{squaring\_int\_exp} & 2.593s & 0.002s & 0.000s & 0.004s\\\hline
+\end{tabular}
+\end{center}}
+
+With this we will move on to further subsections as there are few improvements that can be made on an \(\bigO(\log_2(a))\) algorithm, particularly in this instance.
+
+%SUB%
+\subsection{Calculating \(x^b\)}
+
+If we have \(b \in (0, 1)\), then we obviously can't use the our previous subsection for calculating \(x^y\). The most common way of calculating such exponentiation is by considering that \(x = e^{\ln(x)}\) and thus \(x^b = (e^{\ln(x)})^b = e^{b\ln(x)}\); however this now raises the problem of how to calculate both \(e^\alpha\) and \(\ln(\beta)\). The following will deal with how to calculate these values and thus use them in conjunction to calculate \(x^b\).\\
+
+%SUB%
+\subsection{Naive Method}
+
+The mathematical constant \(e\) has been known since the early 1600s and was originally calculated by Jacob Bernoulli, and was studied by Leonhard Euler, where it appeared in Euler's Mechanica in 1736. While several possible equivalent definitions of \(e\) exist the most common such definition is that \(e := \lim_{n \to \infty}(1 + \tfrac{1}{n})^n\).\\
+
+If we now consider the definition of \(e\) and also consider \(e^x\), then we can show that \(e^c = \lim_{n\to\infty}(1+\tfrac{x}{n})^n\). This gives us our first basic method of how to calculate \(e^x\):
+
+%PCD%
+\begin{lstlisting}[caption={Baisc Method for calculating \(e^x\)},label={PCD_"basic exp"}]
+  basic_exp($x \in \R, n \in \N$)
+      return $(1 + \tfrac{x}{n})^n$
+\end{lstlisting}
+
+If we consider \((1+\tfrac{x}{n})^n\) as a function of a continuous \(n\) then we can find the following derivation:
+
+\begin{align*}
+	\frac{d}{dn}\left[(1 + \tfrac{x}{n})^n\right]
+		&= (1+\tfrac{x}{n})^n\frac{d}{dn}\left[n\ln(1+\tfrac{x}{n})\right]\\
+	&= (1+\tfrac{x}{n})^n\left(\frac{d}{dn}[n]\ln(1+\tfrac{x}{n}) 
+		+ n\frac{d}{dn}\left[\ln(1+\tfrac{x}{n})\right]\right)\\
+	&=(1+\tfrac{x}{n})^n\left(\ln(1+\tfrac{x}{n}) 
+		+ \frac{n}{1 + \tfrac{x}{n}}\frac{d}{dn}[1 + \tfrac{x}{n}]\right)\\
+	&=(1+\tfrac{x}{n})^n\left(\ln(1+\tfrac{x}{n}) - \frac{x}{n + x}\right)\\
+	&=\frac{(1+\frac{x}{n})^n}{x + n}((x + n)\ln(1 + \tfrac{x}{n}) - x)
+\end{align*}
+
+By the last line of this we can see that because \((x, n) \in (\Rp)^2\) then \(\ln(1 + \frac{x}{n}) > 0\) and thus we conclude that \((x+n)\ln(1+\frac{x}{n}) - x > 0\). Therefore we see that \(\frac{d}{dn}\left[(1+\frac{x}{n})^n\right] > 0\) for all \((x, n) \in \Rp^2\), and in particular this means that \((1+\frac{x}{n})^n < (1+\frac{x}{n+1})^{n+1}\ \forall\: n \in \N\).\\
+
+One consequence of this is that \((1+\frac{x}{n})^n < e^x\ \forall\: n \in \N\), therefore we can define the error of algorithm \ref{PCD_"basic exp"} as \(\epsilon_N := |e^x - (1+\frac{x}{n})^n| = e^x - (1+\frac{x}{n})^n\). Now as \(\lim_{n\to\infty}(1+\frac{x}{n})^n = e^x\) then we see that \(\lim_{n\to\infty}\epsilon_n = 0\), and thus our algorithm is correct and valid for approximating \(e^x\).\\
+
+Next we see that this method, while simple, approximates \(e^x\) very poorly. In particular the table below shows the approximation of \(e^{0.75}\) for different values of \(n\), where the bold digits are the correctly approximated digits.
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(n\) & \textsf{Approximation of \(e^{0.75}\)}\\\hline
+1 & 1.800000000000000044\\\hline
+10 & \textbf{2.}158924997272786787\\\hline
+100 & \textbf{2.2}18468215957572747\\\hline
+1000 & \textbf{2.22}4829248807374831\\\hline
+10000 & \textbf{2.225}469716120127850\\\hline
+100000 & \textbf{2.2255}33806810873500\\\hline
+1000000 & \textbf{2.225540}216319864358\\\hline
+10000000 & \textbf{2.225540}857275162929\\\hline
+100000000 & \textbf{2.22554092}1370736781\\\hline
+1000000000 & \textbf{2.22554092}7780294606\\\hline
+\end{tabular}
+\end{center}}
+
+With this table we see that the method very poorly approximates \(e^x\), requiring a very large \(n\) to get just a few digits of accuracy. While this does not require more calculations from the method, requiring this large a value of \(n\) can lead to inaccuracies in the implementation of the algorithm using \codeinline{double} data types in C.\\
+
+In general there are better methods of approximating \(e^x\) and also \(\ln(x)\), which while requiring more calculations are much more accurate than the most basic method presented here.
+
+%SUB%
+\subsection{Taylor Series Method}
+
+\theoremstyle{plain}
+\newtheorem{nat log dif}{Proposition}[subsection]
+\newtheorem{log convergence}[nat log dif]{Proposition}
+
+If we take the elementary result from calculus that \(\frac{d}{dx}e^x = e^x\), then we can calculate the Maclaurin series of \(e^x\). By the definition of a Maclaurin series we know that the series expansion of \(e^x\) about 0 is 
+
+\[\sum_{k=0}^\infty \frac{d^{(k)}}{dx^k}[e^x](0)\frac{x^k}{k!}\]
+
+As \(\frac{d^{(k)}}{dx^k}[e^x] = e^x\ \forall\: k \in \Zpz\) and \(e^0 = 1\) then we see that the series becomes
+
+\[\sum_{k=0}^\infty \frac{x^k}{k!}\]
+
+Using this we see that \(e^x \approx \sum_{k=0}^n \frac{x^k}{k!}\), which gives the following method for approximating \(e^x\):
+
+%PCD%
+\begin{lstlisting}[caption={Taylor Method for calculating \(e^x\)},label={PCD_"taylor exp"}]
+  taylor_exp($x \in \R, n \in \Zpz$)
+      $t = 1$
+      $z = 1$
+      $k = 1$
+      while $k < n$:
+          $t \mapsto \frac{t\cdot x}{n}$
+          $z \mapsto z + t$
+          $k \mapsto k + 1$
+      return $z$
+\end{lstlisting}
+
+This allows us to calculate \(e^x\) more efficiently, and we can see that the error of the approximation is easy \(\epsilon_n := |e^x - \sum_{k=0}^n\frac{x^k}{k!}| \le \frac{|x|^{n+1}}{(n+1)!}\) for all \(n \in \Zpz\). While we can't guarantee the size of \(x\) in general we will consider \(x \in (0,1)\) for the purposes of analysing this function.\\
+
+As \(x \in (0,1)\) then it follows that \(x < 1\) and thus we can see that \(\epsilon_n < \frac{1}{n!}\ \forall\: n \in \Zpz\). Using this we can see that to use our method such that the error is at most \(\tau_d := 10^{-d}\), then we need to find \(n \in \Zpz : \frac{1}{n!} < \tau_d\). The table below shows some values for \((n, d)\) pairs such that \(n\) is the smallest positive integer such that \(\frac{1}{n!} < \tau_d\):
+
+%TBL%
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d \in \N\) 
+	& \(\textrm{arg}\min\left\{n \in \N : n! > 10^d\right\}\)\\\hline
+1 & 4\\\hline
+10 & 14 \\\hline
+100 & 70 \\\hline
+1000 & 450\\\hline
+\end{tabular}
+\end{center}
+
+Therefore we can guarantee 100 digits of accuracy with an input of \(n \ge 70\) and 1000 digits of accuracy with \(n \ge 450\), this is much less than our previous method where an input of \(n = 1000\) only gave 2 decimal places of accuracy.\\
+
+The inverse of the function \(z = e^x\) is the logarithm function \(\ln(z) = x\), which we can again consider for Taylor Series expansion. First we will show the result from calculus that \(\frac{d}{dx}[\ln(x)] = \frac{1}{x}\):
+
+%THM%
+\begin{nat log dif}
+\[\frac{d}{dx}[\ln(x)] = \frac{1}{x}\]
+\end{nat log dif}
+\begin{proof}
+We will prove this from the first principles using the definition that \(\frac{d}{dx}[f(x)] = \lim_{h\to 0} \frac{f(x + h) - f(x)}{h}\)
+
+\begin{align*}
+	\frac{d}{dx}[\ln(x)] 
+		&= \lim_{h\to 0}\frac{\ln(x + h) - \ln(x)}{h}\\
+		&= \lim_{h\to 0}\frac{\ln(1 + \frac{h}{x})}{h}\\
+		&= \lim_{h\to 0}\ln\left((1+\frac{h}{x})^{\frac{1}{h}}\right)
+\end{align*}
+
+If we let \(u := \frac{h}{x}\), then we get that \(ux = h\) and \(\frac{1}{h} = \frac{1}{ux}\). Also \(\lim_{h\to 0}u = 0\), and so we get the following:
+
+\begin{align*}
+	\frac{d}{dx}[\ln(x)]
+		&= \lim_{u\to 0}\ln((1+u)^{\frac{1}{ux}})\\
+		&= \frac{1}{x}\lim_{u\to 0}\ln((1+u)^{1/u})\\
+\end{align*}
+
+If we now let \(n := \frac{1}{u}\) and consider that \(\lim_{u\to 0} n = \infty\), then our derivative becomes:
+
+\begin{align*}
+	\frac{d}{dx}\ln(x) 
+		&= \frac{1}{x}\lim_{n\to\infty}\ln((1 + \frac{1}{n})^n)\\
+		&= \frac{1}{x}\ln(\lim_{n\to\infty}(1+\frac{1}{n})^n)\\
+		&= \frac{1}{x}\ln(e) &\textrm{by the definition of \(e\)}\\
+		&= \frac{1}{x}
+\end{align*}
+\end{proof}
+
+Now we know that \(\frac{d^k}{dx^k}[\frac{1}{x}] = (-1)^kk!x^{-k-1}\), and thus we can build up a Taylor Series expansion. In this case, rather than centring the series about \(x=0\) for a Maclaurin series we can instead centre the series around \(x=1\) which gives the following series expansion for \(\ln(x)\):
+
+\begin{align*}
+	\sum_{k=0}^\infty \frac{\frac{d^k}{dx^k}[\ln(x)](1)}{k!}(x-1)^k
+		&=\ln(1) + \sum_{k=1}^\infty\frac{\frac{d^{k-1}}{dx^{k-1}}
+			[x^{-1}](1)}{k!}(x-1)^k\\
+		&=\sum_{k=1}^\infty\frac{[(-1)^{k-1}(k-1)!x^{-k}](1)}
+			{k!}(x-1)^k\\
+		&=\sum_{k=1}^\infty\frac{(-1)^{k-1}}{k}(x-1)^k\\
+		&=-\sum_{k=1}^\infty\frac{(1-x)^k}{k}
+\end{align*}
+				
+We know that \(\ln(x) = -\sum_{k=1}^\infty\frac{(1-x)^k}{k}\) when the series \(\sum_{k=1}^\infty\frac{(1-x)^k}{k}\) converges. We thus need to know when the sum converges.
+
+%THM%
+\begin{log convergence}
+The series \(\sum_{k=1}^\infty\frac{(1-x)^k}{k}\) converges when \(x \in (0,2)\).
+\end{log convergence}
+\begin{proof}
+Let \(a_k := \frac{(1-x)^k}{k}\). We will proceed by using the ratio test to show when the series converges absolutely. The test states that the series converges when \(\lim_{k\to\intfy} \left|\frac{a_{k+1}}{a_k}\right| < 1\).\\
+
+Now we can consider the following derivation:
+
+\begin{align*}
+	\lim_{k\to\infty}\left|\frac{a_{k+1}}{a_k}\right|
+		&=\lim_{k\to\infty}\left|\frac{\frac{1}{k+1}(1-x)^{k+1}}
+			{\frac{1}{k}(1-x)^k}\right|\\
+		&=\lim_{k\to\infty}\left|\frac{k}{k+1}(1-x)\right|\\
+		&=|1-x|\lim_{k\to\infty}\left|\frac{k}{k+1}\right|\\
+		&=|1-x|
+\end{align*}
+
+Therefore our series converges when:
+\begin{align*}
+	|1-x| < 1 &\iff -1 < 1 - x < 1\\
+		&\iff -1 < x - 1 < 1\\
+		&\iff 0 < x < 2
+\end{align*}
+
+Hence \(\sum_{k=1}^\infty \frac{(1-x)^k}{k}\) converges when \(x \in (0, 2)\).
+\end{proof}
+
+Now as we can't know if \(x \in (0,2)\) then we can consider that \(\forall\: x \in \Rp\:\: \exists\: (a, b) \in [\frac{1}{2}, 1)\times\Z : x = a\cdot2^b\); thus we see that \(\ln(x) = \ln(a\cdot2^b) = b\ln(2) + \ln(a)\). As previously noted in Section \ref{SUB_"Code and Computers used"} this operation, while theoretically complex, is simple to calculate for most computers by how the represent floating point values.\\
+
+With this we can then use the following method to approximate \(\ln(x)\) by the Taylor polynomial \(-\sum_{k=1}^n\frac{(1-x)^k}{k}\):
+
+%PCD%
+\begin{lstlisting}[caption={Taylor Method for calculating \(\ln(x)\)},label={PCD_"taylor log"}]
+  taylor_nat_log($x \in \Rp, n \in \N$):
+      Find $(a, b) \in [\tfrac{1}{2}, 1)\times \Z$ such that $x = a\cdot2^b$
+      $y := 1 - a$
+      $t := y$
+      $z := y$
+      $k := 2$
+      while $k < n$:
+          $t \mapsto t\cdot y$
+          $z \mapsto z + \tfrac{t}{k}$
+          $k \mapsto k + 1$
+      return $b\ln(2) - z$
+\end{lstlisting}
+
+The first thing to consider for the above method is how to calculate \(\ln(2)\). It is not possible to directly calculate \(\ln(2)\) using the above algorithm as \(2 = \frac{1}{2}\cdot2^2\), however \(\frac{1}{2} = \frac{1}{2}\cdot2^0\) and so we do not need to know \(\ln(2)\) to calculate \(\ln(\frac{1}{2})\). We can see that \(\ln(2) = -\ln(\frac{1}{2})\), and so we can calculate our constant value \(\ln(2)\) to be used in the algorithm by using the algorithm itself.\\
+
+Now similar to previous Taylor approximations the final error of our approximation using the above method is \(\epsilon_n := |\ln(x) - \textrm{taylor\_log(}x,n\textrm{)}|\). As the next term of the approximation would be \(\tfrac{(1-x)^n}{n}\), then we know that \(\epsilon_n \le \left|\tfrac{(1-a)^n}{n}\right|\); further we know that \(a \in [\tfrac{1}{2}, 1)\) and thus \(\epsilon_n < \tfrac{1}{2^nn}\).\\
+
+Using this approximation we can see that if we wish to guarantee \(d\) decimal places of accuracy then it suffices to find \(n \in \N\) such that \(\tfrac{1}{2^nn} < 10^{-d} \implies 2^nn > 10^d\). As \(n \in \N\) then \(2^n < 2^nn\) and so we merely need to find \(n \in \N\) such that \(2^n > 10^d\) to guarantee \(d\) decimal places of accuracy. Some example values are included in the table below:\\
+
+%TBL%
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d \in \N\) 
+	& \(\textrm{arg}\min\left\{n \in \N : 2^n > 10^d\right\}\)\\\hline
+1 & 4\\\hline
+10 & 34\\\hline
+100 & 333 \\\hline
+1000 & 3322\\\hline
+\end{tabular}
+\end{center}
+
+As we now have Taylor methods for approximating both \(e^x\) and \(\ln(x)\), then we can use the two to derive a Taylor method of calculating \(x^y\) and \(\log_x(y)\). To start we will consider \(x^y = e^{y\ln(x)}\) and \(x = a\cdot2^b\), giving the solution as \(x^y = e^{y(b\ln(2) + \ln(a))}\). Similarly we note that \(\log_x(y) = \frac{\ln(y)}{\ln(x)}\), and if we consider that \(x = a\cdot2^b\) and \(y = c\cdot2^d\), then we see that \(\log_x(y) = \frac{d\ln(2) + \ln(c)}{b\ln(2) + \ln(a)}\). Below are the Taylor methods for approximating these functions:
+
+%PCD%
+\begin{lstlisting}[caption={Taylor Method for calculating \(x^y\) and \(\log_x(y)\)},label={PCD_"taylor pow/log"}]
+  taylor_log($x \in \Rp, y \in \Rp, n \in \N$):
+      $a :=$ taylor_nat_log($y, n$)
+      $b :=$ taylor_nat_log($x, n$)
+      return $\tfrac{a}{b}$
+  
+  taylor_pow($x \in \Rp, y\in \R, n \in \N$):
+      $a :=$ taylor_nat_log($x, n$)
+      $a \mapsto y \cdot a$
+      return taylor_exp($a, n$)
+\end{lstlisting}
+
+To test the convergence of the Taylor methods above we are going to test calculations of \(7.3^{4.8}\), \(7.3^{-4.8}\), \(0.21^{4.8}\), \(7.3^{0.21}\), \(\log_{7.3}(4.8)\), \(\log_{0.21}(4.8)\) and \(\log_{7.3}(0.21)\). These values are calculated for several different values of \(n\) with the bold digits representing the correct values in the tables below:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\(n\)&\(7.3^{4.8}\)&\(7.3^{-4.8}\)&\(0.21^{4.8}\)&\(7.3^{0.21}\)\\\hline
+1 & \textbf{1}.0000000000& \textbf{1.000}0000000& \textbf{1.00}00000000& \textbf{1.}0000000000\\\hline
+2 & \textbf{10}.561319400& \textbf{-}8.561319400& \textbf{-}6.422212933& \textbf{1.}4183077237\\\hline
+3 & \textbf{5}6.076838311& \textbf{36}.990949511& \textbf{2}1.518877680& \textbf{1.5}046585363\\\hline
+4 & \textbf{2}00.85920964& \textbf{-1}07.8118783& \textbf{-}48.47602784& \textbf{1.51}67171202\\\hline
+5 & \textbf{54}6.24576990& \textbf{2}37.58122696& \textbf{8}2.710783892& \textbf{1.51}79778747\\\hline
+6 & \textbf{1}205.3726532& \textbf{-}421.5471761& \textbf{-}113.8668463& \textbf{1.5180}831956\\\hline
+7 & \textbf{2}253.5829747& \textbf{6}26.66342673& \textbf{1}31.57101558& \textbf{1.518090}5223\\\hline
+8 & \textbf{3}682.4131809& \textbf{-8}02.1668232& \textbf{-1}31.0877429& \textbf{1.5180909}589\\\hline
+9 & \textbf{53}86.6141612& \textbf{90}2.03416303& \textbf{1}14.86315726& \textbf{1.51809098}16\\\hline
+10 & \textbf{7}193.4074522& \textbf{-9}04.7591286& \textbf{-}89.85299062& \textbf{1.5180909827}\\\hline
+\cdots&\cdots&\cdots&\cdots&\cdots\\\hline
+20 & \textbf{139}01.238666& \textbf{-11}.00988984& \textbf{-0.}092958315& \textbf{1.5180909827}\\\hline
+\cdots&\cdots&\cdots&\cdots&\cdots\\\hline
+40 & \textbf{13929.955484}& \textbf{0.00007178}62& \textbf{0.0005580236}& \textbf{1.5180909827}\\\hline
+\cdots&\cdots&\cdots&\cdots&\cdots\\\hline
+80 & \textbf{13929.955484}& \textbf{0.0000717877}& \textbf{0.0005580236}& \textbf{1.5180909827}\\\hline
+\end{tabular}
+\end{center}}
+
+As we can see in the table the \textrm{taylor\_pow} does not converge perfectly, and may even diverge from the correct value for small values of \(n\); however we see that the methods do converge for large values of \(n\). This behaviour is due to the values being outside the restrictions used in the analysis of the functions.
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\(n\)&\(\log_{7.3}(4.8)\)&\(\log_{0.21}(4.8)\)&\(\log_{7.3}(0.21)\)\\\hline
+1 & \textbf{0.}8431178860& \textbf{-1.}086107266& \textbf{-0.}776274970\\\hline
+2 & \textbf{0.}8431178860& \textbf{-1.}086107266& \textbf{-0.}776274970\\\hline
+3 & \textbf{0.}8045021618& \textbf{-1.}025878600& \textbf{-0.7}84207957\\\hline
+4 & \textbf{0.7}938608884& \textbf{-1.}011309817& \textbf{-0.7}84982875\\\hline
+5 & \textbf{0.7}906472231& \textbf{-1.0}07102721& \textbf{-0.785}071082\\\hline
+6 & \textbf{0.789}6173849& \textbf{-1.00}5776909& \textbf{-0.7850}82036\\\hline
+7 & \textbf{0.789}2739993& \textbf{-1.00}5337682& \textbf{-0.78508}3473\\\hline
+8 & \textbf{0.789}1562591& \textbf{-1.005}187460& \textbf{-0.785083}668\\\hline
+9 & \textbf{0.789}1150494& \textbf{-1.005}134935& \textbf{-0.7850836}95\\\hline
+10& \textbf{0.789}1003970& \textbf{-1.005}116266& \textbf{-0.78508369}9\\\hline
+\cdots & \cdots & \cdots & \cdots \\\hline
+50& \textbf{0.7890920869}& \textbf{-1.005105681}& \textbf{-0.785083699}\\\hline
+\end{tabular}
+\end{center}}
+
+This shows that \textrm{taylor\_log} converges better than \textrm{taylor\_exp}, however part of this is due to the values tested having magnitudes close to \(1\). Answers with a larger or smaller magnitudes tend to converge slower, which can be seen in the table for \textrm{taylor\_exp}. The value that had best convergence in the \textrm{taylor\_exp} table had an answer of about \(1.5\) and all other values tested had answers that were several orders of magnitude different from \(1\).
+
+%SUB%
+\subsection{Hyperbolic Series Method}
+
+There are more efficient series which can be used to find \(\ln\), which converge quicker than the Taylor approximation. One such method is to consider the Hyperbolic Trigonometric function \(\tanh\). We start by considering the definition that \(\tanh(x) := \frace^x - e^{-x}}{e^x + e^{-x}}\), and then find a formula for \(\tanh^{-1}(x)\):
+
+\begin{align*}
+z = \frac{e^x - e^{-x}}{e^x + e^{-x}} 
+	&\implies z = \frac{e^{2x} - 1}{e^{2x} + 1}\\
+	&\implies ze^{2x} + z = e^{2x} - 1\\
+	&\implies e^{2x}(1 - z)=1+z\\
+	&\implies e^{2x} = \frac{1+z}{1-z}\\
+	&\implies e^{x} = \left(\frac{1+z}{1-z}\right)^{\frac{1}{2}}\\
+	&\implies x = \frac{1}{2}\ln\left(\frac{1+z}{1-z}\right)
+\end{align*}
+
+Using this we can see that \(2\tanh^{-1}\left(\frac{x-1}{x+1}\right) = \ln(x)\), and we can use the Taylor Expansion of \(\tanh^{-1}\) to approximate \(\ln\).\\
+
+Now to attain the Taylor series for \(\tanh^{-1}(x)\) we can use the same method as when we calculated the Taylor series for \(\ln\). The exact calculations are omitted, but the end result is that we get that:
+
+\[\tanh^{-1}(x) = \sum_{n=0}^\infty\frac{x^{2n+1}}{2n+1}\quad \forall\: x \in \Rp\]
+
+And thus by using this series we get the result that:
+
+\[\ln(x) = 2\sum_{n=0}^\infty\frac{1}{2n+1}\left(\frac{x-1}{x+1}\right)^{2n+1}\quad \forall\: x \in \Rp\]
+
+The implementation of this is similar to previous implementations of series approximations of a function and is detailed below:
+
+%PCD%
+\begin{lstlisting}[caption={Hyperbolic seies method for \(\ln\)},label={PCD_"hyperbolic ln"}]
+  hyperbolic_nat_log($x \in \Rp, n \in \Zpz$):
+      $a := \tfrac{x - 1}{x+1}$
+      $b := y^2$
+      $c := a$
+      $k := 1$
+      while $k \le n$:
+          $a \mapsto a\cdot b$
+          $c \mapsto c + \tfrac{a}{2k+1}$
+          $k \mapsto k + 1$
+      return $2\cdot c$
+\end{lstlisting}
+
+Using this we see that if we have \(\epsilon_n := |\ln(x) - \textrm{hyperbolic\_nat\_log(}x, n\textrm{)}|\), then we know that \(\epsilon_n \le \frac{1}{2n + 3}\left|\frac{x-1}{x+1}\right|^{2n+3}\). If we consider restricting our calculations to \(x \in [\tfrac{1}{2}, 1)\) by using the  same calculations as shown for algorithm \ref{PCD_"taylor log"}, then we can see that \(|x - 1| \le \frac{1}{2}\) and \(|x+1| \ge \frac{3}{2}\); therefore \(\epsilon_n \le \frac{1}{3^{2n+3}(2n+3)}\).\\
+
+By considering the final simplification that \(\epsilon_n < \frac{1}{3^{2n+3}}\), then if we wish to have \(\epsilon_n < \tau \in \Rp\) it suffices to find \(n \in \N\) such that \(\frac{1}{3^{2n+3}} < \tau\). In particular we consider when \(\tau = 10^{-d}\) which will guarantee \(d\) decimal places of accuracy, below is a table showing the smallest \(n \in \N\) that guarantees \(d\) decimal places of accuracy:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d \in \N\) 
+	& \(\textrm{arg}\min\left\{n \in \N : 3^{2n+3} > 10^d\right\}\)\\\hline
+1 & 1\\\hline
+10 & 8\\\hline
+100 & 104\\\hline
+1000 & 1047\\\hline
+\end{tabular}
+\end{center}
+
+As can be seen in the table, fewer iterations are needed to approximate \(\ln(x)\) to the same degree of accuracy using hyperbolic series as when using the Taylor series. Further, the calculations performed each iteration are very similar in complexity, both being \(\bigO(1)\), and thus we can expect that algorithm \ref{PCD_"hyperbolic ln"} will execute faster than \ref{PCD_"taylor log"}.
+
+%SUB%
+\subsection{Continued fractions}
+
+\theoremstyle{plain}
+\newtheorem{equiv cont frac}{Proposition}[subsection]
+\newtheorem{odd even conv}[equiv cont frac]{Proposition}
+
+Another method for evaluating \(e^x\) is the use of continued fractions, which are a way of approximating real functions by a rational number\cite{BOK_ContFrac} with a recursive structure. Such fractions have been studied for many years and can be used to rationally approximate functions. Some examples of continued fractions for real numbers are\cite[][266]{BOK_ContFrac}:
+
+\begin{displaymath}
+\begin{array}{c@{\hspace{4em}}c}
+e = 2 + \cfrac{1}{1 +
+	    \cfrac{1}{2 +
+		\cfrac{1}{1 +
+		\cfrac{1}{1 +
+		\cfrac{1}{4 + \ddots} } } } }&
+\pi = 3 + \cfrac{1}{7 + 
+		  \cfrac{1}{15 +
+		  \cfrac{1}{1 + 
+		  \cfrac{1}{292 +
+		  \cfrac{1}{1 + \ddots} } } } }
+\end{array}
+\end{displaymath}
+
+In general a continued fraction for a number \(x \in \R\) has the form:
+
+%EQN%
+\begin{equation}
+\label{EQN_"general cont frac"}
+	b_0 + \cfrac{a_1}{b_1 + 
+		  \cfrac{a_2}{b_2 +
+		  \cfrac{a_3}{b_3 + \ddots} } }
+\end{equation}
+
+As the writing of continued fractions in the above manner takes up a lot of room and has a degree of ambiguity we will use the following notation:
+
+%EQN%
+\begin{equation}
+\label{EQN_"cont frac notation"}
+	\mathbf{K}_{n=1}^\infty \frac{a_n}{b_n} := \cfrac{a_1}{b_1 +
+		  					   				   \cfrac{a_2}{b_2 +
+							   				   \cfrac{a_3}{b_3 + 
+											   \cfrac{a_4}{b_4 + \ddots}}}}
+\end{equation}
+
+Therefore we can re-write Equation \ref{EQN_"general cont frac"} as \(b_0 + \mathbf{K}_{n=1}^\infty \frac{a_n}{b_n}\).\\
+
+One of the most useful formulas regarding continued fractions was formulated by Leonhard Euler\cite[][Ch.~18]{BOK_EulContFrac}, and deals with the sum \(a_0 + a_0a_1 + a_0a_1a_2 + \cdots + (a_0 \cdots a_n) = \sum_{i=0}^n(\prod_{j=0}^ia_j)\). The formula derived by Euler is known as Euler's Continued Fraction Formula and is as follows:
+
+%EQN%
+\begin{equation}
+\label{EQN_"euler cont frac"}
+\begin{align*}
+	\sum_{i=0}^n\left(\prod_{j=0}^ia_j\right) 
+		= \mathbf{K}_{i=0}^n\frac{\alpha_i}{\beta_i} \textrm{ where } 
+			&\alpha_i := \left\{
+				\begin{array}{lcl}
+					a_0&:&i=0\\
+					-a_i&:&i \in [1,n]\cap\Z
+				\end{array}\right.\\
+			&\beta_i := \left\{
+				\begin{array}{lcl}
+					1&:&i=0\\
+					1+a_i&:&i\in[1,n]\cap\Z
+				\end{array}
+\end{align*}
+\end{equation}
+
+Many Taylor series have a structure that is compatible with equation \ref{EQN_"euler cont frac"} and so can be approximated by a continued fraction in this way. In particular we are looking at \(e^x = \sum_{k=0}^n \frac{x^n}{n!}\) where we note that we can re-write the series as \(e^x = 1 + \sum_{i=1}^n (\prod_{j=1}^i \frac{x}{j})\) and therefore by using Euler's Continued Fraction Formula we see that:
+
+\begin{align}
+e^x &= 1 + \cfrac{x}{1 -
+		   \cfrac{\frac{1}{2}x}{1 + \frac{1}{2}x - 
+		   \cfrac{\frac{1}{3}x}{\ddots - 
+		   \cfrac{\frac{1}{n-1}x}{1 + \frac{1}{n-1}x - 
+		   \frac{\frac{1}{n}x}{1 + \frac{1}{n}x} } } } }
+		   \label{EQN_"exp cont frac 1"}\\
+	&= 1 + \mathbf{K}_{i=1}^n\frac{\alpha_i}{\beta_i} &\textrm{ where }
+		&\alpha_i := \left\{\begin{array}{lcl}
+			x&:&i=1\\
+			-\frac{1}{i}x &:& i \in [2, n]\cap\Z
+			\end{array}\right.\nonumber\\
+	&	&&\beta_i := \left\{\begin{array}{lcl}
+			1 &:& i=1\\
+			1 + \frac{1}{i}x &:& i \in [2,n]\cap\Z
+			\end{array}\right.\nonumber
+\end{align}
+
+We want to simplify the above equation to remove the fractional coefficients. If we consider multiplying \(\alpha_1\) by some constant \(c_1\), then to have an equivalent fraction we would have to multiply it's denominator by \(c_1\); in practice this means multiplying \(\beta_1\) and \(\alpha_2\) by \(c_1\). We can suppose that we could continue in a similar manner for constants \(c_2, c_3, \ldots\) multiplying \(\alpha_2, \alpha_3, \ldots\).
+
+%THM%
+\begin{equiv cont frac}
+\label{THM_"equiv cont frac"}
+If we have a continued fraction \(b_0 + \mathbf{K}_{i=1}^n\frac{a_i}{b_i}\) and constants \((c_i : i \in [1, n] \cap \Z)\), then:
+\[b_0 + \mathbf{K}_{i=1}^n\frac{a_i}{b_i} = b_0 + \mathbf{K}_{i=1}^n\frac{c_{i-1}c_ia_i}{c_ib_i}\]
+where \(c_0 := 1\), for any \(n \in \N\).
+\end{equiv cont frac}
+\begin{proof}
+We will proceed by induction on \(n \in \N\).\\
+\begin{description}
+\item[\textrm{H\((n)\):}] \(b_0 + \mathbf{K}_{i=1}^n\frac{a_i}{b_i} = b_0 + \mathbf{K}_{i=1}^n\frac{c_{i-1}c_ia_i}{c_ib_i}\)
+\item[\textrm{H\((1)\):}]
+	\begin{align*}
+		b_0 + \frac{c_0c_1a_1}{c_1b_1} 
+			&= b_0 + \frac{c_1a_1}{c_1b_1} &\textrm{as \(c_0 = 1\)}\\
+			&= b_0 + \frac{a_1}{b_1} &\textrm{as required}
+	\end{align*}
+\item[\textrm{H\((n)\) \(\implies\) H\((n+1)\):}]
+	\begin{align*}
+		b_0 + \mathbf{K}_{i=1}^{n+1}\frac{c_{i-1}c_ia_i}{c_ib_i}
+			&= b_0 + \left(\mathbf{K}_{i=1}^n
+				\frac{c_{i-1}c_ia_i}{c_ib_i}\right)_+
+				\frac{c_nc_{n+1}a_{n+1}}{c_{n+1}b_{n+1}}\\
+			&= b_0 + \left(\mathbf{K}_{i=1}^n
+				\frac{c_{i-1}c_ia_i}{c_ib_i}\right)_+
+				c_n\frac{a_{n+1}}{b_{n+1}}\\
+	\end{align*}
+
+Now let us define \(b'_i\) as:
+\begin{displaymath}
+\left\{
+	\begin{array}{lcl}
+		b_n + \frac{a_{n+1}}{b_{n+1}} &:& i = n\\
+		b_i &:& i \neq n
+	\end{array}
+\right.
+\end{displaymath}
+
+Therefore we can continue and see that:
+	\begin{align*}
+		b_0 + \mathbf{K}_{i=1}^{n+1}\frac{c_{i-1}c_ia_i}{c_ib_i}
+			&= b_0 + \mathbf{K}_{i=1}^n\frac{c_{i-1}c_ia_i}{c_ib'_i}\\
+			&= b_0 + \mathbf{K}_{i=1}^n \frac{a_i}{b'_i}
+				&\textrm{by H\((n)\)}\\
+			&= b_0 + \mathbf{K}_{i=1}^{n+1}\frac{a_i}{b_i}
+	\end{align*}
+\end{description}
+\end{proof}
+
+Using this proposition we can see that if we have the sequence \((c_1, c_2, \ldots, c_n)\) defined as \(c_i = i\) and apply it to our sequence for \(e^x\) we get that:
+
+\begin{align}
+e^x &= 1 + \cfrac{x}{1 -
+		   \cfrac{x}{2 + x - 
+		   \cfrac{2x}{\ddots - 
+		   \cfrac{(n-1)x}{n-1 + x - 
+		   \frac{x}{n + x} } } } } \label{EQN_"exp cont frac 1 simp"}\\
+	&= 1 + \mathbf{K}_{i=1}^n\frac{\alpha_i}{\beta_i} &\textrm{ where }
+		&\alpha_i := \left\{\begin{array}{lcl}
+			x&:&i=1\\
+			-(i-1)x &:& i \in [2, n]\cap\Z
+			\end{array}\right.\nonumber\\
+	&	&&\beta_i := \left\{\begin{array}{lcl}
+			1 &:& i=1\\
+			x + i &:& i \in [2,n]\cap\Z
+			\end{array}\right.\nonumber
+\end{align}
+
+This is a much simpler continued fraction, but evaluating it would still be computationally expensive due to the repeated division operations; to get around this we can consider what are known as the convergents of a continued fraction. It is obvious that if we use a continued fraction to approximate some value \(z\) by the continued fraction \(b_0 + \mathbf{K}_{i=1}^n \frac{a_i}{b_i}\), then there are some \(A_n, B_n \in \N\) such that \(z = \frac{A_n}{B_n}\).\\
+
+To start we will define \(A_{-1} := 1\) and \(B_{-1} := 0\), and consider the case when \(n = 0\); for this case \(z = b_0\), which means that \(A_0 = b_0\) and \(B_0 = 1\). For the case when \(n = 1\) we have \(z = b_0 + \frac{a_1}{b_1}\), which when rearranged is \(z = \frac{b_0b_1 + a_1}{b_1}\). This means that \(A_1 = b_0b_1 + a_1 = b_1A_0 + a_1A_{-1}\) and \(B_1 = b_1 = b_1B_0 + a_1B_{-1}\), and for the case when \(n = 2\) we get the similar result that \(A_2 = b_0b_1b_2 + a_2b_0 + a_1b_2 = b_2A_1 + a_2A_0\) and \(B_2 = b_1b_2 + a_2 = b_2 B_1 + a_2B_0\).\\
+
+It is actually true that this relationship continues for all \(n \in \N\), and thus we get what are known as the Fundamental Recurrence Formulas for continued fractions:
+
+\begin{displaymath}
+\begin{array}{rcl@{\hspace{2em}}rclc}
+	A_{-1} &=& 1 &B_{-1} &=& 0\\
+	A_0 &=& b_0 &B_0 &=& 1\\
+	A_{n+1} &=& b_{n+1}A_n + a_{n+1}A_{n-1}
+	&B_{n+1}&=& b_{n+1}B_n + a_{n+1}B_{n-1} & \forall\ n \in \Zpz
+\end{array}
+\end{displaymath}
+
+Using this and our simplified continued fraction for \(e^x\) we can use the following method to approximate \(e^x\) by using a continued fraction up to \(a_n,b_n\) where \(n \ge 2\):
+ 
+%PCD%
+\begin{lstlisting}[caption={Continued fraction for \(e^x\) version 1},label={PCD_"cont exp v1"}]
+  cont_frac_exp_v1($x \in \R, n \in \N$):
+      $A_1 := x + 1$
+      $B_1 := 1$
+      $A_2 := x^2 + 2x + 2$
+      $B_2 := 2$
+      $a := -x$
+      $b := 2 + x$
+      $k := 2$
+      while $k <= n$:
+          $a \mapsto a - x$
+          $b \mapsto b + 1$
+          $A_{k+1} := bA_k + aA_{k-1}$
+          $B_{k+1} := bB_k + ab_{k-1}$
+          $k \mapsto k + 1$
+      return $\tfrac{A_k}{B_K}$
+\end{lstlisting}
+
+One observation of the above algorithm, when implemented on a computer, is that if we pre-generate \(b_i\) and \(a_i\) for \(i \in [2, n]\cap \Z\) then the calculations of \(A_i\) and \(B_i\) are independent. This means that, if supported by the computer, both \(A_i\) and \(B_i\) could be computed in parallel. This may allow an implementation of the algorithm to be more efficient than one that computes the function in sequence.\\
+
+While continued fractions are useful for approximating functions, it is difficult to evaluate the error of their output analytically. One result is that if \(a_n = 1\ \forall\: n \in \N\) when approximating some value \(z\), then \(|z - \tfrac{A_n}{B_n}| \le \frac{1}{|B_{n+1}B_n|}\)\cite{BOK_ContFrac}. If we transform the continued fraction of \(e^x\) into this form by using Proposition \ref{THM_"equiv cont frac"}, then we get that:
+
+\begin{displaymath}
+	e^x = 1 + \cfrac{1}{(-\tfrac{1}{x}) + 
+			  \cfrac{1}{(-\frac{2+x}{2x}) +
+			  \cfrac{1}{(-\frac{3+x}{3x}) + \ddots } } }
+\end{displaymath}
+
+By using a computer to implement the calculations for a test value of \(x = 1\), we see that \(\frac{1}{B_5B_6} = 0.009131261889664\ldots\) and \(\frac{1}{B_{10}B_{11}} = 0.000041307209877\ldots\); thus we can guarantee two decimal place of accuracy with \textrm{cont\_frac\_exp(\(1, 5\))} and 4 with \textrm{cont\_frac\_exp(\(1, 10\))}. However if we instead have \(x = 14\) then \(\frac{1}{B_{10}B_{11}} = 0.314711263190806\ldots\) and convergence is similarly poor for negative values.\\
+ 
+Further computations show that convergence of \(x \in (0, 1)\) is better than the convergence when \(x=1\), and thus we can use the identities and conversions to ensure good convergence. In particular if \(x \in \Rn\) then we can calculate the reciprocal of \textrm{cont\_frac\_exp(\(-x, n\))} and if \(x \in (1,\infty)\) we use the identity that \(x = a\cdot2^b\); with this we see that \(e^x = (e^a)^{2^b}\) and \(2^b \in \Zp\).\\
+
+As \(a \in (0,1)\) and \(2^b \in \Zp\) then we can calculate \(z = 2^a\) using algorithm \ref{PCD_"cont exp v1"}. Then we can calculate \(z^{2^b}\) using algorithm \ref{PCD_"exp by square"}, to find our approximation of \(e^x\). Performing the calculation in this way allows us to use the our continued fraction method to guarantee fast convergence, and the \(\bigO(1)\) integer exponential algorithm to guarantee the correct approximation without increasing the algorithmic complexity of the calculations by more than a constant factor.\\
+
+With this restriction in place we know that algorithm \ref{PCD_"cont exp v1"} converges at least as quickly as it does for \(x = 1\), and thus we can use its convergence to guarantee the convergence of our method. Below is a table that shows the minimum \(n\) needed to achieve the associated \(d\) decimal places of accuracy:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d\) & Minimum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
+1 & 2 \\\hline
+10 & 22 \\\hline
+100 & 235 \\\hline
+1000 & 2386 \\\hline
+\end{tabular}
+\end{center}
+
+An alternative continued fraction for \(e^x\) that arises from the generalized hyper geometric series\cite{BOK_JoTh80} is:
+
+\begin{align}
+e^x &= \cfrac{1}{1 -
+	   \cfrac{x}{1 +
+	   \cfrac{x}{2 -
+	   \cfrac{x}{3 +
+	   \cfrac{2x}{4 -
+	   \cfrac{2x}{5 +
+	   \cfrac{3x}{6 - \ddots} } } } } } } \label{EQN_"exp cont frac 2"}\\
+	&= \mathbf{K}_{i=1}^n\frac{\alpha_i}{\beta_i} &\textrm{ where } 
+		&\alpha_i := \left\{\begin{array}{lcl}
+			1 &:& i = 1\\
+			-x &:& i = 2\\
+			(-1)^{i-1}\lfloor\frac{i-1}{2}\rfloor x&:&i\in[3,\infty)\cap\Z
+			\end{array}\right.\nonumber\\
+	&  &&\beta_i := \left\{\begin{array}{lcl}
+			1 &:& i=1\\
+			i-1 &:& i \in [2, \infty) \cap\Z
+			\end{array}\right.\nonumber
+\end{align}
+
+Due to the \((-1)^{i-1}\lfloor\frac{i-1}{2}\rfloor\) factor in the definition of \(\alpha_i\) it is more efficient to perform two updates each step rather than one. Below is the implementation of this method:
+
+%PCD%
+\begin{lstlisting}[caption={Continued fraction for \(e^x\) version 2},label={PCD_"cont exp v2"}]
+  cont_frac_exp_v2($x \in \R, n \in \N$):
+      $A_1 := 1$
+      $B_1 := 1$
+      $A_2 := 1$
+      $B_2 := 1 - x$
+      $a := 1$
+      $b := 1$
+      $k := 2$
+      while $k \le n$:
+          $a \mapsto xa$
+          $b \mapsto b + 1$
+          $A_{k+1} := bA_k + aA_{k-1}$
+          $B_{k+1} := bB_k + ab_{k-1}$
+          $k \mapsto k + 1$
+          $b \mapsto b + 1$
+          $A_{k+1} := bA_k - aA_{k-1}$
+          $B_{k+1} := bB_k - ab_{k-1}$
+          $k \mapsto k + 1$
+      return $\tfrac{A_k}{B_K}$
+\end{lstlisting}
+
+The fraction needed to analyse this method is again found by using proposition \ref{THM_"equiv cont frac"}, and is:
+
+\begin{displaymath}
+	\cfrac{1}{1 +
+	\cfrac{1}{-\frac{1}{x} +
+	\cfrac{1}{-2 + 
+	\cfrac{1}{\frac{3}{x} +
+	\cfrac{1}{2 + 
+	\cfrac{1}{-\frac{5}{x} +
+	\cfrac{1}{-2 + \ddots} } } } } } }
+\end{displaymath}
+
+By implementing this we get similar results to above, particularly there is rapid convergence for \(x \in (0, 1)\). Further the convergence of values in \(x \in (0,1)\) is more rapid than \(x = 1\) and so we can use the convergence of \(x = 1\) as an upper bound of our method. Below is the table showing the smallest \(n \in \N\) needed to ensure \(d\) decimal places of accuracy for some \(d \in \N\):
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d\) & Minimum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
+1 & 4 \\\hline
+10 & 12 \\\hline
+100 & 61 \\\hline
+1000 & 405 \\\hline
+\end{tabular}
+\end{center}
+
+As can be seen the convergence of \ref{EQN_"exp cont frac 2"} appears to be significantly faster than that of \ref{EQN_"exp cont frac 1 simp"} and one might be satisfied by this, however an even better solution exists.\\
+
+As the fraction \ref{EQN_"exp cont frac 2"} can be shown to converge for all values of \(x\) to \(e^x\) then we can consider the even and odd convergents. The even convergents of the sequence are \(\frac{A_0}{B_0}, \frac{A_2}{B_2}, \frac{A_4}{B_4}, \ldots\), while the odd convergents are \(\frac{A_1}{B_1}, \frac{A_3}{B_3}, \frac{A_5}{B_5}, \ldots\). As \(\lim_{n\to\infty} \frac{A_n}{B_n}=e^x\), then \(\lim_{n\to\infty}\frac{A_{2n}}{B_{2n}} = \lim_{n\to\infty}\frac{A_{2n+1}}{B_{2n+1}} = e^x\); the following proposition\cite[][86]{BOK_ContFrac} gives an explicit form for the odd and even convergents.
+
+%THM%
+\begin{odd even conv}
+\label{THM_"odd even conv"}
+If \(z = \mathbf{K}_{i=1}^\infty \frac{a_i}{1}\), then the limit of the odd convergent of \(z\) is:
+\begin{displaymath}
+	x_{\textrm{odd}}=a_1 - \cfrac{a_1a_2}{1+a_2+a_3 -
+						   \cfrac{a_3a_4}{1+a_4+a_5 -
+						   \cfrac{a_5a_6}{1+a_6+a_7 - \ddots} } }
+\end{displaymath}
+while the limit of the even convergent is:
+\begin{displaymath}
+	x_{\textrm{even}}=\cfrac{a_1}{1+a_2 -
+					  \cfrac{a_2a_3}{1+a_3+a_4 -
+					  \cfrac{a_4a_5}{1+a_5+a_6 - \ddots} } }
+\end{displaymath}
+\end{odd even conv}
+\begin{proof}
+Omitted
+\end{proof}
+
+If we apply proposition \ref{THM_"equiv cont frac"} to \ref{EQN_"exp cont frac 2"}, to achieve the form \(\mathbf{K}_{i=1}^\infty \frac{a_i}{1}\) then we end up with the following fraction:
+
+\begin{equation}
+	e^x = \cfrac{1}{1 +
+		  \cfrac{-x}{1 +
+		  \cfrac{\frac{1}{2}x}{1 +
+		  \cfrac{-\frac{1}{6}x}{1 +
+		  \cfrac{\frac{1}{6}x}{1 +
+		  \cfrac{-\frac{1}{10}x}{1 +
+		  \cfrac{\frac{1}{10}x}{1 + 
+		  \cfrac{-\frac{1}{14}x}{1 + \ddots} } } } } } } }
+\end{equation}
+
+Now if we apply proposition \ref{THM_"odd even conv"} to the above fraction we see that:
+
+\begin{equation}
+	e^x = 1 + \cfrac{x}{1 - x + \frac{1}{2}x +
+			  \cfrac{\frac{1}{12}x^2}{1 - \frac{1}{6}x + \frac{1}{6}x +
+			  \cfrac{\frac{1}{60}x^2}{1 -\frac{1}{10}x +\frac{1}{10}x +
+			  \cfrac{\frac{1}{140}x^2}{\ddots} } } }
+\end{equation}
+
+Finally by simplifying and applying proposition \ref{THM_"equiv cont frac"} one more time we reach the following continued fraction for \(e^x\):
+
+\begin{align}
+e^x &= 1 + \cfrac{2x}{2-x+
+		   \cfrac{x^2}{6 +
+		   \cfrac{x^2}{10+
+		   \cfrac{x^2}{14+\ddots} } } } \label{EQN_"exp cont frac 3"}\\
+	&= 1 + \mathbf{K}_{i=1}^\infty \frac{\alpha_i}{\beta_i}
+		&\textrm{ where }
+		&\alpha_i := \left\{\begin{array}{lcl}
+			2x &:& i = 1\\
+			x^2 &:& i \in [2, \infty)\cap\Z
+			\end{array}\right.\nonumber\\
+	&&	&\beta_i := \left\{\begin{array}{lcl}
+			2 - x &:& i = 1\\
+			4i - 2 &:& i \in [2, \infty)\cap \Z
+			\end{array}\right.\nonumber
+\end{align}
+
+If we implement this method by using the Fundamental Recurrence Formula then we get the following:
+
+%PCD%
+\begin{lstlisting}[caption={Continued fraction for \(e^x\) version 3},label={PCD_"cont exp v3"}]
+  cont_frac_exp_v3($x \in \R, n \in \N$):
+      $A_0 := 1$
+      $B_0 := 1$
+      $A_1 := 2 + x$
+      $B_1 := 2 - x$
+      $a := x^2$
+      $b := 2$
+      $k := 2$
+      while $k \le n$:
+          $b \mapsto b + 4$
+          $A_{k+1} := bA_k + aA_{k-1}$
+          $B_{k+1} := bB_k + ab_{k-1}$
+          $k \mapsto k + 1$
+      return $\tfrac{A_k}{B_K}$
+\end{lstlisting}
+
+As with the previous two continued fraction methods of approximating \(e^x\) we can apply proposition \ref{THM_"equiv cont frac"} to \ref{EQN_"exp cont frac 3"} to find the following equivalent continued fraction:
+
+\begin{displaymath}
+	1 + \cfrac{1}{\frac{1}{x} - \frac{1}{2} +
+		\cfrac{1}{\frac{12}{x} + 
+		\cfrac{1}{\frac{5}{x} +
+		\cfrac{1}{\frac{28}{x} + \ddots } } } }
+\end{displaymath}
+
+Again a computer was used to evaluate \(B_k\) of the above fraction, which gave the expected results of quick convergence for \(x \in (0,1)\) and more rapid convergence for \(x \in (0,1)\) than \(x = 1\). Using this the table below was generated to show the minimum \(n \in \N\) that guarantees \(d\) digits of accuracy:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\(d\) & Minimum \(n\) to guarantee \(d\) decimal places of accuracy\\\hline
+1 & 2 \\\hline
+10 & 6 \\\hline
+100 & 30 \\\hline
+1000 & 202 \\\hline
+\end{tabular}
+\end{center}
+
+This has the fastest theoretical convergence of the three methods, and thus is expected to perform the best.
+
+\subsection{Comparison of Methods}
+
+We have introduced several methods for calculating both logarithms and exponentials in this chapter, and considered their theoretical convergence; we now look at a direct comparison of the methods as implemented in C.\\
+
+The first consideration is which values to use while comparing methods. While all the methods converge for all values, or can be made to by using transformations of the inputs and outputs, most methods converge best for small values. Therefore values being tested will typically be in the range of \([0.5, 1)\).\\
+
+The first methods to be compared here are the versions of the continued fraction method discussed previously. Below we have the outputs of different versions of the program for different values of \(n\), with the bold digits being the correctly approximated digits.
+
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\(n\) & \codeinline{cont\_frac\_exp\_v1} 
+	&\codeinline{cont\_frac\_exp\_v2} 
+	&\codeinline{cont\_frac\_exp\_v3}\\\hline
+1 & \textbf{1}.9449999999999& 3.3333333333333& \textbf{2.0}769230769230\\\hline
+2 & \textbf{2.0}021666666666& 3.3333333333333& \textbf{2.013}2689987937\\\hline
+3 & \textbf{2.01}21708333333& \textbf{2.0}769230769230& \textbf{2.01375}43842848\\\hline
+4 & \textbf{2.013}5714166666& \textbf{2.0}054200542005& \textbf{2.01375270}42253\\\hline
+5 & \textbf{2.0137}348180555& \textbf{2.013}2689987937& \textbf{2.01375270747}44\\\hline
+6 & \textbf{2.01375}11581944& \textbf{2.0137}906192914& \textbf{2.0137527074704}\\\hline
+7 & \textbf{2.013752}5879565& \textbf{2.01375}43842848& \textbf{2.0137527074704}\\\hline
+8 & \textbf{2.013752}6991603& \textbf{2.013752}6161232& \textbf{2.0137527074704}\\\hline
+9 & \textbf{2.01375270}69445& \textbf{2.01375270}42253& \textbf{2.0137527074704}\\\hline
+10 & \textbf{2.0137527074}399& \textbf{2.013752707}6056& \textbf{2.0137527074704}\\\hline
+\end{tabular}
+\end{center}}
+
+As can be seen here the first two methods have similar convergence, however despite having a very poor theoretical convergence the first method converges better than the second version. Further, it is obvious that the third method has the fastest convergence, and thus should be the one to use in further comparisons.\\
+
+Now we can compare the speed of the Taylor and continued fraction methods of calculating exponential values. For this we will use 1000 values in the range \([\frac{1}{2}, 1)\) and calculate each 100000 times to compare the speed of the method. We will be using values of \(n\) which guarantee 10 decimal places of accuracy, in particular \(n = 14\) for \codeinline{taylor\_exp} and \(n = 6\) for \codeinline{cont\_frac\_exp\_v3}.\\
+
+The results of the tests run on my computer are included in the table below alongside those for the built in \codeinline{exp} function in \codeinline{math.h}:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+	\hline
+	&\textsf{Total time:} & \textsf{Average time:} & \textsf{Minimum time:}
+	&\textsf{Maximum time:}\\\hline
+	\codeinline{taylor\_exp} & 12.430s & 0.012s & 0.012s & 0.019s\\\hline
+	\codeinline{cont\_frac\_exp} & 4.741s & 0.004s & 0.004s & 0.007s\\\hline
+	\codeinline{builtin\_exp} & 2.608s & 0.002s & 0.002s & 0.004s\\\hline
+\end{tabular}
+\end{center}}
+
+This shows that the continued fractions method of evaluating exponential functions is almost three times as efficient as the standard Taylor series method. However both fall short of the built in method, despite the hyperbolic series method being a close second. This is likely due to a lower level implementation of the exponential function with various highly efficient programming practices implemented to optimize the code execution speed.\\
+
+However one consideration is that if we instead test values in the range \([-5, 50]\), then while both \codeinline{taylor\_exp} and \codeinline{cont\_frac\_exp} have similar results the total time for \codeinline{cont\_frac\_exp} becomes {\fontfamily{pcr}\selectfont 9.347s}. This discrepancy is due to the additional calculations needed by \codeinline{cont\_frac\_exp} so that it evaluates only values in the range \([\frac{1}{2}, 1)\) for a quicker convergence.\\
+
+The two methods discussed to evaluate \(\ln\) have their convergence for different values of \(n\) shown below, where they are approximating the value 0.7, with the bold digits representing the correctly approximated digits:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\(n\) & \codeinline{taylor\_nat\_log} 
+	&\codeinline{hyperbolic\_nat\_log}\\\hline
+1 & \textbf{-0.3}00000000000& \textbf{-0.3566}04925707\\\hline
+2 & \textbf{-0.3}00000000000& \textbf{-0.35667}3383305\\\hline
+3 & \textbf{-0.3}45000000000& \textbf{-0.3566749}06089\\\hline
+4 & \textbf{-0.35}4000000000& \textbf{-0.35667494}2973\\\hline
+5 & \textbf{-0.356}025000000& \textbf{-0.3566749439}13\\\hline
+6 & \textbf{-0.356}511000000& \textbf{-0.356674943938}\\\hline
+7 & \textbf{-0.3566}32500000& \textbf{-0.356674943938}\\\hline
+8 & \textbf{-0.3566}63742857& \textbf{-0.356674943938}\\\hline
+9 & \textbf{-0.35667}1944107& \textbf{-0.356674943938}\\\hline
+10 & \textbf{-0.356674}131107& \textbf{-0.356674943938}\\\hline
+\end{tabular}
+\end{center}}
+
+We can see here that the hyperbolic method converges a lot faster than the Taylor method; one particular note is that the hyperbolic series accurately approximates the first 12 decimal places of \(\ln(0.7)\) accurately in just 6 iterations while the Taylor method only achieves 6 decimal places after 10 iterations.\\
+
+To further test the two methods the table below shows the timings of calculating 1000 values in the range \([0.02, 50]\), each of which will be calculated to 10 decimal places 100000 times by each method. To guarantee 10 decimal places of accuracy with \codeinline{taylor\_log} we can use \(n = 34\) and \(n = 8\) for \codeinline{hyperbolic\_log}, below is the table that displays the results alongside the results for the built in \codeinline{log} function:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+	\hline
+	&\textsf{Total time:} & \textsf{Average time:} & \textsf{Minimum time:}
+	&\textsf{Maximum time:}\\\hline
+	\codeinline{taylor\_log} & 22.247s & 0.022s & 0.021s & 0.026s\\\hline
+	\codeinline{hyperbolic\_log} & 7.742s & 0.007s & 0.007s & 0.009s\\\hline
+	\codeinline{builtin\_log} & 3.438s & 0.003s & 0.003s & 0.005s\\\hline
+\end{tabular}
+\end{center}}
+
+Here we can see that the hyperbolic method of approximating \(\ln(x)\) is the better of the two methods discussed, around three times faster in execution. While the built in function is, as to be expected, the fastest executing function, \codeinline{hyperbolic\_log} is not far behind, implying that \codeinline{builtin\_log} may use an optimized version of \codeinline{hyperbolic\_log}.\\
+
+Finally we get to comparing the general exponential, \(x^y\), and logarithm, \(log_x(y)\), functions. First we will test the convergence of the two variations of the \(log_x(y)\) function for different values of \(n\), using \((x,y) = (1.5, 15)\):
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\(n\) & \codeinline{taylor\_log} 
+	&\codeinline{hyperbolic\_log}\\\hline
+1 & \textbf{6.}1155499597569& \textbf{6.678}4758082659\\\hline
+2 & \textbf{6.}1155499597569& \textbf{6.6788}677803210\\\hline
+3 & \textbf{6.}5747854684469& \textbf{6.678873}4950163\\\hline
+4 & \textbf{6.6}587865280763& \textbf{6.67887358}57263\\\hline
+5 & \textbf{6.67}48050386470& \textbf{6.6788735872}409\\\hline
+6 & \textbf{6.678}0194099644& \textbf{6.678873587267}1\\\hline
+7 & \textbf{6.678}6895339230& \textbf{6.6788735872675}\\\hline
+8 & \textbf{6.6788}331533503& \textbf{6.6788735872675}\\\hline
+9 & \textbf{6.6788}645711387& \textbf{6.6788735872675}\\\hline
+10 & \textbf{6.67887}15529216& \textbf{6.6788735872675}\\\hline
+\end{tabular}
+\end{center}}
+
+This table clearly demonstrates that \codeinline{hyperbolic\_log} converges faster to the correct value than \codeinline{taylor\_log} as expected. The table below shows the convergence of \codeinline{taylor\_pow} and \codeinline{improved\_pow} for the input of \((x, y) = (1.115, 15)\):
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\(n\) & \codeinline{taylor\_pow} 
+	&\codeinline{improved\_pow}\\\hline
+1 & \textbf{1}.0000000000000& \textbf{5.}7430173458025\\\hline
+2 & \textbf{4}.7597077083991& \textbf{5.11}63939774264\\\hline
+3 & \textbf{5.}9158698156503& \textbf{5.118}5134154921\\\hline
+4 & \textbf{5.}6528248111124& \textbf{5.1182}823832710\\\hline
+5 & \textbf{5.}3825631874287& \textbf{5.11826}88605223\\\hline
+6 & \textbf{5.}2383576844918& \textbf{5.118267}9322812\\\hline
+7 & \textbf{5.1}703487304639& \textbf{5.11826786}73534\\\hline
+8 & \textbf{5.1}401274582517& \textbf{5.118267862}7291\\\hline
+9 & \textbf{5.1}272612067887& \textbf{5.1182678623}951\\\hline
+10 & \textbf{5.1}219353833296& \textbf{5.1182678623}708\\\hline
+\cdots&\cdots&\cdots\\\hline
+20 & \textbf{5.11826}84126550& \textbf{5.1182678623688}\\\hline
+\cdots&\cdots&\cdots\\\hline
+30 & \textbf{5.118267862}4756& \textbf{5.1182678623688}\\\hline
+\cdots&\cdots&\cdots\\\hline
+40 & \textbf{5.118267862368}9& \textbf{5.1182678623688}\\\hline
+\end{tabular}
+\end{center}}
+
+Both of these methods for the general exponential function have slow convergences, though the improved method does converge faster. This implies that there may be a more efficient method for approximating \(x^y\).\\
+
+Next we will consider the actual speed of both the logarithm and exponential functions presented. One note is that C does not have a general \(\log\) function for an arbitrary base in \codeinline{math.h}, and so to implement this we will use \codeinline{log(y)/log(x)} for the built in logarithm. All of the functions will have values of \((x, y) \in (0,2]\times[0,3)\) and will use a value of \(n\) sufficient to calculate their answer accurate to 10 decimal places. Below are the calculations for 1000 random values calculated 10000 times for each method:
+
+%TBL%
+{\fontfamily{pcr}\selectfont
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+	\hline
+	&\textsf{Total time:} & \textsf{Average time:} & \textsf{Minimum time:}
+	&\textsf{Maximum time:}\\\hline
+\codeinline{taylor\_log} & 4.750s & 0.004s & 0.004s & 0.008s\\\hline
+\codeinline{hyperbolic\_log} & 1.589s & 0.001s & 0.001s & 0.002s \\\hline
+\codeinline{builtin\_log} & 0.690s & 0.000s & 0.000s & 0.000s \\\hline
+\codeinline{taylor\_pow} & 6.956s & 0.006s & 0.006s & 0.007s \\\hline
+\codeinline{improved\_pow} & 2.456s & 0.002s & 0.002s & 0.003s \\\hline
+\codeinline{builtin\_pow} & 0.787s & 0.000s & 0.000s & 0.001s \\\hline
+\end{tabular}
+\end{center}}
+
+Again we see that the methods that we showed to be theoretically superior, do in fact have superior execution speeds; however our methods still fail to match the execution speed of those built into C.\\
+
+Overall we can conclude that if we were to want to implement calculating logarithms of a number then the hyperbolic series method is the best choice discussed, while the best choice for evaluating exponentials is the continued fraction method.\\
+
+The special case of the exponentiation by squaring is worth considering in the case where a computer only supports integers. This is because the algorithm will still work for integer only values, while most of the others will not, and has a computational complexity of \(\bigO(1)\).

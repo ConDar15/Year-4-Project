@@ -1,0 +1,1225 @@
+%SEC%
+\section{Trigonometric Functions}
+
+The trigonometric functions have been studied since antiquity, originally for their relation to triangles, which were incredibly important to early mathematical understanding. Presently the trigonometric functions have found applications in a vast array of problems from musical theory to satellite navigation.\\
+
+Here we will discuss various methods for approximating the trigonometric functions \(\sin\), \(\cos\) and \(\tan\). Further we will explore the inverse trigonometric functions \(\sin^{-1}\), \(\cos^{-1}\) and \(\tan^{-1}\) which also have many practical uses in modern life.\\
+
+Trigonometric functions can be calculated using either degrees of an angle (e.g. \(\sin(60^{\circ}) = \frac{\sqrt{3}}{2}\)) or in radians(e.g. \(\sin(\frac{\pi}{3}) = \frac{\sqrt{3}}{2}\)). For this document we will only discuss the use of radians and consider that \(\theta^\textrm{rad} = \theta^\circ \cdot \frac{\pi}{180}\) can be used to convert between the two units if needed.
+
+%SUB%
+\subsection{Trigonometric Identities}
+
+Most readers will be well aware of the standard trigonometric identities: useful equalities that help in the analysis of trigonometric functions; this section will lay out such identities that will prove useful in this document. As with Section \ref{SEC_"General Definitions and Theorems"} this is not meant to be an exhaustive overview, merely a reminder and as such identities not listed here may be used in the document.\\
+
+The first identities to consider are the basic ones taught in secondary school such as \(\sin^2x + \cos^2x = 1\). In particular we are interested in the shifts, reflections and periods of \(\sin\) and \(\cos\). Some of the relevant functions are included below:
+
+\begin{displaymath}
+\begin{array}{rcl@{\hspace{4em}}rcl}
+	\sin(-x) &=& -\sin(x) &\cos(-x) &=& \cos(x)\\
+	\sin(x + \tfrac{\pi}{2}) &=& \cos(x) 
+		&\cos(x + \tfrac{\pi}{2}) &=& -\sin(x)\\
+	\sin(x + \pi) &=& -\sin(x) &\cos(x + \pi) &=& -\cos(x)\\
+	\sin(x + 2\pi) &=& \sin(x) &\cos(x + 2\pi) &=& \cos(x)
+\end{array}
+\end{displaymath}
+
+Another useful formula to remember is the sine rule, which is detailed in figure \ref{FIG_"Sine Rule"} as well as the combined angle formulas 
+\begin{align*}
+	\sin(x\pmy) &= \sin(x)\cos(y) \pm \sin(y)\cos(x)\\ 
+	\cos(x \pm y) &= \cos(x)\cos(y) \mp \sin(x)\sin(y)\\
+	\tan(x\pmy) &= \frac{\tan(x) \pm \tan(y)}{1 \mp \tan(x)\tan(y)}
+\end{align*}
+	
+%FIG%
+\begin{figure}[!ht]
+	\caption{The Sine Rule}
+	\label{FIG_"Sine Rule"}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Sine Rule Diagram"}
+\end{figure}
+
+A final note in this section is the derivatives of the trigonometric functions, in particular 
+\begin{displaymath}
+\begin{array}{c@{\hspace{2em}}c@{\hspace{2em}}c}
+\frac{d}{dx}\sin(x) = \cos(x) & \frac{d}{dx}\cos(x) = -\sin(x) & \frac{d}{dx}\tan(x) = \sec^2(x)
+\end{displaymath}
+
+will be useful later on in the development of methods.
+
+%SUB%
+\subsection{Calculating \pi}
+\label{SUB_"Calculating pi"}
+
+Several of the methods in this section require that we already know the value of \(\pi\), for example when we are applying several trig identities. Here we will briefly discuss several methods for calculating the value of \(\pi\), so that we may use this value in later subsections.\\
+
+The first method to consider is the method used by ancient mathematicians, such as the Greeks and Chinese\cite{ART_ArchPi}\cite[][106]{BOK_CalcBook}. We know that if the radius of the circle is \(\frac{1}{2}\), then the circumference of the circle is \(\pi\), and the value is between the perimeters of the inner and outer polygon perimeters. The internal perimeter is \(p_n = n\sin(\frac{\pi}{n})\) and the external perimeter is \(P_n = n\tan(\frac{\pi}{n})\).\\
+
+%FIG%
+\begin{figure}[!ht]
+	\label{FIG_"Pi Diagram 1"}
+	\caption{Ancient method of calculating \(\pi\)}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Pi Diagram 1"}
+\end{figure}
+
+As we know the values of \(\tan(\frac{\pi}{6})\) and \(\sin(\frac{\pi}{6})\), then we can calculate \(P_6\) and \(p_6\). It has be shown that \(P_{2n} = \frac{2p_nP_n}{p_n + P_n}\) and \(p_{2n} = \sqrt{p_nP_{2n}}\)\cite{BOK_HistMat}, which allows us to create an iterative method to approximate \(\pi\), by taking the mid-point of the successive polygon perimeters.\\
+
+Other common historical methods for approximating \(\pi\) are to use infinite series. One such method uses the series expansion of \(\tan^{-1}\), which is discussed in detail below, where \(\tan^{-1}(1) = \frac{\pi}{4}\). This gives the following approximation using \(N\) terms:
+
+%EQN%
+\begin{equation}
+\label{EQN_"Tan pi Series"}
+\pi = 4\sum_{n=0}^{N} \frac{(-1)^n}{2n+1} = \sum_{n=0}^N \frac{8}{(4n+1)(4n+3)}
+\end{equation}
+
+This sequence converges very slowly, with sub linear convergence, to the correct value. More modern methods have typically revolved around finding more rapidly converging infinite series, examples include Ramanujan's series\cite{ART_RamaPi}:
+
+\begin{equation}
+\frac{1}{\pi} = \frac{2\sqrt{2}}{9801}\sum_{n=0}^\infty \frac{(4n)!(1103 + 26390n)}{(k!)^n396^{4n}}
+\end{equation}
+
+or the Chudnovsky algorithm\cite{ART_ChudPi}:
+
+\begin{equation}
+\frac{1}{\pi} = 12\sum_{n=0}^\infty \frac{(-1)^n(6n)!(13591409 + 545140134n)}{(3n)!(n!)^3640320^{3n + \frac{3}{2}}}
+\end{equation}
+
+This final series is extremely rapidly convergent to the value of \(\frac{1}{\pi}\), for example just the first term gives \(\pi\) accurate to 13 decimal places while we can get \(\pi\) accurate to 1000 decimal places with summing just 71 terms. Compared to Equation \ref{EQN_"Tan pi Series"} which takes the summation of 500 terms to achieve the same 1000 digits of accuracy.\\
+
+To get large degrees of accuracy for \(\pi\) is extremely computer intensive and using the \codeinline{mpfr} requires the number of bits of precision and number of terms to be set. This makes calculating \(\pi\) to a large number of decimal places, for example 1000000, computationally infeasible on a regular home computer. Therefore for our purposes we will use the pre calculated value of \(\pi\) to 1000000 decimal places as listed on \textcite{ONL_1MilPi}
+
+%SUB%
+\subsection{Geometric Method}
+\label{SUB_"Trig Geometric Method"}
+
+\theoremstyle{plain}
+\newtheorem{Geo Trig Prop 1}{Proposition}[subsection]
+\newtheorem{Geo Trig Prop 2}[Geo Trig Prop 1]{Proposition}
+\newtheorem{Geo Trig Prop 3}[Geo Trig Prop 1]{Proposition}
+
+The first method I will be discussing is a method based on geometric properties that are derived on a circle, and we will start by considering values of \(\cos\) in the range \([0, \frac{\pi}{2}]\). To do this we will consider the figure \ref{FIG_"Geometric Trig 1"}, which shows a unit circle.\\
+
+%FIG%
+\begin{figure}[!ht]
+	\caption{Diagram showing angles to be dealt with}
+	\label{FIG_"Geometric Trig 1"}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 1"}
+\end{figure}
+
+Here theta will be given in radians, and we can note that the labelled arc has length \(\theta\) due the formula for the circumference of a circle. By using the following derivation we can find a formula for \(\theta\) in terms of \(s\):
+
+\begin{displaymath}
+\begin{align*}
+	s^2 &= \sin^2\theta + (1 - \cos\theta)^2\\
+	    &= (\sin^2\theta + \cos^2\theta) + 1 - 2\cos\theta\\
+		&= 2 - 2 \cos\theta 
+			&\mathrm{By using } \sin^2\theta + \cos^2\theta = 1\\
+	\cos\theta &= 1 - \frac{s^2}{2}
+\end{align*}
+\end{displaymath}
+
+We will now consider a figure \ref{FIG_"Geometric Trig 2"} which will allow us to calculate an approximate value of \(s\).\\
+
+%FIG%
+\begin{figure}[!ht]
+	\caption{Diagram detailing how to calculate \(s\)}
+	\label{FIG_"Geometric Trig 2"}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 2"}
+\end{figure}
+
+We will first note that by an elementary geometry result we can know that the angle \(ABC\) is a right-angle; also we can consider that \(h\) is an approximation of \(\tfrac{\theta}{2}\), which will become relevant later. Now because \(AC\) is a diameter of our circle then it's length is 2 and thus, by utilising Pythagoras' Theorem, we get that the length of \(AB\) is \(\sqrt{AC^2 - BC^2} = \sqrt{4 - h^2}\).\\
+
+From here we consider the area of triangle \(ABC\), which can be calculated as \(\frac{1}{2}\cdot h\cdot\sqrt{4-h^2}\) and as \(\frac{1}{2}\cdot2\cdot\frac{s}{2}\); by equating these two, squaring both sides and re-arranging we get that \(s^2 = h^2(4 - h^2)\). We now have the basis for a method that will allow us to calculate \(\cos\theta\).\\
+
+To complete our method we will introduce a new line that is to \(h\) what \(h\) is to \(s\) as shown in figure \ref{FIG_"Geometric Trig 3"}.
+
+%FIG%
+\begin{figure}[!ht]
+	\caption{Detailing the recursive steps}
+	\label{FIG_"Geometric Trig 3"}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 3"}
+\end{figure}
+
+We then see that if we repeat the steps above we get that \(h^2 = \hat{h}^2(4 - \hat{h}^2)\), and it also follows that \(\hat{h} \approx \frac{\theta}{4}\). Using this we can take an initial guess of \(h_0 := \frac{\theta}{2^k}\), for some \(k \in \N\), and then calculate \(h_{n+1}^2 = h_n^2(4 - h_n^2)\) where \(n \in [0, k] \cap \Z\); finally we calculate \(\cos\theta = 1 - \frac{h_k^2}{2}\), giving the following algorithm:
+  
+%PCD%
+\begin{lstlisting}[caption={Geometric calculation of \(\cos\)},label={PCD_"Geometric Cos"}]
+  geometric_cos($\theta \in [0, \frac{\pi}{2}], k \in \N$)
+      $h_0 := \theta2^{-k}$
+      $n := 0$
+      while $n < K$:
+          $h_{n+1}^2 := h_n^2\cdot(4 - h_n^2)$
+          $n \mapsto n + 1$
+      return $1 - \tfrac{1}{2}h_k^2$
+\end{lstlisting}\\
+
+Now we can use the above pseudo-code to calculate any trigonometric function value by using various trigonometric identities. First we  suppose \(\theta \in \R\), then we can repeatedly apply the identity \(\cos\theta = \cos(\theta \pm 2\pi)\) to either add or subtract \(2\pi\) until we have a value \(\theta' \in [0, 2pi)\). Once we have this value we can utilise the following assignment to calculate \(\cos\theta\):
+
+\begin{displaymath}
+	\cos\theta = \left\{ \begin{array}{lcl}
+			\cos\theta' & : & \theta' \in [0, \frac{\pi}{2}]\\
+			-\cos(\pi - \theta') & : & \theta' \in [\frac{\pi}{2}, \pi]\\
+			-\cos(\theta' - \pi) & : & \theta' \in [\pi, \frac{3\pi}{2}]\\
+			\cos(2\pi - \theta') & : & \theta' \in [\frac{3\pi}{2}, 2\pi)
+		\end{array}\right.
+\end{displaymath}
+
+Using Algorithm \ref{PCD_"Geometric Cos"} we can also easily calculate both \(\sin\theta\) and \(\tan\theta\), by further use of trigonometric identities. In particular we note that \(\sin\theta = \cos(\theta - \frac{\pi}{2})\) and \(\tan\theta = \frac{\sin\theta}{\cos\theta}\). Hence we can now calculate the trigonometric function value of any angle.\\
+
+We now wish to analyse the error of our approximation for \(\cos\), as the other methods have errors that are derivative of the error for approximating \(\cos\). Now Figure \ref{FIG_"Geometric Trig 4"} shows an arc of a circle which creates chord \(x\), with this we will be able to calculate the exact length of the chord and thus work on the error of our approximations.\\
+
+%FIG%
+\begin{figure}[!ht]
+	\caption{Diagram to find actual arc approximation}
+	\label{FIG_"Geometric Trig 4"}
+	\centering
+	\includegraphics[width=0.5\textwidth]{"./Diagrams/Geometric Trig Diagram 4"}
+\end{figure}
+
+To start we will note that \(\phi = \frac{\pi - \theta}{2} = \frac{\pi}{2} - \frac{\theta}{2}\), and then by using the Sine Rule we get 
+\[\frac{x}{\sin\theta} = \frac{1}{\sin\phi} \implies x = \frac{\sin\theta}{\sin\phi}\]
+
+Now we can recall the trigonometric identities for \(\sin\), which gives \(\sin\theta = 2\sin\frac{\theta}{2}\cos\frac{\theta}{2}\), and also \(\sin\phi = \cos\frac{\theta}{2}\). This allows us to see that
+\[x = \frac{2\sin\frac{\theta}{2}\cos\frac{\theta}{2}}{\cos\frac{\theta}{2}} = 2\sin\tfrac{\theta}{2}\]
+
+Therefore we see that \(h_n\) is approximating the chord length associated with angle \(\theta2^{n-k}\), and thus \(\epsilon_n = |h_n - 2\sin(\theta2^{n-k-1})|\). Now as \(h_0 =\theta2^{-k} \approx 2\sin(\theta2^{-k-1})\) then if follows that \(\exists\: \phi\) such that \(h_0 = 2\sin(\phi2^{-k-1})\), from this we can see that \(\phi = 2^{k+1}\sin^{-1}(\theta2^{-k-1})\). We will uses these facts to prove a couple of propositions.
+
+%THM%
+\begin{Geo Trig Prop 1}
+\label{THM_"Geo Trig Prop 1"}
+\(h_n = 2\sin(\phi2^{n-k-1})\ \forall\: n \in [0, k] \cap \Z\) where \(\phi := 2^{k+1}\sin^{-1}(\theta2^{-k-1})\).
+\end{Geo Trig Prop 1}
+\begin{proof}
+Proceed by induction on \(n \in [0, k]\cap\Z\).\\
+\begin{description}
+\item [\textrm{H\((n)\):}] \(h_n = 2\sin(\phi2^{n-k-1})\)
+\item [\textrm{H\((0)\):}] 
+	\begin{displaymath}
+		\begin{align*}
+			2\sin(\phi2^{-k-1}) &= 2\sin(\sin^{-1}(\phi2^{-k-1}))\\
+								&= \theta2^{-k}\\
+								&= h_0 & \textrm{by definition of } h_0
+		\end{align*}
+	\end{displaymath}
+\item [\textrm{H\((n)\) \(\implies\) H\((n+1)\):}]
+	\begin{displaymath}
+		\begin{align*}
+			h_{n+1} &= h_n\sqrt{4-h_n^2}\\
+					&= 2\sin(\phi2^{n-k-1})\sqrt{4-4\sin^2(\phi2^{n-k-1})}
+						&\textrm{by H\((n)\)}\\
+					&= 4\sin(\phi2^{n-k-1})\cos(\phi2^{n-k-1})\\
+					&= 2\sin(\phi2^{n-k})
+						&\textrm{by the use of double angle formulas}
+		\end{align*}
+	\end{displaymath}
+\end{description}
+\end{proof}
+
+%THM%
+\begin{Geo Trig Prop 2}
+\label{THM_"Geo Trig Prop 2"}
+\(h_n > 2\sin(\theta2^{n-k-1})\ \forall\: n \in [0,k] \cap \Z\)
+\end{Geo Trig Prop 2}
+\begin{proof}
+We start by considering the expansion of the exact value of \(h_n\).
+\begin{displaymath}
+	\begin{align*}
+		h_n &= 2\sin(\phi2^{n-k-1})\\
+			&= 2\sin(2^{n-k-1}(2^{k+1}\sin^{-1}(\theta2^{-k-1})))\\
+			&= 2\sin(2^n\sin^{-1}(\theta2^{-k-1}))\\
+			&= 2\sin(\theta2^{n-k-1} + \tfrac{1}{6}\theta^32^{n-3k -3} 
+				+ \bigO(2^{-5k}))
+				& \textrm{Detailed in section \ref{SUB_"Taylor Series Trig"}
+	\end{align*}
+\end{displaymath}
+
+Now as we know that \(n \le k\), then it follows that \(\theta2^{n-k-1} \le \tfrac{1}{2}\theta\).\\
+
+Also as \(\theta \le \tfrac{\pi}{2}\) we know that \(\theta2^{n-k-1} \le \tfrac{\pi}{4}\).\\
+
+We can also show that \(\tfrac{1}{6}\theta^32^{n-3k-3} + \bigO(2^{-5k}) \le \tfrac{\pi}{4}\), though the proof is omitted here for brevity; therefore we see that \(\phi2^{n-k-1} \le \tfrac{\pi}{2}\), and obviously that \(\phi2^{n-k-1} > \theta2^{n-k-1}\).\\
+
+Hence, as \(\sin\) is an increasing function in the range \([0, \tfrac{\pi}{2}]\), we conclude that \[h_n = 2\sin(\phi2^{n-k-1}) > 2\sin(\theta2^{n-k-1})\].
+\end{proof}
+
+With these two propositions we can now consider the error of our approximation of \(\cos\). First we will prove the following proposition regarding the error of the approximation of \(s\):
+
+%THM%
+\begin{Geo Trig Prop 3}
+\label{THM_"Geo Trig Prop 3"}
+If \(\epsilon_n := |h_n - 2\sin(\theta2^{n-k-1})|\ \forall\: n \in [0,k] \cap \Z\), then \(\epsilon_k < 2^k\epsilon_0\).
+\end{Geo Trig Prop 3}
+\begin{proof}
+\(\epsilon_n = h_n - 2\sin(\theta2^{n-k-1})\) as \(h_n > 2\sin(\theta2^{n-k-1})\) by Proposition \ref{THM_"Geo Trig Prop 2"}.\\
+
+Now we see that:
+\begin{displaymath}
+\begin{align*}
+	\epsilon_{n+1} &= h_{n+1} - 2\sin(\theta2^{n-k})\\
+		&= h_n\sqrt{4-h_n^2} 
+			- 4\sin(\theta2^{n-k-1})\cos(\theta2^{n-k-1})\\
+\end{align*}
+\end{displaymath}
+
+If we consider the equation \(\alpha\beta - \gamma\delta = (\alpha - \gamma) + \alpha(\beta - 1) - \gamma(\delta - 1)\) and apply it to our current formula we get:
+
+\begin{displaymath}
+\begin{align*}
+	\epsilon_{n+1} &= (h_n - 2\sin(\theta2^{n-k-1})) 
+						+ h_n(\sqrt{4 - h_n^2} - 1)
+						- 2\sin(\theta2^{n-k-1})(2\cos(\theta2^{n-k-1}) - 1)\\
+		&= \epsilon_n + h_n(\sqrt{4 - h_n^2} - 1)
+			-2\sin(\theta2^{n-k-1})(2\cos(\theta2^{n-k-1}) - 1)\\
+		&= 2\epsilon_n + h_n(\sqrt{4 - h_n^2} - 2)
+			-2\sin(\theta2^{n-k-1})(2\cos(\theta2^{n-k-1}) - 2)\\
+		&= 2\epsilon_n + h_n(\sqrt{4 - h_n^2} - 2)
+			+2\sin(\theta2^{n-k-1})(2 - 2\cos(\theta2^{n-k-1}))\\
+		&< 2\epsilon_n + h_n(\sqrt{4 - h_n^2} - 2\cos(\theta2^{n-k-1}))\\
+		&< 2\epsilon_n + h_n\left(\sqrt{4 - 4\sin^2(\theta2^{n-k-1})}
+			- 2\cos(\theta2^{n-k-1})\right)\\
+		&= 2\epsilon_n + h_n(2\cos(\theta2^{n-k-1}) 
+			- 2\cos(\theta2^{n-k-1}))\\
+		&= 2\epsilon_n
+\end{align*}
+\end{displaymath}
+
+The inequalities in the above derivation arise from the fact that \(h_n > 2\sin(\theta2^{n-k-1})\) by Proposition \ref{THM_"Geo Trig Prop 2"}.\\
+
+Hence as we now know that \(\epsilon_{n+1} < 2\epsilon_n\), we then see that \(\epsilon_n < 2^n\epsilon_0\). Therefore we prove our statement that
+\[\epsilon_k < 2^k\epsilon_0\]
+\end{proof}
+
+Obviously \(\epsilon_k = |h_k - s|\), and we can now use this to find the error of our final answer. First we will start by letting \(\mathcal{C} := 1-\tfrac{1}{2}h_k^2\) and note that analytically \(cos\theta = 1 - \tfrac{1}{2}s^2\). Therefore we will now consider \(\epsilon_{\mathcal{C}} = |\mathcal{C} - \cos(\theta)|\):
+
+\begin{displaymath}
+\begin{align*}
+	\epsilon_{\mathcal{C}} &= \left|1-\frac{h_k^2}{2}-1+\frac{s^2}{2}\right|\\
+		&=\tfrac{1}{2}|h_k^2 - s^2|\\
+		&=\tfrac{1}{2}|h_kh_k 
+			- 2\sin(\tfrac{\theta}{2})2\sin(\tfrac{\theta}{2})|\\
+		&=\tfrac{1}{2}(h_kh_k 
+			- 2\sin(\tfrac{\theta}{2})2\sin(\tfrac{\theta}{2}))
+			&\textrm{as \(2\sin(\tfrac{\theta}{2}) < h_k\)}\\
+		&=\tfrac{1}{2}(2\epsilon_k + h_k(h_k-2) - 2\sin(\tfrac{\theta}{2})
+			(2\sin(\tfrac{\theta}{2}) - 2)\\
+		&<\tfrac{1}{2}(2\epsilon_k + h_k(h_k - 2\sin(\tfrac{\theta}{2})))\\
+			&=\tfrac{1}{2}(2+h_k)\epsilon_k\\
+		&=\frac{1}{2}(2 + 2\sin(\tfrac{\phi}{2}))\epsilon_k\\
+		&=(1 + \sin(\tfrac{\phi}{2}))\epsilon_k\\
+		&\le2\epsilon_k
+\end{align*}
+\end{displaymath}
+
+As \(\epsilon_{\mathcal{C}} \le 2\epsilon_k\), then by Proposition \ref{THM_"Geo Trig Prop 3"} we see that \(\epsilon_{\mathcal{C}} < 2^{k+1}\epsilon_0\). Now to consider \(\epsilon_0\) we first observe that \(\epsilon_0 =\theta2^{-k} - 2\sin{\theta2^{-k-1}\), and therefore we can conclude that:
+
+\[\epsilon_{\mathcal{C}} < 2\theta - 2^{k+2}\sin(\theta2^{-k-1})\]
+
+It is not immediately obvious that \(2\theta - 2^{k+2}\sin(\theta2^{-k-1})\) is a useful upper bound for \(\epsilon_{\mathcal{C}}\). However if we consider the series expansion of \(\sin(x)\), shown in Section \ref{SUB_"Taylor Series Trig"} to be \(\sin(x) = x - \tfrac{1}{3}x^3 + \tfrac{1}{5}x^5 - \cdots\), and substitute this into our equation we see that:
+
+\begin{align*}
+	\epsilon_{\mathcal{C}} &< 2\theta - 2^{k+2}(\theta2^{-k-1} 
+		- \frac{1}{3!}\theta^32^{-3k-3} 
+		+ \frac{1}{5!}\theta^52^{-5k-5} - \cdots)\\
+	&= 2\theta - 2\theta + \frac{1}{3}\theta^32^{-2k-1}
+		- \frac{1}{5!}\theta^52^{-4k-3} + \cdots\\
+	&= \frac{1}{3}\theta^32^{-2k-1} - \frac{1}{5!}\theta^52^{-4k-1}
+		+ \cdots
+\end{align*}
+
+Now obviously the last line tends towards zero as \(k\) tends to infinity, due to it being a formula of order \(\bigO(2^{-2k-1})\). Therefore we know that \(\forall\: \tau \in \Rp\:\: \exists\: \mathcal{K} \in \N : \epsilon_{\mathcal{C}, k} < \tau\ \forall\: k \in [\mathcal{K}, \infty) \cap \Z\). In particular, if we then wish to calculate \(\cos\theta\) accurate to \(N\) decimal places then we are looking to find \(k \in \N\) such that:
+
+\[2\theta - 2^{k+2}\sin(\theta2^{-k-1}) < 10^{-N} \implies 2^{k+2}\sin(\theta2^{-k-1}) > 2\theta - 10^{-N}\]
+
+For an example of the above in action we will be taking \(\theta = 0.5\). The table below shows the minimum \(k \in \N\) to guarantee \(N\) digits of accuracy in the result:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|}
+	\hline
+	\(N\) & \(k\)\\
+	\hline
+	5 & 6\\\hline
+	10 & 14\\\hline
+	50 & 80\\\hline
+	100 & 163\\\hline
+	1000 & 1658\\\hline
+\end{tabular}
+\end{center}
+
+As can be seen the value of \(k\) required to achieve \(N\) digits of accuracy increases roughly linearly when \(\theta = 0.5\). Testing for other values of \(\theta\) reveals them to have similar required values for \(k\), at least within the same order of each other.\\
+
+Another consideration for Algorithm \ref{PCD_"Geometric Cos"} is that we could "run it in reverse" to attain an algorithm for the inverse cosine function. To start take line 7 which is \(\mathcal{C} = 1 - \frac{1}{2}h_k^2\), which can be re-arranged to give \(h_k^2 = 2 - 2\mathcal{C}\), where we know \(\mathcal{C}\) as our initial value.\\
+
+Line 5 is a little more difficult, but by re-arranging we see that \(h_n^4 - 4h_n^2 + h_{n+1}^2 = 0\), which can be solved via the quadratic formula to give \(h_n^2 = 2 \pm \sqrt{4 - h_{n+1}^2}\). Now we can make the observation that if \(x \in \Rpz\), then \(\cos^{-1}(-x) = \pi - \cos^{-1}(x)\) and so we can restrict our algorithm to only consider \(x \in [0,1]\). With this we know that \(\theta \in [0,\frac{\pi}{2}]\), and thus \(h_k \le \sqrt{2}\). Therefore as \(h_{n+1} > h_n\ \forall\: n \in [0,k-1]\cap\Z\) we see that \(h_n^2 \le 2\ \forall\: n \in [0,k]\cap\Z\). This allows us to ascertain that to reverse Line 5 we perform \(h_n^2 = 2 - \sqrt{4 - h_{n+1}^2}\).\\
+
+Finally line 2 is reversed by returning the value \(2^kh_0\); therefore we get the following algorithm for \(\cos^{-1}(x)\) where \(x \in [0,1]\):
+
+%PCD%
+\begin{lstlisting}[caption={Geometric calculation of \(\cos^{-1}\)},label={PCD_"Geometric aCos"}]
+  geometric_aCos($x \in [0,1], k \in \N$)
+      $h_k := 2 - 2x$
+      $n := k-1$
+      while $n \ge 0$:
+          $h_n^2 := 2 - \sqrt{4 - h_{n+1}^2}$
+          $n \mapsto n - 1$
+      return $2^kh_0$
+\end{lstlisting}\\
+
+Similar to the regular trigonometric functions we can use trigonometric identities to calculate the inverse trigonometric functions from \(\cos^{-1}\). To start we recall that \(\cos^{-1}(-x) = -\cos(x)\) where \(x \in [0,1]\), then we can use the identities that \(\sin^{-1}(x) = \frac{\pi}{2} - \cos^{-1}(x)\) and \(\tan^{-1}(x) = \sin^{-1}(\frac{x}{\sqrt{x^2 + 1}})\).\\
+
+If we suppose that all operations in the method are accurately computed then Algorithm \ref{PCD_"Geometric aCos"} is a computation with high accuracy. This is because there is no initial guess, such as in Algorithm \ref{PCD_"Geometric Cos"}, and so the only introduction of error is assuming that \(2^kh_0 \approx \theta\). However as we discuss in detail in Section \ref{SEC_"Root Functions"}, calculating square roots is not a simple task and thus will introduce error to the method in general; therefore the accuracy of the method is roughly as accurate as our method of calculating square roots.
+
+%SUB%
+\subsection{Taylor Series}
+\label{SUB_"Taylor Series Trig"}
+
+If we consider our definition of a Maclaurin Series from Section \ref{SUBSUB_"Taylor Series"}, we can use this to approximate our Trigonometric Functions. Consider first \(\cos\theta\), for which we know that \(\frac{d}{d\theta}\cos\theta = - \sin\theta\); it then follows that \(\frac{d^2}{d\theta^2}\cos\theta = -\cos\theta\), \(\frac{d^3}{d\theta^3} \cos\theta = \sin\theta\) and \(\frac{d^4}{d\theta^4} \cos\theta = \cos\theta\).\\
+
+If we let \(f(x) = \cos x\) and use the known values \(\cos(0) = 1\) and \(\sin(0) = 0\), then we see that:
+
+\begin{displaymath}
+	f^{(n)}(0) = \left\{
+		\begin{array}{rcl}
+			1 &:& 4 \mid n\\
+			0 &:& 4 \mid n-1\\
+			-1 &:& 4 \mid n-2\\
+			0 &:& 4 \mid n-3
+		\end{array}\right.
+\end{displaymath}
+
+By simplifying this by omitting the \(0\) coefficient terms we get the following series:
+
+%EQN%
+\begin{equation}
+\label{EQN_"Cos Series Formula"}
+\sum_{n=0}^\infty \frac{(-1)^n}{(2n)!}x^{2n} = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots
+\end{equation}
+
+By using similar working we can get that the series associated with \(\sin(x)\):
+
+%EQN%
+\begin{equation}
+\label{EQN_"Sin Series Formula"}
+\sum_{n=0}^\infty \frac{(-1)^n}{(2n+1)!}x^{2n+1} = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots
+\end{equation}
+
+Before we go any further we need to consider when Equations \ref{EQN_"Cos Series Formula"} and \ref{EQN_"Sin Series Formula"} converge to their respective functions. Using the ratio test for series\cite and quation \ref{EQN_"Cos Series Formula"} we see that
+
+\begin{displaymath}
+	\begin{align*}
+		L_{\mathcal{C}} &= \lim_{n \to \infty} \left| 
+			\frac{a_{n+1}}{a_n} \right|\\
+		&= \lim_{n \to \infty} \left| 
+			\frac{\frac{(-1)^{n+1}}{(2n+2)!}x^{2n+2}}
+				{\frac{(-1)^n}{(2n)!}x^{2n}} \right|\\
+		&=\frac{(2n)!}{(2n+2)!}|x|^2\\
+		&=\frac{1}{(2n+2)(2n+1)}|x|^2
+	\end{align*}
+\end{displaymath}
+
+Now it is easy to see that, \(L_{\mathcal{C}} = 0\) for all values of \(x\) as the fractional component decreases as \(n\) increases and \(|x|^2\) is a constant. Therefore we can conclude that Equation \ref{EQN_"Cos Series Formula"} converges to \(\cos(x)\) for all values of \(x\). We can use a very similar deduction to show that Equation \ref{EQN_"Sin Series Formula"} converges to \(\sin(x)\) for all values of \(x\).\\
+
+The above means that \(\cos\) and \(\sin\) can be approximated using Taylor Polynomials, in particular for a given \(N \in \N\):
+\begin{displaymath}
+\begin{array}{rcl}
+	\cos x \approx \sum_{n=0}^N \frac{(-1)^n}{(2n)!}x^{2n}
+	& \textrm{and}
+	&\sin x\approx \sum_{n=0}^N \frac{(-1)^n}{(2n+1)!}x^{2n+1}
+\end{array}
+\end{displaymath}
+
+This allows us to create the following two methods for computing \(\cos x\) and \(\sin x\):
+
+%PCD%
+\begin{lstlisting}[caption={Taylor computation of \(\cos\) and \(\sin\)},label={PCD_"Taylor Cos/Sin"}]
+  taylor_cos($x \in \R, N \in \N$)
+      $\mathcal{C} := 0$
+      $n := 0$
+      while $n < N$:
+          $\mathcal{C} \mapsto \mathcal{C} + (-1)^n\cdot\tfrac{1}{(2n)!}x^{2n}$
+          $n \mapsto n+1$
+      return $\mathcal{C}$
+  
+  taylor_sin($x \in \R, N \in \N$)
+      $\mathcal{S} := 0$
+      $n := 0$
+      while $n < N$:
+          $\mathcal{S} \mapsto \mathcal{S} + (-1)^n\cdot\tfrac{1}{(2n+1)!}x^{2n+1}$
+          $n \mapsto n+1$
+      return $\mathcal{S}$
+\end{lstlisting}
+
+As these two methods are obviously very similar and the fact that \(\sin(x) = \cos(x - \frac{\pi}{2})\), we will continue by examining only the Taylor method for approximating \(\cos\). We will assume that any calculations for \(\sin\) are transformed into a problem of finding a \(\cos\) value.\\
+
+It should be noted that this \(\cos\) algorithm is particularly inefficient to calculate on a computer implementation; this is primarily due to the way in which the update of \(\mathcal{C}\) is calculated each loop.\\
+
+In each loop we are calculating \(x^{2n}\), which has a naive complexity of \(\bigO(2n)\). However what we are actually calculating is \(x^{2(n-1)}\cdot x^2\) and thus if we store the values of \(x^{2(n-1)}\) and \(x^2\), the complexity of this step drops to \(\bigO(1)\). Similarly we are also calculating \(\tfrac{1}{(2n)!}\) in each loop which, by the same logic, is \(\tfrac{1}{2(n-1)!} \cdot \tfrac{1}{(2n)(2n-1)}\), and we can use the same storage and update method as for \(x^{2n}\).\\
+
+As another step towards optimizing the algorithm we can start with an initial value of \(\mathcal{C} = 1\), and then perform two updates of \(\mathcal{C}\) each loop until we reach or surpass \(N\). This saves calculating \((-1)^n\) each loop, by explicitly performing two different calculations. Implementing all of the above gives us the following two updated methods:
+
+%PCD%
+\begin{lstlisting}[caption={Taylor computation of \(\cos\) optimised},label={PCD_"Taylor Cos opt"}]
+  taylor_cos($x \in \R, N \in \N$)
+      $\mathcal{C} := 1$
+      $x_2 := x^2$
+      $a := 1$
+      $b := 1$
+      $n := 1$
+      while $n < N$:
+          $a \mapsto a \cdot \tfrac{1}{(2n-1)(2n)}$
+          $b \mapsto b \cdot x_2$
+          $\mathcal{C} \mapsto \mathcal{C} - a\cdot b$
+          $a \mapsto a \cdot \tfrac{1}{(2n+1)(2n+2)}$
+          $b \mapsto b \cdot x_2$
+          $\mathcal{C} \mapsto \mathcal{C} + a\cdot b$
+          $n \mapsto n+2$
+      return $\mathcal{C}$
+\end{lstlisting}
+
+As the next term of the polynomial is known definitively then we can see that it is very easy to calculate the error of our approximation. We see that 
+\begin{displaymath}
+\begin{align*}
+	\epsilon_N &= |\cos(x) - \mathrm{taylor\_cos(x,N)}|\\
+		&= \bigO(|x|^{N'+1}) &\textrm{where } N' \textrm{ is the smallest}\\
+		&&\textrm{odd integer such that } N'\ge N\\
+		&\le \frac{1}{(2(N'+1))!} |x|^{N'+1}\\
+		&\le \frac{1}{(2(N+1))!} |x|^{N+1}
+\end{align*}
+\end{displaymath}
+
+If we place bounds on the value of \(\cos\) calculated as in Section \ref{SUB_"Trig Geometric Method"}, then we know that \(|x| \le \frac{\pi}{2}\), and thus we get the following bound for the error of our approximation:
+
+\[\epsilon_N \le \frac{\pi^{N' + 1}}{2^{N'+1}(2(N'+1))!}\]
+
+Thus if we find \(N \in \N\) such that \(\frac{\pi^{N}+1}{2^{N+1}(2(N+1)!)} < \tau \in \R+\) then we know that \(\epsilon_N < \tau\). If we consider \(\tau = 10^k\), then we can find \(N \in \N\) such that our approximation is accurate to \(k\) decimal places. Below is a table which details some values of \(k\) and the corresponding minimum \(N\) to guarantee \(k\) decimal places of accuracy:
+
+%TBL%
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|}
+	\hline
+	\(k\) & \(N\)\\
+	\hline
+	5 & 4\\\hline
+	10 & 7\\\hline
+	50 & 21\\\hline
+	100 & 36\\\hline
+	1000 & 233\\\hline
+\end{tabular}
+\end{center}
+
+Now for \(\tan x\) we can either calculate both \(\sin x\) and \(\cos x\) using \textrm{taylor\_cos(\(x,N\))} and divide the resulting value, or we can calculate \(\tan x\) directly using a Taylor expansion.\\
+
+In calculating the Maclaurin series for \(\tan x\) we start by letting \(\tan x = \sum_{n=0}^\infty a_nx^n\), and then noting that as \(\tan x\) is an odd series then it's Maclaurin series only contains non-zero coefficients for odd powers of \(x\)\cite{ONL_OddFunc}; therefore we get that \(\tan x = \sum_{n=0}^\infty a_{2n+1}x^{2n+1} = a_1x + a_3x^3 + a_5x^5 + \cdots\).\\
+
+Next we consider that \(\frac{d}{dx} \tan x = 1 + \tan^2 x\), and knowing the Maclaurin series form of \(\tan x\) we get the following:
+
+\begin{displaymath}
+\begin{align*}
+	\sum_{n=0}^\infty (2n+1)a_{2n+1}x^{2n} &= 1 + 
+		(\sum_{n=0}^\infty a_{2n+1}x^{2n+1})^2\\
+	&= 1 + a_1^2x^2 + (2a_1a_3)x^4 + (2a_1a_5 + a_3^2)x^6 + \cdots
+\end{align*}
+\end{displaymath}
+
+Considering the coefficients of powers on the right hand side of the above equation we see that \(2a_1a_3 = a_1a_3 + a_3_a_1 = a_1a_{4-1} + a_3a_{4-3}\) and \(2a_1a_5 + a_3^2 = a_1a_5 + a_3a_3 + a_5a_1 = a_1a_{6-1} + a_3a_{6-3} +a_5a_{6-5}\). This indicates that our general form for the co-efficient of \(2n\) on the right hand side is \(\sum_{k=1}^n a_{2k-1}a_{2n - 2k + 1}\), and thus returning to our equation we get
+
+\[a_1 + \sum_{n=1}^\infty (2n+1)a_{2n+1}x^{2n} = 1 + \sum_{n=1}^\infty(\sum_{k=1}^n a_{2k-1}a_{2n-2k+1})x^{2n}\]
+
+Using this we conclude that \(a_1 = 1\) and \(a_{2n+1} = \frac{1}{2n+1}\sum_{k=1}^n a_{2k-1}a_{2n-2k+1}\ \forall\: n \in \N\). We can note immediately that the calculation of any previous coefficients will provide no help in calculating later coefficients and so the entire sum must be calculated each loop, while also storing each co-efficient already calculated.\\
+
+This means that the complexity to calculate coefficient \(a_{2n+1}\) is \(\bigO(n)\) and will be the \(n^\text{th}\) such calculation, making the complexity of calculating \(n\) coefficients to be \(\bigO(n^2)\). Comparing this to the \mathrm{taylor\_cos} method we see that to calculate up to \(n\) coefficients of both \(\cos\) and \(\sin\) has complexity \(\bigO(n)\). Therefore it is more efficient to calculate \(\tan\) by calculating both \(\cos\) and \(\sin\) using Algorithm \ref{PCD_"Taylor Cos opt"}, and performing division than directly using Taylor Polynomial approximation.\\
+
+We would also like to be able to calculate the inverse trigonometric functions using this method, which means we need to find our Maclaurin series of the inverse trigonometric functions. The simplest of these is \(\tan^{-1}\), where we start by recalling that \(\frac{d}{dx} \tan^{-1} x = \frac{1}{1+x^2}\) and then by integrating both sides we get:
+
+\begin{displaymath}
+\begin{align*}
+	\tan^{-1} x &= \int \frac{1}{1+x^2} dx\\
+		&= \int (1 - (-x^2))^{-1} dx\\
+		&= \int \sum_{n=0}^\infty (-x^2)^n dx &\textrm{by Equation \ref{EQN_"Maclaurin Series 1"}}\\
+		&= \int \sum_{n=0}^\infty (-1)^nx^{2n} dx\\
+		&= c + \sum_{n=0}^\infty \frac{(-1)^n}{2n+1}x^{2n+1}
+\end{align*}
+\end{displaymath}
+
+As \(\tan^{-1} (0) = 0\) then we see that \(c = 0\) and thus gives us the following formula for \(\tan^{-1}\):
+
+\[\tan^{-1} x = \sum_{n=0}^\infty \frac{(-1)^n}{2n+1}x^{2n+1}\]
+
+Now due to the restrictions from Equation \ref{EQN_"Maclaurin Series 1"} the above is only valid for \(x \in [-1, 1]\), but we know that the domain of \(\tan^{-1}\) is \(x \in \R\). To fix this we will first recognise that \(\tan^{-1}(-x) = -\tan^{-1}(x)\), so we can restrict our problem to \(x \in \Rpz\). Now if we take the double angle formula for \(\tan\):
+
+\[\tan(\alpha + \beta) = \frac{\tan(\alpha) + \tan(\beta)}{1 - \tan(\alpha)\tan(\beta)}\]
+
+By substituting \(\alpha = \tan^{-1}(x)\) and \(\beta = \tan^{-1}(x)\) into the above then we get
+
+\[\tan^{-1}(x) + \tan^{-1}(y) = \tan^{-1}\left(\frac{x + y}{1 - xy}\right)\]
+
+Using this, suppose we are looking for \(\tan^{-1}(z)\) where \(z \in (1, \infty)\) and let \(y = 1\), then \(\tan^{-1}(y) = \frac{\pi}{4}\). We can then re-arrange the equation \(z = \frac{x + 1}{1 - x}\) to get \(x = \frac{z - 1}{z + 1}\); finally as \(z > 1\), then \(0 < x < 1\). This allows us to calculate:
+
+\[\tan^{-1}(z) = \frac{\pi}{4} + \tan^{-1}\left(\frac{z-1}{z+1}\right)\]
+
+In the above the calculated value is in the range \([0, 1]\) and so it is valid to use a Taylor polynomial using our Maclaurin series above. This gives the following method
+
+%PCD%
+\begin{lstlisting}[caption={Taylor Method for \(\tan^{-1}\)},label={PCD_"Taylor aTan"}]
+  taylor_aTan($x \in [0,1], N \in \N$)
+      $\mathcal{T} := 0$
+      $x_2 := x^2$
+      $y := x$
+      $n := 0$
+      while $n < N$:
+          $\mathcal{T} \mapsto \mathcal{T} + \tfrac{1}{2n+1}y$
+          $y\mapsto y\cdot x_2$
+          $\mathcal{T} \mapsto \mathcal{T} - \tfrac{1}{2n+3}y$
+          $y\mapsto y\cdot x_2$
+          $n \mapsto n + 2$
+      return $\mathcal{T}$
+\end{lstlisting}
+
+Similar to Algorithm \ref{PCD_"Taylor Cos opt"} the error of Algorithm \ref{PCD_"Taylor aTan"} is easy to calculate. We see that 
+
+\begin{displaymath}
+\begin{align*}
+	\epsilon_N &= |\tan^{-1}(x) - \mathrm{taylor\_aTan(x,N)}|\\
+		&\le \frac{1}{2N + 3}|x|^{2N+3}\\
+		&\le \frac{1}{2N + 3} &\textrm{as } x \le 1
+\end{algin*}
+\end{displaymath}
+
+The next function we will consider is \(\sin^{-1}\), which starts it's derivation in much the same way as \(\tan^{-1}\). First we start by recalling that \(\frac{d}{dx} \sin^{-1}(x) = (1 - x^{2})^{-\frac{1}{2}}\), then by taking integrals of both sides we get the following derivation:
+
+\begin{displaymath}
+\begin{align*}
+	\sin^{-1}(x) &= \int (1 - x^{2})^{-\frac{1}{2}} dx\\
+		&= \int \sum_{n=0}^\infty \binom{-\frac{1}{2}}{n} (-x^2)^n\\
+		&= c + \sum_{n=0}^\infty (-1)^n 
+			\left(\prod_{k=1}^n \frac{-\tfrac{1}{2} - k + 1}{k}\right)
+			\frac{x^{2n+1}}{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{(-1)^n}{n!(2n+1)} 
+			\left(\prod_{k=1}^n \tfrac{1}{2} - k\right)
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{(-1)^{2n}}{n!(2n+1)}
+			\left(\prod_{k=1}^n \frac{2k - 1}{2}\right)
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{1}{n!(2n+1)2^n}
+			\left(\prod_{k=1}^n 2k - 1\right)
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{1}{n!(2n+1)2^n}
+			(1\times3\times5\times\cdots\times(2n-1))
+			x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{1}{n!(2n+1)2^n} \times
+			\frac{1\times2\times3\times\cdots\times(2n)}{2\times4\times\cdots\times(2n)}x^{2n+1}\\
+		&= c + \sum_{n=0}^\infty \frac{(2n)!}{(n!)^2(2n+1)4^n}x^{2n+1}
+\end{align*}
+\end{displaymath}
+
+As \(\sin^{-1}(0) = 0\) then we see that \(c=0\). Because the above is valid for \(x \in (-1,1)\), and we know the values of \(\sin^{-1}(-1)\) and \(\sin^{-1}(1)\), then we can have the following method for evaluating \(\sin^{-1}\):
+
+%PCD%
+\begin{lstlisting}[caption={Taylor Method for \(\sin^{-1}\)},label={PCD_"Taylor aSin"}]
+  taylor_aSin($x \in [-1,1], N \in \N$)
+      if $x = 1$:
+          return $\tfrac{\pi}{2}$
+      if $x = -1$:
+          return $-\tfrac{\pi}{2}$
+      $\mathcal{S} := x$
+      $x_2 := x^2$
+      $y := x$
+      $a := 1$
+      $b := 1$
+      $c := 1$
+      $n := 1$
+      while $n < N$:
+          $a \mapsto 2n\cdot(2n-1)\cdot a$
+          $b \mapsto n^2 \cdot b$
+          $c \mapsto 4\cdot c$
+          $y \mapsto x_2 \cdot y$
+          $\mathcal{S} \mapsto \mathcal{S} + \tfrac{a}{b\cdot c \cdot(2n+1)}\cdot y$
+          $n \mapsto n + 1$
+      return $\mathcal{S}$
+\end{lstlisting}
+
+The error for this method is similar to the \(\tan^{-1}\) method, in that \(\epsilon_N \le \frac{(2(N+1))!}{((N+1)!)(2N+1)4^{N+1}}\). Finally we note that \(\cos^{-1}(x) = \tfrac{\pi}{2} - \sin^{-1}(x)\), and thus can be calculated from a value calculated with Algorithm \ref{PCD_"Taylor aSin"}.
+
+%SUB%
+\subsection{CORDIC}
+\label{SUB_"CORDIC"}
+
+\theoremstyle{plain}
+\newtheorem{Cordic Gamma Property}{Proposition}[subsection]
+\newtheorem{Cordic Accuracy}[Cordic Gamma Property]{Proposition}
+
+CORDIC is an algorithm that stands for \textbf{CO}rdinate \textbf{R}otation \textbf{DI}gital \textbf{C}omputer\cite[][138]{BOK_CalcBook} and can be used to calculate many functions, including Trigonometric Values. The CORDIC algorithm works by utilising Matrix Rotations of unit vectors. This algorithm is less accurate than some other methods but has the advantage of being able to be implemented for fixed point real numbers in efficient ways using only addition and bit shifting.\\
+
+CORDIC works by taking an initial value of
+\begin{math}
+	\mathbf{x}_0 = \left( 
+		\begin{array}{c}
+			1 \\
+			0
+		\end{array} \right)
+\end{math}
+which can be rotated through an anti-clockwise angle of \(\gamma\) by the matrix
+\begin{displaymath}
+	\left( \begin{array}{cc}
+		\cos{\gamma} & -\sin{\gamma} \\
+		\sin{\gamma} &  \cos{\gamma}
+	\end{array} \right)
+	= \frac{1}{\sqrt{1 + \tan{\gamma}^2}} \left( \begin{array}{cc}
+		1 & -\tan{\gamma} \\
+		\tan{\gamma} & 1
+	\end{array} \right)
+\end{displaymath}
+
+By taking taking smaller and smaller values of \(\gamma\) we can create an iterative process to find \(\mathbf{x}_n\) which converges, for a given \(\theta \in (-\frac{\pi}{2}, \frac{\pi}{2})\), to
+\begin{displaymath}
+	\left( \begin{array}{c}
+		\cos{\theta}\\
+		\sin{\theta}
+	\end{array} \right)
+\end{displaymath}
+
+To do this we repeatedly add and subtract our values for \(\gamma\) from \(\theta\) to bring it as close to 0 as possible. For our purposes we wish to have a sequence \((\gamma_k : k \in [0, n] \cap \Z)\) which will allow us to construct all angles in the range \((-\frac{\pi}{2}, \frac{\pi}{2})\) to within a known level of accuracy. \\
+
+The way that this works can be thought of like a paper fan where each section is smaller than the last and to approximate the desired angle we repeatedly fold the angle back and forth. An visualisation of this is in figure \ref{FIG_"Fan Diagram"}, which shows three views of the CORDIC fan. The top left view is the unfolded fan, the top right is the fan folded to approximate the angle shown by the red line and the view at the bottom is a close up of the previous view.\\
+
+%FIG%
+\begin{figure}[!ht]
+	\caption{The CORDIC fan}
+	\label{FIG_"Fan Diagram"}
+	\centering
+	\includegraphics[width=0.75\textwidth]{"./Diagrams/Fan Diagram"}
+\end{figure}
+
+While there are many possible choices for \(\gamma_k\) we wish to consider \((\gamma_k : k \in [0, n] \cap \Z)\) such that \(\tan \gamma_k = 2^{-k}\ \forall\: k \in [0,n] \cap \Z\). We can note that the powers of 2 have a useful property, in that if \(m > n \in \N\) we see that \(\sum_{k=n}^{m-1} 2^k = 2^m - 2^n\). We wish to show that our choice for \(\gamma_k\) have a similar property which will be useful in showing that they are a good choice for our CORDIC algorithm.
+
+%THM%
+\begin{Cordic Gamma Property}
+\label{THM_"Cordic Gamma Property"}
+If \(m \in \Zpz\) and \(n \in \Zp\) such that \(m > n\) and \(\gamma_k = \tan^{-1}(2^-k)\ \forall\: k \in \Zpz\), then \(\gamma_m < \gamma_n + \sum_{k=m+1}^n \gamma_k\).
+\end{Cordic Gamma Property}
+\begin{proof}
+We know that \(2^{-m} = 2^{-n} + \sum_{k=m+1}^n 2^-k\), and thus by applying \(\tan^{-1}\) to both sides we get:
+
+\[\tan^{-1} 2^{-m} = \gamma_m = \tan^{-1}(2^{-m-1} + 2^{-m-2} + \cdots + 2^{-n} + 2^{-n})\]
+
+Let \(a := 2^{-m-1} + 2^{-m-2} + \cdots + 2^{-n} + 2^{-n}\) and \(b := 2^{-m-2} + \cdots + 2^{-n} + 2^{-n}\). Obviously \(a < b\) and further we know that \(\tan^{-1}\) is continuous on \([a,b]\) and differentiable on \((a,b)\). Therefore we can apply the Mean Value Theorem\cite{BOK_RealAnaly2} from calculus to find that 
+
+\[\exists c \in (a,b) : \frac{1}{c^2 + 1} = \frac{\tan^{-1}(b) - \tan^{-1}(a)}{b-a}\]
+
+By re-arranging we see that 
+
+\begin{align*}
+	\tan^{-1}(b) &= \frac{2^{-m-1}}{c^2 + 1} + \tan^{-1}(a)\\
+		&< \frac{2^{-m-1}}{2^{-2m-2} + 1} + \tan^{-1}(a)
+\end{align*}
+
+It can be shown, by considering the series expansion of \(\tan^{-1}(2^{-m-1})\), that \(\frac{2^{-m-1}}{2^{-2m-2} + 1} < \tan^{-1}(2^{-m-1})\ \forall\: m \in \Zpz\); therefore we get that:
+
+\[\tan^{-1}(b) < \tan^{-1}(2^{-m-1}) + \tan^{-1}(a)\]
+
+Following this an using the assumed value of \(\gamma_{m+1}\), we see that:
+
+\[\gamma_m < \gamma_{m+1} + \tan^{-1}(2^{-m-2} + \cdots + 2^{-n} + 2^{-n})\]
+
+By repeating the above process we eventually see that:
+
+\[\gamma_m < \sum_{k=m+1}^{n-1} \gamma_k + \tan^{-1}(2^{-n} + 2^{-n})\]
+
+In a similar manner we can repeat the above process with \(a := \tan^{-1}(2^{-n})\) and \(b := \tan^{-1}(2^{-n} + 2^{-n})\). This will show that:
+
+\begin{displaymath}
+	\gamma_m < \gamma_n + \sum_{k=m+1}^{n}\gamma_n
+\end{displaymath}
+
+\end{proof}
+
+Using the previous proposition we can then show that our \(\gamma_k\) have the property that every angle in \((-\frac{\pi}{2}, \frac{\pi}{2})\) can be approximated by either adding or subtracting successive \(\gamma_k\) to within a tolerance of \(\gamma_n\).
+
+%THM%
+\begin{Cordic Accuracy}
+\label{THM_"Cordic Accuracy"}
+If \(\gamma_k = \tan^{-1}(2^-k) \forall k \in \Z\), then for any \(n \in \N\) 
+\[\exists \: (c_k\in \{-1,1\} : k \in [0,n] \cap \Z) \: : \: |\beta - \sum_{k=0}^nc_k\gamma_k| \le \gamma_n \quad \forall \: \beta \in (-\frac{\pi}{2}, \frac{\pi}{2})\]
+\end{Cordic Accuracy}
+\begin{proof}
+We let \(\beta \in (-\frac{\pi}{2}, \frac{\pi}{2})\) and then will proceed by induction on \(n \in \N\).
+\begin{description}
+\item[\textrm{H\((n)\)}:] 
+	\(\exists\: (c_k \in\{-1, 1\} : k \in [0, n] \cap \Z) : |\theta - \sum_{k=0}^nc_k\gamma_k| \le \gamma_n\)\\
+\item[\textrm{H\((0)\)}:] 
+	We have 4 cases to consider:\\
+	\begin{description}
+	\item[Case \(\theta \in [0, \frac{\pi}{4})\):]
+		In this case \(-\frac{\pi}{4} \le \theta - \gamma_0 < 0\)\\
+		Therefore \(|\theta - \gamma_0| \le \gamma_0\).
+	\item[Case \(\theta \in [\frac{\pi}{4}, \frac{\pi}{2})\):]
+		In this case \(0 \le \theta - \gamma_0 < \frac{\pi}{4}\)\\
+		Therefore \(|\theta - \gamma_0| \le \gamma_0\).
+	\item[Case \(\theta \in (-\frac{\pi}{4}, 0)\):]
+		In this case \(0 < \theta + \gamma_0 < \frac{\pi}{4}\)\\
+		Therefore \(|\theta - \gamma_0| < \gamma_0\).
+	\item[Case \(\theta \in (-\frac{\pi}{2}, -\frac{\pi}{4}]\):]
+		In this case \(-\frac{\pi}{4} < \theta - \gamma_0 \le 0\)\\
+		Therefore \(|\theta - \gamma_0| < \gamma_0\).
+	\end{description}
+	Therefore we see that \textrm{H\((0)\)} holds true.
+\item[\textrm{H\((n)\) \(\implies\) H\((n+1)\)}:]\hfill\break
+	By \textrm{H\((n)\)} \(\exists\: (c_k \in \{-1,1\} : k \in [0,n] \cap \Z) : |\theta - \sum_{k=0}^nc_k\gamma_k| \le \gamma_n\); so let \(\theta_n := \theta - \sum_{k=0}^nc_k\gamma_k\).\\
+	By Proposition \ref{THM_"Cordic Gamma Property"} we know that \(\gamma_n < 2\gamma_{n+1}\), and so we can proceed by case analysis:
+	\begin{description}
+	\item[Case \(\theta_n \in [0, \gamma_{n+1})\):]\hfill\break
+		\(-\gamma_{n+1} \le \theta_n - \gamma_{n+1} < 0 \implies |\theta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = -1\).
+	\item[Case \(\theta_n \in [\gamma_{n+1}, \gamma_n)\):]\hfill\break
+		\(0 \le \theta_n - \gamma_{n+1} < \gamma_{n+1} \implies |\theta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = -1\).
+	\item[Case \(\theta_n \in [-\gamma_{n+1}, 0)\):]\hfill\break
+		\(0 \le \theta_n + \gamma_{n+1} < \gamma_{n+1} \implies |\theta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = 1\).
+	\item[Case \(\theta_n \in (-\gamma_n, -\gamma_{n+1})\):]\hfill\break
+		\(-\gamma_{n+1} < \theta_n + \gamma_{n+1} < 0 \implies |\theta - \sum_{k=0}^{n+1}c_k\gamma_k| \le \gamma_{n+1}\) where \(c_{n+1} = 1\).
+	\end{description}
+\end{description}
+	Therefore as we have found a suitable \(c_n\) in all cases then we have shown that \textrm{H\((n)\) \(\implies\) H\((n+1)\)}.
+\end{proof}
+
+With this proposition we see that our choice for \(\gamma_k\) is a good choice to use for the CORDIC algorithm as it covers the entire range of \((-\frac{\pi}{2}, \frac{\pi}{2})\).\\
+
+Now, as stated before, the basis of our algorithm is to calculate \(\left(\begin{array}{c}\cos\theta\\\sin\theta\end{array}\right)\) by using rotations of a unit vector. By putting our values for \(\gamma_k\) into our rotation matrix we get the following:
+
+\begin{displaymath}
+\left(\begin{array}{cc}
+	\cos\gamma_k & -\sin\gamma_k\\
+	\sin\gamma_k & \cos\gamma_k
+	\end{array}\right)
+= \frac{1}{\sqrt{1 + 2^{-2k}}}
+\left(\begin{array}{cc}
+	1 & -2^{-k}\\
+	2^{-k} & 1
+\end{array}\right)
+\end{displaymath}
+
+Then if we take a current estimate of \(\left(\begin{array}{c}\cos\theta\\\sin\theta\end{array}\right)\) at step \(k\) to be \(\left(\begin{array}{c}x_n\\y_n\end{array}\right)\), we see that
+
+\begin{displaymath}
+	\left(\begin{array}{cc}
+		\cos\gamma_k & - \sin\gamma_k\\
+		\sin\gamma_k & \cos\gamma_k
+	\end{array}\right)
+	\left(\begin{array}{c}
+		x_k \\ y_k
+	\end{array}\right)
+	= \frac{1}{\sqrt{1 + 2^{-2k}}}
+	\left(\begin{array}{c}
+		x_k - 2^{-k}y_k\\
+		y_k + 2^{-k}x_k
+	\end{array}\right)
+\end{displaymath}
+
+This gives a very simple formula for the update of \(x_k\) and \(y_k\), which can be used as the basis of the CORDIC Algorithm.\\
+
+As seen in our proof of Proposition \ref{THM_"Cordic Accuracy"}, we can approximate our desire angle at step \(n\) by keeping a track of \(\theta_n := \theta - \sum_{k=0}^{n-1}c_k\gamma_k\). At step \(n\) we then have \(\theta_{n+1} = \theta_n - \gamma_n\) if \(\theta_{n+1} \ge 0\), and \(\theta_{n+1} = \theta_n + \gamma_n\) otherwise. This leads us to the general implementation of CORDIC for Trigonometric Functions:
+
+%PCD%
+\begin{lstlisting}[caption={General Cordic},label={PCD_"General_Cordic"}]
+  CORDIC($\theta \in (-\tfrac{\pi}{2}, \tfrac{\pi}{2}), n \in \N$):
+      $x := 1$
+      $y := 0$
+      $k := 0$
+      while $k < n$:
+          if $\theta \ge 0$:
+              $t := x$
+              $x \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(x - 2^{-k}y)$
+              $y \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(y + 2^{-k}t)$
+              $\theta \mapsto \theta - \tan^{-1}(2^{-k})$
+          else:
+              $t := x$
+              $x \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(x + 2^{-k}y)$
+              $y \mapsto \tfrac{1}{\sqrt{1 + 2^{-2k}}}(y - 2^{-k}t)$
+              $\theta \mapsto \theta + \tan^{-1}(2^{-k})$
+          $k \mapsto k + 1$
+      return $(x, y)^T$
+\end{lstlisting}
+
+There are few improvements we can make on the general algorithm, however if we start to consider implementations of the algorithm we can find several ways to make our algorithm more efficient.\\
+
+We first consider the representation of our values in the program, and while the previous algorithms used a floating point \codeinline{double} value, as described in Section \ref{SUB_"Code and Computers used"}, we will instead  use a fixed point representation for CORDIC. If we have a fixed point representation of our values, then we are using an \(N\) bit integer to represent the value in question, with a fixed number of bits set aside for the integer part and the remainder for the fractional part. In this case the processes of addition, subtraction, and multiplication \& division by powers of 2 is the same as that for integers.\\
+
+In particular as our values never exceed the range of \((-2,2)\), then we can use \(N-2\) bits of our \(N\) bit integer to be the fractional part; this gives us a maximum precision of \(2^{2-N}\). Further, as we are only performing multiplication and division by two, this operation can be performed by bit shifting the values, which is much quicker than actual integer multiplication.\\
+
+Second we can pre calculate all of the values needed for the algorithm to trade storage space for a reduction in computational complexity. The values which we need to pre-calculate are \(\gamma_k = \tan^{-1}(2^{-k})\) and \(\tfrac{1}{\sqrt{1+2^{-2k}}}\) for \(k \in [0, n) \cap \Z\). The first thing to note about this is that instead of calculating the multiplication \(\tfrac{1}{\sqrt{1+2^{-2k}}}\) at each stage we can actually take this value out of the loops and pre-calculate \(\prod_{k=0}^n \tfrac{1}{\sqrt{1+2^{-2k}}}\) for \(k \in [0, n) \cap \Z\). Using these pre calculated products we can then replace \(x := 1\) with \(x := \prod_{k=0}^n \tfrac{1}{\sqrt{1+2^{-2k}}}\) in the initialisation stage.\\
+
+Now to consider an actual implementation, suppose we are using the 16 bit integer \codeinline{int16\_t} to represent our values; which will have the leading two bits represent the integer part and the remaining 14 bits represent the fractional part. In this case the level of precision is \(2^{-14} = 0.00006103515625\) and further we can show that as \(\gamma_{14} = \tan^{-1}(2^{-14}) \approx 2^{-14}\); therefore the largest we will choose \(n := 14\) to ensure the maximum possible accuracy, without performing excessive calculations\\
+
+This means we can simplify our algorithm further by calculating only \(\prod_{k=0}^{14} \frac{1}{\sqrt{1 + 2^{-2k}}}\) and \(\tan^{-1}(2^{-k})\ \forall\: k \in [0,14] \cap \Z\). One further note is that these values then need to be converted to approximations in our 16 bit fixed point representation. The first value is: 
+
+\begin{align*}
+	\prod_{k=0}^{14} \frac{1}{\sqrt{1 + 2^{-2k}}} &= 
+		0.60725293651701023412897124207973889082\ldots\\
+		&\approx \textrm{00.10011011011101}_2\\
+		&= \textrm{26dd}_{16}
+\end{align*}
+
+Below is a table of all the angles in the relevant formats
+
+%TBL%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	\(\gamma_k\) & Exact Form & Binary & Hexadecimal \\\hline
+	\(\gamma_0\) & \(\texttt{0.7853981633}\ldots\)
+		& \(\texttt{00.11001001000011}_2\)
+		& \(\texttt{3243}_{16}\\\hline
+	\(\gamma_1\) & \(\texttt{0.4636476090}\ldots\)
+		& \(\texttt{00.01110110101100}_2\)
+		& \(\texttt{1dac}_{16}\)\\\hline
+	\(\gamma_2\) & \(\texttt{0.2449786631}\ldots\)
+		& \(\texttt{00.00111110101101}_2\)
+		& \(\texttt{0fad}_{16}\)\\\hline
+	\(\gamma_3\) & \(\texttt{0.1243549945}\ldots\)
+		& \(\texttt{00.00011111110101}_2\)
+		& \(\texttt{07f5}_{16}\)\\\hline
+	\(\gamma_4\) & \(\texttt{0.0624188099}\ldots\)
+		& \(\texttt{00.00001111111110}_2\)
+		& \(\texttt{03fe}_{16}\)\\\hline
+	\(\gamma_5\) & \(\texttt{0.0312398334}\ldots\)
+		& \(\texttt{00.00000111111111}_2\)
+		& \(\texttt{01ff}_{16}\)\\\hline
+	\(\gamma_6\) & \(\texttt{0.0156237286}\ldots\)
+		& \(\texttt{00.00000100000000}_2\)
+		& \(\texttt{0100}_{16}\)\\\hline
+	\(\gamma_7\) & \(\texttt{0.0078123410}\ldots\)
+		& \(\texttt{00.00000010000000}_2\)
+		& \(\texttt{0080}_{16}\)\\\hline
+	\(\gamma_8\) & \(\texttt{0.0039062301}\ldots\)
+		& \(\texttt{00.00000001000000}_2\)
+		& \(\texttt{0040}_{16}\)\\\hline
+	\(\gamma_9\) & \(\texttt{0.0019531225}\ldots\)
+		& \(\texttt{00.00000000100000}_2\)
+		& \(\texttt{0020}_{16}\)\\\hline
+	\(\gamma_{10}\) & \(\texttt{0.0009765621}\ldots\)
+		& \(\texttt{00.00000000010000}_2\)
+		& \(\texttt{0010}_{16}\)\\\hline
+	\(\gamma_{11}\) & \(\texttt{0.0004882812}\ldots\)
+		& \(\texttt{00.00000000001000}_2\)
+		& \(\texttt{0008}_{16}\)\\\hline
+	\(\gamma_{12}\) & \(\texttt{0.0002441406}\ldots\)
+		& \(\texttt{00.00000000000100}_2\)
+		& \(\texttt{0004}_{16}\)\\\hline
+	\(\gamma_{13}\) & \(\texttt{0.0001220703}\ldots\)
+		& \(\texttt{00.00000000000010}_2\)
+		& \(\texttt{0002}_{16}\)\\\hline
+	\(\gamma_{14}\) & \(\texttt{0.0000610351}\ldots\)
+		& \(\texttt{00.00000000000001}_2\)
+		& \(\texttt{0001}_{16}\)\\\hline
+\end{tabular}
+\end{center}
+
+This allows us to then write the following method in C to calculate both \(\cos\beta\) and \(\sin\beta\), provided \(\beta \in [-\tfrac{\pi}{2}, \tfrac{\pi}{2}]\) is given in 16 bit fixed point representation:
+
+%PCD%
+\begin{codelisting}{16 bit Fixed Point CORDIC algorithm}
+int16_t *cordic_16(int16_t beta)
+{
+	const int16_t GAMMA = {0x3243, 0x1dac, 0x0fad, 0x07f5, 0x03fe,
+			       0x01ff, 0x0100, 0x0080, 0x0040, 0x0020,
+			       0x0010, 0x0008, 0x0004, 0x0002, 0x0001};
+
+	int16_t x = 0x26dd, y = 0x0000, t, result;
+
+	for(int k = 0; k <= 14; ++k)
+	{
+		t = x;
+		if(beta >= 0)
+		{
+			beta -= GAMMA[k];
+			x = x - (y >> k);
+			y = y + (t >> k);
+		}
+		else
+		{
+			beta += GAMMA[k];
+			x = x + (y >> k);
+			y = y - (t >> k);
+		}
+	}
+
+	//This line is required by C to allow the value to be returned
+	result = malloc(2 * sizeof(int16_t));
+	
+	result[0] = x;
+	result[1] = y;
+	return result;
+}
+\end{lstlisting}
+\end{codelisting}
+
+As can easily be seen in the algorithm the number of calculations each iteration is constant, and the number of iterations is fixed at 15. This means that the algorithm is an \(\bigO(1)\) algorithm, and guarantees an answer accurate to 4 decimal places as \(2^{-14} < 10^{-4}\). Further as the only calculations are integer addition, subtraction and bit shifting this method executes extremely quickly.\\
+
+Similar methods exist for other fixed length formats such as using \codeinline{int32\_t} or \codeinline{int64\_t}. To examine in more detail how the method converges we will consider an implementation using \codeinline{int64\_t}, which will be approximating \(\cos(0.5)\). The code used is included in the Appendix \ref{SUB_"Trigonometric Code"} and can perform the calculations with \(n \le 63\). Below are some of the functions approximations for different values of \(n\):
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|c|}
+	\hline
+	\(n\) & \textsf{Output with bold accurate digits}\\\hline
+	1 & \textbf{0.}70710678118654757273731\\\hline
+	2 & \textbf{0.}94868329805051376801827\\\hline
+	3 & \textbf{0.8}4366148773210747346951\\\hline
+	4 & \textbf{0.}90373783889353875853345\\\hline
+	5 & \textbf{0.87}527458786899225984257\\\hline
+	6 & \textbf{0.8}8995346811933362385360\\\hline
+	\cdots & \cdots\\\hline
+	19 & \textbf{0.87758}301847694786257392\\\hline
+	20 & \textbf{0.877582}10404530012649360\\\hline
+	21 & \textbf{0.877582561}26152311971111\\\hline
+	22 & \textbf{0.877582}78986933524468128\\\hline
+	\cdots & \cdots\\\hline
+	53 & \textbf{0.8775825618903727}5873943\\\hline
+	54 & \textbf{0.877582561890372}64771712\\\hline
+	55 & \textbf{0.8775825618903727}5873943\\\hline
+	56 & \textbf{0.8775825618903727}5873943\\\hline
+	\cdots & \cdots\\\hline
+	63 & \textbf{0.8775825618903727}5873943\\\hline
+\end{tabular}
+\end{center}}
+
+This table shows us several interesting features of the algorithm, the first being that while there are points at which a certain number of decimal places are guaranteed; before that point the number of decimal places of accuracy can vary, such as in the first few iterations. As we know that the error after \(n\) iterations is at most \(\gamma_n = \tan^{-1}(2^{-n})\), then we can guarantee that we have at least \(d\) decimal places of accuracy if we use as least \(\log_2(\cot(10^{-d}))\) iterations.\\
+
+Second there are some values of \(n\) which have uncharacteristically close approximations of the actual value, such as the case when 21 iterations are used. This arises due to the algorithm finding a good approximation for \(\beta\), but then successive numbers of iterations move away from this value, thus once more decreasing the number of decimal digits of accuracy.\\
+
+Finally at the end of the table we see that from 55 iterations onwards, the results do not get any more accurate. It turns out this is due to the program converting the \codeinline{int64\_t} fixed point values into \codeinline{double} values, which typically have an precision of around \(2^{-55}\). If we instead modify the program to use a more precise floating point representation we see that the 53-56 section of the table becomes:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|c|}
+	\hline
+	\(n\) & \textsf{Output with bold accurate digits}\\\hline
+	53 & \textbf{0.8775825618903727}3965747\\\hline
+	54 & \textbf{0.877582561890372}68653156\\\hline
+	55 & \textbf{0.87758256189037271}298609\\\hline
+	56 & \textbf{0.8775825618903727}2621336\\\hline
+\end{tabular}
+\end{center}}
+
+This is much more in line with what we would expect to see from the known error of the algorithm.\\
+
+Now another use of CORDIC is to effectively run it in reverse, which will allow us to calculate the Inverse Trigonometric functions. To do this we will start by considering the method for calculating \(\tan^{-1}\), and then use trigonometric identities to calculate both \(\cos^{-1}\) and \(\sin^{-1}\).\\
+
+To accomplish this we will be fixing some initial values for \(\sin\theta\) and \(\cos\theta\), and then running the CORDIC algorithm to move the approximation of \(\sin\theta\) towards zero. In doing this we will effectively run our algorithm in reverse, and if we keep track of the angles that we rotate through we can find \(\tan^{-1}\).\\
+
+We know that \(\tan\theta = \frac{\sin\theta}{\cos\theta}\), which means that if we have a current approximation \(\left(\begin{array}{c}x_k\\y_k\end{array}\right)\) then \(\frac{y_k}{x_k} \approx \tan\theta\). Using this, if we have an input of \(\tan\theta = z\) then we can take our initial values to be \(x_0 := \tfrac{1}{2}\) and \(y_0 := \tfrac{z}{2}\). This has the desired property that \(\tfrac{y_0}{x_0} = z\), and if we have \(y_n\) tending to 0 then the angle we approximate in the process will be \(\theta\). \\
+
+If we again consider a 16 bit fixed point implementation for our algorithm we can implement it as follows:
+
+%PCD%
+\begin{codelisting}{16 bit Fixed Point CORDIC \(\tan^{-1}\)}
+int16_t *cordic_atan_16(int16_t z)
+{
+	const int16_t GAMMA = {0x3243, 0x1dac, 0x0fad, 0x07f5, 0x03fe,
+			       0x01ff, 0x0100, 0x0080, 0x0040, 0x0020,
+			       0x0010, 0x0008, 0x0004, 0x0002, 0x0001};
+
+	int16_t x = 0x2000, y = z >> 1, t, theta;
+
+	for(int k = 0; k <= 14; ++k)
+	{
+		t = x;
+		if(y < 0)
+		{
+			theta -= GAMMA[k];
+			x = x - (y >> k);
+			y = y + (t >> k);
+		}
+		else
+		{
+			theta += GAMMA[k];
+			x = x + (y >> k);
+			y = y - (t >> k);
+		}
+	}
+
+	return theta;
+}
+\end{lstlisting}
+\end{codelisting}
+
+Similar to our considerations when dealing with the Taylor method of calculating \(\tan^{-1}\), we need to ensure that the input value is not too large, and so can perform the same transformations to the value to ensure we are always calculating a value in the range \([0,1)\). Using this we can then use the identities \(\sin^{-1}(z) = \tan^{-1}(\frac{z}{\sqrt{1-z^2}})\) and \(\cos^{-1}(z) = \tan^{-1}(\frac{\sqrt{1 - z^2}}{z})\). \\
+
+Obviously there are basic exceptional values that need to be checked for, in particular \(\cos^{-1}(0) = \tfrac{\pi}{2}\), and \(\sin^{-1}(\pm1) = \pm\tfrac{\pi}{2}\). If these values are checked prior to the actual calculation, then we are never dividing by 0 and \(z \in [-1,1]\cap\Z\), thus we have a complete algorithm that calculates the inverse Trigonometric Functions.\\
+
+This method, like the CORDIC method for the regular Trigonometric Functions, has an approximation that is accurate to within \(\gamma_n\). Thus for our 16 bit implementation, the output will be accurate to within an error of \(2^{-14} = 0.00006103515625\), in particular guaranteeing at least 4 decimal places of accuracy. A final note is that the Inverse Trigonometric Functions, again much like the regular CORDIC algorithm, is an \(\bigO(1)\) algorithm with simple calculations, making the algorithm extremely efficient.
+
+%SUB%
+\subsection{Comparison of Methods}
+
+We have observed three different methods for calculating the Trigonometric Functions, as well as their inverses, so should compare their efficiency and accuracy properties.\\
+
+First we will compare how quickly each algorithm approaches the correct value for different inputs of \(n\), and using \(\theta = 0.5\). The comparison will use \codeinline{double} values for computation, so that all three methods may be equally compared. The table below compares the convergence of \(\cos\theta\), with the bold digits being the correct digits found:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|l|l|}
+\hline
+\(n\) & \textrm{geometric\_Cos(0.5, \(n\))}
+	  & \textrm{taylor\_Cos(0.5, \(n\))}
+	  & \textrm{CORDIC(0.5, \(n\))}\\\hline
+1 & \textbf{0.87}6953125000000
+  & \textbf{1}.000000000000000
+  & \textbf{0.}707106781186547\\\hline
+2 & \textbf{0.877}426177263259
+  & \textbf{0.877}604166666666
+  & \textbf{0.}948683298050513\\\hline
+3 & \textbf{0.8775}43526076081
+  & \textbf{0.877}604166666666
+  & \textbf{0.8}43661487732107\\\hline
+4 & \textbf{0.8775}72806699400
+  & \textbf{0.87758256}2158978
+  & \textbf{0.}903737838893538\\\hline
+5 & \textbf{0.87758}0123327654
+  & \textbf{0.87758256}2158978
+  & \textbf{0.87}5274587868992\\\hline
+6 & \textbf{0.87758}1952264380
+  & \textbf{0.87758256189037}3
+  & \textbf{0.8}89953468119333\\\hline
+7 & \textbf{0.877582}409484792
+  & \textbf{0.87758256189037}3
+  & \textbf{0.8}82719918613777\\\hline
+8 & \textbf{0.8775825}23789035
+  & \textbf{0.877582561890372}
+  & \textbf{0.87}9022003513595\\\hline
+9 & \textbf{0.8775825}52365041
+  & \textbf{0.877582561890372}
+  & \textbf{0.877}152884812089\\\hline
+10& \textbf{0.8775825}59509040
+  & \textbf{0.877582561890372}
+  & \textbf{0.87}8089122532394\\\hline
+\end{tabular}
+\end{center}}
+
+This table demonstrates that \textrm{taylor\_Cos} has the fastest convergence, and also demonstrates the staggered increase in accuracy as each step of the algorithm calculates two updates to \(\cos\theta\), and thus the output only gets more accurate every other value of \(n\). The \textrm{geometric\_Cos} method has the second best convergence, while the CORDIC algorithm lags behind, having inconsistent convergence as measured in correct digits.\\
+
+Next we will note that all algorithms can guarantee 10 digits of accuracy in a fixed number of steps. In particular we can guarantee 10 digits of accuracy for \textrm{geometric\_Cos} when \(n \ge 16\), \textrm{taylor\_Cos} when \(n \ge 8\) and \textrm{CORDIC} when \(n \ge 34\). Using the lower bounds of each of these values for \(n\) we can directly compare the speed of the methods.\\
+
+To compare the methods we will be testing 1000 random values in the range \([0, \frac{\pi}{2})\) for which we will calculate the cosine of with each method 100000 times. This will then also be compared to the standard C implementation of the \(\cos\) function, available in \codeinline{math.h}. The results of my personal testing follow, where the given times are for individual values, not individual method execution times:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+&\textsf{Total time:} & \textsf{Average time:} & \textsf{Minimum time:}
+	&\textsf{Maximum time:}\\\hline
+\codeinline{geometric\_cos} & 16.029s & 0.016s & 0.015s & 0.022s\\\hline
+\codeinline{taylor\_cos} & 7.937s & 0.007s & 0.007s & 0.013s\\\hline
+\codeinline{cordic\_cos} & 21.471s & 0.021s & 0.020s & 0.030s\\\hline
+\codeinline{builtin\_cos} & 0.243s & 0.000s & 0.000s & 0.000s\\\hline
+\end{tabular}
+\end{center}
+}
+
+These values show that the fastest algorithm that we have discussed is algorithm \ref{PCD_"Taylor Cos opt"}, while the slowest is the CORDIC algorithm. However all of our algorithms are much less efficient than the built-in \codeinline{cos} function of C. It turns out this discrepancy is due to inefficient implementation as the \codeinline{cos} function also uses a Taylor approximation\cite{ONL_MathCosImp}, but it is implemented in a much lower level method that optimises the execution of the code.\\
+
+Next we will compare our methods for the Inverse Trigonometric Functions, starting with how they converge to the correct value, as detailed in the following table:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|l|l|}
+\hline
+\(n\) & \textrm{geometric\_aCos(0.5, \(n\))}
+	  & \textrm{taylor\_aCos(0.5, \(n\))}
+	  & \textrm{CORDIC(0.5, \(n\))}\\\hline
+1 & \textbf{2.3}51425307918200
+&\textbf{2.}270796326794896
+&\textbf{2.3}56194490192344\\\hline
+2 & \textbf{2.34}7503635391542
+&\textbf{2.}327962993461563
+&\textbf{1}.892546881191538\\\hline
+3 & \textbf{2.346}521397812842
+&\textbf{2.}340568243461563
+&\textbf{2.}137525544318402\\\hline
+4 & \textbf{2.346}275724597314
+&\textbf{2.34}4244774711563
+&\textbf{2.}261880538865164\\\hline
+5 & \textbf{2.346}214299177873
+&\textbf{2.34}5470795757570
+&\textbf{2.3}24299348861121\\\hline
+6 & \textbf{2.34619}8942378459
+&\textbf{2.34}5913166442261
+&\textbf{2.3}55539182291389\\\hline
+7 & \textbf{2.34619}5103149716
+&\textbf{2.346}081295659538
+&\textbf{2.3}39915453670913\\\hline
+8 & \textbf{2.34619}4143336564
+&\textbf{2.3461}47594614218
+&\textbf{2.34}7727794731014\\\hline
+9 & \textbf{2.346193}903386887
+&\textbf{2.3461}74467628018
+&\textbf{2.34}3821564599047\\\hline
+10& \textbf{2.3461938}43452078
+&\textbf{2.3461}85594784405
+&\textbf{2.34}5774687115525\\\hline
+
+\end{tabular}
+\end{center}}
+
+Here we see for the inverse trigonometric functions the convergence speed has been altered with the Geometric method now having the fastest convergence; the Taylor Method converges much slower and the CORDIC method is more stable. One interesting behaviour that emerges for larger values of \(n\) in the \textrm{geometric\_aCos} is demonstrated in the following table:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+\(n\) & \textrm{geometric\_aCos(0.5, \(n\))}\\\hline
+13 & \textbf{2.34619382}2083380897\\\hline
+14 & \textbf{2.3461938}12716280469\\\hline
+15 & \textbf{2.346193}737779483257\\\hline
+\cdots & \cdots\\\hline
+22 & \textbf{2.346}097524754926944\\\hline
+23 & \textbf{2.34}1202123910687049\\\hline
+24 & \textbf{2.3}51023238547698124\\\hline
+\end{tabular}
+\end{center}}
+
+This behaviour arises due to the use of \codeinline{double} to calculate values of very small magnitude, this causes the value to become effectively 0 and thus lead to the inaccuracies seen. If we use a higher precision representation for the calculations we get the following table instead:
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+\(n\) & \textrm{geometric\_aCos(0.5, \(n\))}\\\hline
+13 & \textbf{2.346193823}718087586\\\hline
+14 & \textbf{2.3461938234}83759158\\\hline
+15 & \textbf{2.3461938234}25177051\\\hline
+\cdots & \cdots\\\hline
+22 & \textbf{2.3461938234056}50874\\\hline
+23 & \textbf{2.346193823405649}980\\\hline
+24 & \textbf{2.346193823405649}757\\\hline
+\end{tabular}
+\end{center}}
+
+With this we see that Algorithm \ref{PCD_"Geometric aCos"} continues in the same pattern as before and is actually correct. So we may time our functions again to compare their efficiency. To do this we will again use 1000 random values, this time in the range \((-1,1)\), each of which we will calculate \(\cos^{-1}\) using each method 100000 times. We note that the algorithms can guarantee 10 decimal places of accuracy for different values of \(n\), in particular \textrm{geometric\_aCos} when \(n \ge 18\), \textrm{taylor\_aCos} when \(n \ge 30\) and \textrm{CORDIC} when \(n \ge 50\).
+
+{\fontfamily{pcr}\selectfont
+%TBL%
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+&\textsf{Total time:} & \textsf{Average time:} & \textsf{Minimum time:}
+	&\textsf{Maximum time:}\\\hline
+\codeinline{geometric\_cos} & 27.273s & 0.027s & 0.026s & 0.033s\\\hline
+\codeinline{taylor\_cos} & 14.358s & 0.014s & 0.014s & 0.018s\\\hline
+\codeinline{cordic\_cos} & 29.142s & 0.029s & 0.028s & 0.032s\\\hline
+\codeinline{builtin\_cos} & 2.143s & 0.002s & 0.001s & 0.005s\\\hline 
+\end{tabular}
+\end{center}}
+
+Again this table shows that the Taylor method is the quickest of those analysed and the CORDIC method is the slowest, however they also both are much slower than the built in methods. One thing to note is that the inverse trigonometric functions are simply less efficient to calculate, as can be seen in the execution time of the built-in method, which appears to be two orders of magnitude greater than the corresponding trigonometric method.\\
+
+We conclude that for most implementations the Taylor method is the most appropriate method to use to ensure a high accuracy quickly. However the CORDIC algorithm is of use when more advanced features such as floating point type values, or hardware multipliers are not present; further it is possible to create hardware implementations of the CORDIC algorithm which can even further speed up the calculations. 
