@@ -1,0 +1,463 @@
+\documentclass[12pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{sidecap}
+\usepackage{animate}
+\usepackage{textcomp, xspace}
+\usepackage{listings}
+\usepackage[pdflatex]{graphicx}
+
+\usetheme{Goettingen}
+\usecolortheme{whale}
+\setbeamerfont{caption}{size={\fontsize{8pt}{10pt}}}
+\setbeamerfont{note page}{size=\fontsize{6pt}{8pt}}
+\setbeamerfont{footnote}{size=\fontsize{6pt}{6pt}}
+
+\newcommand{\intro}{\underline{\textbf{INTRO:}}}
+\definecolor{cBg}{RGB}{240,240,250}
+\definecolor{cCm}{RGB}{0, 105, 0}
+\definecolor{cSt}{RGB}{155, 0, 0}
+\definecolor{cKw}{RGB}{0, 0, 105}
+\definecolor{pBg}{RGB}{255,220,205}
+\renewcommand{\lstlistingname}{Algorithm}
+\lstset{
+	basicstyle=\rmfamily,
+    mathescape,
+    frame=lines}
+
+\title{How to Program a Calculator}
+\date{}
+\subtitle{A look at the geometric cosine method}
+\author{Jake Darby}
+
+\begin{document}
+
+\section{Introduction}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\note[itemize]{
+\item Welcome, hopefully quick so we can all get our lunch
+\item Jake Darby and as can be seen looking at how to program a calculator
+\item Not got time for everything, so looking in a bit of detail at one method of calculating cos}
+
+
+\begin{frame}
+\frametitle{Project Overview}
+\begin{itemize}[<+(1)->]
+	\item Numerical Analysis of Common Functions
+	\begin{itemize}[<+(1)->]
+		\item Appoximations
+		\item Errors
+		\item Implementation
+	\end{itemize}
+	\item Functions examined have been studied since antiquity
+	\begin{itemize}[<+(1)->]
+		\item Square Roots
+		\item Trigonometric Functions
+		\item Logarithms and Exponentials
+	\end{itemize}
+	\item These functions can be complex to approximate well
+	\item Implemented by modern computers and calculators
+	\begin{itemize}[<+(1)->]
+		\item Implemented in C
+		\item GNU \& MPFR libraries
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item \intro like to give v. brief overview of whole project
+	\item >Project deals with Numerical Analysis of Common Functions
+	\item This analysis includes
+	\item >How the functions are approximated
+	\item Typically create an algorithm i.e. process which will approximate the correct function value
+	\item >The error of the functions e.g. absolute error
+	\item Examine how to calculate or approximate these errors
+	\item >The implementation of the algorithm
+	\item Includes computational complexity of algorithm, often can be improved with analysis
+	\item >The functions I examined in my project have typically been studied since antiquity
+	\item In particular I studied >Square Root functions, >Trig functions and >Logarithmic and exponential functions
+	\item >The common feature of these functions is that they can all be complex to approximate well
+	\item This has been a problem as these functions have many useful practical applications.
+	\item >These functions are implemented in modern computers and calculators
+	\item The aim of this project is to understand how they are implemented
+	\item >I implemented in C for speed
+	\item >used Gnu Multiple Precision (GNU) and Gnu MPFR (MPFR)
+	\item Allows arbitrary precision in calculations
+	\item Allowed me to calculate \(\sqrt{2}\) to 1 million places in about 1 sec}
+
+\begin{frame}
+\frametitle{Trigonometric Functions}
+\begin{itemize}[<+(1)->]
+	\item Looked at \(\sin\), \(\cos\) and \(\tan\)
+	\begin{itemize}[<+(1)->]
+		\item Studied as far back as the Egyptians
+		\item Use Trigonometric Identities to reduce the problem
+	\end{itemize}
+	\item Analysed several different methods
+	\begin{itemize}[<+(1)->]
+		\item Each of the methods have their benefits
+		\item Taylor
+		\item CORDIC
+		\item Geometric
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item \intro The section we're looking at is the Trigonometric Fnctns
+	\item >In particular this section deals with sin, cos and tan
+	\item Many uses over the years, particularly in architecture
+	\item >As such studied since Ancient Egypt
+	\item Used in the building of the pyramids
+	\item Possibly used further back by the Babylonians, but that is debated
+	\item >Typically use trig idents to reduce the problem
+	\item If we find sin or cos, we can find all the others if we know \(\pi\)
+	\item >In the course of the project I analysed several differnt methods
+	\item >Each method works in a slightly different way with different porperties, which gives different benefits
+	\item >The Taylor method uses a series to approximate the values
+	\item These are easy to calculate and analyse
+	\item >The Coordinate Rotation Digital Computer (aka CORDIC) uses rotations of unit vectors via Matrix Transformations
+	\item Has applications in very basic compute systems
+	\item Can also be implemented in hardware
+	\item >The final method is the one we'll be looking at in more detail here}
+
+\section{Derivation}
+
+\begin{frame}
+\frametitle{Geometric Method Figure 1}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{"./Diagrams/Geometric Trig Diagram 1"}
+	\caption{First diagram in developing the geometric method}
+\end{figure}
+\end{frame}
+
+\note[itemize]{
+	\item I will be briefly demonstrating how the geometric method is constructed in the following slides.
+	\item This is a sectn of a circle with radius 1
+	\item Detailed are the useful values that we'll be using on this diagram, which we'll go over in detail on the next slide.
+	\item note that only consider \(\theta \in [0, \tfrac{\pi}{2}\) as other values can be reduced to this range via trig idents}
+
+\begin{frame}
+\frametitle{Geometric Method Derivation 1}
+\begin{columns}
+	\begin{column}{0.5\textwidth}
+		\begin{itemize}[<+(1)->]
+			\item \(s^2 = \sin^2\theta + (1 - \cos\theta)^2\)
+			\item \(s^2 = 2 - 2\cos\theta\)
+			\item \(\cos\theta = 1 - \tfrac{1}{2}s^2\)
+			\item \(s \approx \theta\)
+			\item We wish to improve our approximation of \(s\)
+		\end{itemize}
+	\end{column}
+	\begin{column}{0.5\textwidth}
+		\begin{figure}
+			\centering
+			\includegraphics[width=\textwidth]{"./Diagrams/Geometric Trig Diagram 1"}
+		\end{figure}
+	\end{column}
+\end{columns}
+\end{frame}
+
+\note[itemize]{
+	\item \intro In analysing this we start by looking at theright hand trinagle
+	\item >This gives the this equation by using Pythagarus' Theorem
+	\item By using the basic trig identity of s2 + c2 = 1 we get>
+	\item Finally re-arranging we get >this which gives us a formula for cos if we know s
+	\item As r = 1, then we know the arc of the angle is \(\theta\) in length
+	\item The chord approximates this so > \(s \approx \theta\)
+	\item >The approximation is fairly poor, so we need to improve our approximation of s}
+
+\begin{frame}
+\frametitle{Geometric Method Diagrams 2}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\textwidth]{"./Diagrams/Geometric Trig Diagram 2"}
+	\caption{Diagram to show how to recursively calculate s}
+\end{figure}
+\end{frame}
+
+\note[itemize]{
+	\item This diagram will allow us to find a much better approximation for s, as detailed on the next slide
+	\item In particular we note that h is the chord of half the original arc}
+
+\begin{frame}
+\frametitle{Geometric Method Derivation 2}
+\begin{columns}
+	\begin{column}{0.5\textwidth}
+	\begin{itemize}[<+(1)->]
+		\item \(ABC\) is right angled
+		\item \(\begin{aligned}[t]AB &= \sqrt{AC^2 - BC^2}\\ &= \sqrt{4-h^2}\end{aligned}\)
+		\item Area of ABC:
+		\begin{itemize}[<+(1)->]
+			\item \(\tfrac{1}{2}h\sqrt{4-h^2}\)\medskip
+			\item \(\tfrac{1}{2}\cdot2\cdot\tfrac{s}{2}\)
+		\end{itemize}
+		\item \(s^2 = h^2(4 - h^2)\)
+		\item \(h \approx \tfrac{\theta}{2}\)
+	\end{itemize}
+	\end{column}
+	\begin{column}{0.5\textwidth}
+		\begin{figure}
+			\centering
+			\includegraphics[width=\textwidth]{"./Diagrams/Geometric Trig Diagram 2"}
+		\end{figure}
+	\end{column}
+\end{columns}
+\end{frame}
+
+\note[itemize]{
+	\item Now in considering this diagram, first observation >ABC Right Angled by elementary geometry
+	\item Then by Pythagarus we get >
+	\item >To tie it all together we consider the area of ABC
+	\item By using BC as the base of the triangle we get >
+	\item Also by using AC as the base of the triangle we get >
+	\item >We get this by equating the two sides and simplifying
+	\item Thus if we know h accurately we can calculate \(s^2\)
+	\item >\(h \approx \tfrac{\theta}{2}\)
+	\item repeating the process would give a a new \(h \approx \tfrac{\theta}{4}\), then \(\tfrac{\theta}{8}\), etc...}
+
+\begin{frame}[fragile]
+\frametitle{Geometric Method Algorithm}
+\begin{lstlisting}
+  geometric_cos($\theta \in [0, \tfrac{\pi}{2}], k \in \mathbb{N}$):
+      $h_0 := \theta2^{-k}$
+      $n := 0$
+      while $n < k$:
+          $h_{n+1}^2 := h_n^2\cdot(4-h_n^2)$
+          $n \mapsto n + 1$
+      return $1 - \tfrac{1}{2}h_k^2$
+\end{lstlisting}
+\end{frame}
+
+\note[itemize]{
+	\item Thus we get this algorithm
+	\item starts with the approximation that \(h_0 := \theta2^{-k}\)
+	\item Uses the recursive formula, that I mentioned on the previous slide
+	\item Finally \(h_k = s\)}
+
+\begin{frame}[fragile]
+\lstset{basicstyle=\ttfamily,
+        language=C,
+		backgroundcolor=\color{cBg},
+		basicstyle=\footnotesize,
+		commentstyle=\color{cCm},
+		frame=L,
+		keywordstyle=\color{cKw},
+		showstringspaces=false,
+		stringstyle=\color{cSt},
+		tabsize=2}
+\frametitle{Geometric Method Implementation}
+\begin{lstlisting}
+#include <assert.h>
+#include <math.h>
+
+double geometric_cos(double theta, 
+                     unsigned int k){
+   //k > 0
+   assert(k);
+   //0 <= theta < pi/2
+   assert(0 <= theta < 1.57079632679);
+
+   double h = theta * pow(2, -k);
+   h *= h;
+
+   for(int i = 0; i < k; ++i)
+      h = h * (4 - h);
+	
+   return 1 - h/2;
+}
+\end{lstlisting}
+\end{frame}
+
+\note[itemize]{
+	\item Simple implementation in C
+	\item checks bounds with assert commands
+	\item only uses one \(h\) variable which is updated}
+
+\section{Errors}
+
+\begin{frame}
+\frametitle{Basics and Assumptions}
+\begin{itemize}[<+(1)->]
+	\item Errors occur due to the assumption that \(h_0 = \theta2^{-k}\)
+	\item We are concerned here with the absolute error
+	\begin{itemize}[<+(1)->]
+		\item If \(\bar{x} \approx x\), then the absolute error is: 
+	\end{itemize}
+	\onslide<4->\begin{displaymath}\epsilon_x := |x - \bar{x}|\end{displaymath}
+	\item Assumptions:
+	\begin{itemize}[<+(1)->]
+		\item All calculations are performed without error
+		\item All calculations are performed to arbitrary precision
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item There is only one real source of error
+	\item >Lies in our assumption \(h_0 = \theta2^{-k}\)
+	\item Actually \(h_0\) is close, but not equal.
+	\item Error measure we will be considering is >absolute error
+	\item >That is that if \(\bar{x}\) approximates \(x\)
+	\item Then the absolute error is \(\epsilon_x\)
+	\item >All of what follows relies on the following assumptions
+	\item >All calculations are performed correctly
+	\item That is no errors are ever made in the calculations
+	\item >All the calculation are performed to arbitrary precision
+	\item That is we can be working accurately with any number of decimal places
+	\item This is not the case in most computer systems, which only have a finite precision}
+
+\begin{frame}
+\frametitle{Error Analysis 1}
+\begin{itemize}[<+(1)->]
+	\item Two important propositions:
+	\begin{itemize}[<+(1)->]
+		\item 4.3.1: \(h_n = 2\sin(2^n\sin^{-1}(\theta2^{-k-1}))\)
+		\item 4.3.2: \(h_n > 2\sin(\theta2^{n-k-1})\)
+	\end{itemize}
+	\item Proposition 4.3.3:
+	\begin{itemize}[<+(1)->]
+		\item \(\epsilon_n = |h_n - 2\sin(\theta2^{n-k-1})|\)
+		\item \(\epsilon_k < 2^k\epsilon_0\)
+		\item Proven by showing \(\epsilon_{n+1} < 2\epsilon_n\)
+		\item Uses simple trigonometry and algebraic re-arrangement
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item >When analysing the error of the method, I proved two propositions
+	\item >The first is proposition 4.3.1
+	\item This states that \(h_n\) is the length of an arc with angle related to \(\theta\).
+	\item Used as a lemma in other proofs
+	\item Simple to prove via induction
+	\item >The second is that \(h_n > 2\sin(\theta2^{n-k-1})\)
+	\item This is proven using the taylor expansion of \(\sin\)
+	\item This allows us to conclude that \(h_n\) is always an overestimate
+	\item This result allows us to then prove >propsition 4.3.3
+	\item >If we define \(\epsilon_n\) as shown on the screen
+	\item >Then \(\epsilon_k < 2^k\epsilon_0\)
+	\item >To prove this I showed that \(\epsilon_{n+1} < 2\epsilon_n\)
+	\item >Which was done via simple trig and re-arangement
+	\item Now we would like to know if this is a useful error measure
+	\item i.e. the error goes to 0 as k goes to infinity}
+
+\begin{frame}
+\frametitle{Error Analysis 2}
+\begin{itemize}[<+(1)->]
+	\item \(\epsilon_k = h_k - s\)
+	\item \(\epsilon_0 = \theta2^{-k} - 2\sin(\theta2^{-k-1})\)
+	\item Let \(\mathcal{C} := 1 - \tfrac{1}{2}h_k^2\)
+	\item Let \(\epsilon_{\mathcal{C}} := |\mathcal{C} - \cos{\theta}|\)
+	\item We can show that \(\epsilon_{\mathcal{C}} < 2\epsilon_k\)
+	\item Thus \(\begin{aligned}[t]\epsilon_{\mathcal{C}} &< 2^{k+1}\epsilon_0\\&= 2\theta - 2^{k+2}\sin(\theta2^{-k-1})\end{aligned}\)
+	\item \small\(2^{k+2}\sin(\theta2^{-k-1}) = 2\theta - \tfrac{1}{6}\theta^32^{-2k-1} + \tfrac{1}{120}\theta^52^{-4k-1} + \cdots\)\normalsize
+	\item \(\epsilon_{\mathcal{C}} < \frac{1}{6}\theta^32^{-2k-1} + \mathcal{O}(2^{-4k-1})\)
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item We will surmize that > \(\epsilon_k = h_k-s\) and > \(\epsilon_0 = \theta2^{-k} - 2\sin(\theta2^{-k-1})\)
+	\item Also we consider >script C to be the approximation of cos
+	\item >and thusly \(\epsilon\) script C to be the absolute error of the algorithm
+	\item It fairly easy to show that \(\epsilon_\mathcal{C} < 2 \epsilon_k\)
+	\item >Therefore we get this final inequality for \(\epsilon_\mathcal{C}\)
+	\item the equality is from substituting in \(\epsilon_0\)
+	\item It is still not obvious that limit of ep C = 0 as k to infty
+	\item By using the taylor expansion of sin again we get >this
+	\item Substituing this into the previous we get >this equation
+	\item as this is \(\mathcal{O}(2^{-2k-1})\) then it is obvious the RHS goes to 0 as k goes to infty
+	\item Hence lim ep C = 0 as k to infty, and we conclude the method correctly converges}
+
+\section{Conclusion}
+
+\begin{frame}
+\frametitle{Digits of Accuracy}
+\begin{itemize}[<+(1)->]
+	\item \(2\theta - 2^{k+2}\sin(\theta2^{-k-1}) < 10^{-N}\)
+	\begin{itemize}[<+(1)->]
+		\item Guarantee \(N\) digits of accuracy
+		\item Must solve \(2^{k+2}\sin(\theta2^{-k-1}) > 2\theta - 10^{-N}\)
+	\end{itemize}
+	\item Use a test value of \(\theta = 0.5\)
+\end{itemize}
+\onslide<6->\begin{figure}
+\centering
+\begin{tabular}{|p{50pt}|p{50pt}|}
+	\hline
+	\(N\) & \(k\)\\
+	\hline
+	5 & 6 \\\hline
+	10 & 14\\\hline
+	50 & 80\\\hline
+	100 & 163\\\hline
+	1000 & 1658\\\hline
+\end{tabular}
+\caption{This table shows the minimum \(k\) required to guarantee \(N\) digits of accuracy for our approximation of \(\cos(0.5)\)}
+\end{figure}
+\end{frame}
+
+\note[itemize]{
+	\item >If we have k which validates this inequality then we know that ep C is also less than \(10^{-N}\)
+	\item >This will guarantee us N decimal places of accuracy
+	\item The actual accuracy may be more than this
+	\item >Equivalent to finding k s.t. this eqn is satisfied
+	\item >Using a test value of 0.5, I found solutions to this
+	\item >This table details the minium k to get N digits of accuracy
+	\item We can see that the growth of k required is roughly linear
+	\item We could use this data to calculate a sufficient k, given a required N digits
+	\item For example if we are told we need 10,000 digits we could use k = 18,000 to be sufficient.}
+
+\begin{frame}
+\frametitle{Final Remarks}
+\begin{itemize}[<+(1)->]
+	\item Interesting method, but better exist
+	\begin{itemize}[<+(1)->]
+		\item e.g. Taylor Series method
+	\end{itemize}
+	\item Fairly trivial to reverse the algorithm to find \(\cos^{-1}\)
+	\item Just one method, in one section
+	\begin{itemize}[<+(1)->]
+		\item Digit by digit square root
+		\item Hardware implementable trig calculations
+		\item Continued fractions for exponentials
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\note[itemize]{
+	\item >While this method interests me and I wished to share it with you better methods do exist for approximating cos
+	\item >For example the Taylor Series Method works better
+	\item However it is relatively uninteresting for a presentation
+	\item >One observation is that if you consider the algorithm presented, it is fairly easy to reverese
+	\item Thus if you start with a value for \(\cos\theta\) you can approximate \(\cos^{-1}\theta\)
+	\item >This method presented here is just one of many in the project
+	\item Some other interesting methods I discuss include
+	\item >A square root method that gives precisely the next digit of the root each time in sequence
+	\item >A method of calculating trig values that can be implemented in circuitary hardware
+	\item Uses the CORDIC algorithm, which isn't as accurate, but is very fast
+	\item >A method of using continued fractions to approximate natural exponentials}
+
+\begin{frame}
+\frametitle{\null}
+\centering
+{\huge Thank you for listening}\\\vspace{20pt}\pause
+{\large Project at: https://github.com/Ybrad/Year-4-Project}\\\vspace{20pt}\pause
+{\large Any questions?}
+\end{frame}
+
+\note[itemize]{
+	\item I hope this presentation was interesting for some of you
+	\item >If you wish to view my project in it's entirety you can visit this github repository
+	\item This contains all the latex files, pdfs, images and code used
+	\item >Now any questions?}
+
+\end{document}
